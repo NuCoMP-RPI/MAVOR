@@ -22,14 +22,15 @@ _________\///______________\///__\///________\///________\///_____________\/////
 int main(int argc, char* argv[]){
     print_name();
 
-    if ( argc < 2)
-    {
-        std::cout << "You must pass the file path as an argument.\n";
-        exit(-1);
-    }
-    
+    // if ( argc < 2)
+    // {
+    //     std::cout << "You must pass the file path as an argument.\n";
+    //     exit(-1);
+    // }
 
-    process_file(argv[1]);
+    const std::string file_path = "/home/blakec4/SchoolPrograms/SAB_CDF/bin/data/processed_outputs/HinH2O/HinH2O_283K.h5";
+
+    process_file(file_path);
 
     return 0;
 }

@@ -4,6 +4,6 @@
 #include <iostream>
 
 // Function calls
-void process_file(const std::string file_path);
+void process_file(const std::string& file_path);
 
 #endif

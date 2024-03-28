@@ -4,6 +4,10 @@
 #include <iostream>
 #include <vector>
 
+#include "H5Cpp.h"
+
+#include "constants.hpp"
+
 // Data Structures
 class TslData {
     public:
@@ -12,20 +16,43 @@ class TslData {
         int lln;
         int za;
         int mat;
-        float temp;
-        float t_eff;
-        float temp_ratio;
-        float a0;
-        float e_max;
-        float m0;
-        float free_xs;
-        float bound_xs;
-        std::vector<float> alphas;
-        std::vector<float> betas;
-        std::vector<float> tsl_vals;
+        double temp;
+        double t_eff;
+        double temp_ratio;
+        double a0;
+        double e_max;
+        double m0;
+        double free_xs;
+        double bound_xs;
+        std::vector<double> alphas;
+        std::vector<double> betas;
+        std::vector<double> tsl_vals_array;
+        std::vector<std::vector<double>> tsl_vals;
+
+        // Constructor to read in the data from the HDF5 file
+        TslData(const std::string& file_path);
+
+        // Public facing methods to return desired versions of the TSL data
+        std::vector<double> return_scaled_alphas(double const & ref_temp = ref_temp_k);
+        std::vector<double> return_scaled_betas(double const & ref_temp = ref_temp_k);
+        std::vector<double> return_full_betas();
+        std::vector<double> return_full_scaled_betas(double const & ref_temp = ref_temp_k);
+        std::vector<std::vector<double>> return_tsl_vals();
+        std::vector<std::vector<double>> return_half_sym_tsl_vals();
+        std::vector<std::vector<double>> return_half_asym_tsl_vals();
+        std::vector<std::vector<double>> return_full_sym_tsl_vals();
+        std::vector<std::vector<double>> return_full_asym_tsl_vals();
+
+    private:
+        // Private methods to handle the TSL data
+        void __vec_element_mult__(std::vector<double>&vec, double const val);
+        std::vector<std::vector<double>> __vector_to_matrix__(std::vector<double> const & flat_vector, int const n_rows, int const n_cols);
+        std::vector<double> __vector_mirror__(std::vector<double> const & arr, bool const del_duplicate);
+        std::vector<double> __negative_vector_mirror__(std::vector<double> const & arr, bool const del_duplicate);
+        std::vector<std::vector<double>> __matrix_2d_flip__(std::vector<std::vector<double>> const & matrix2d, bool const del_duplicate, int const axis);
+        std::vector<double> __lat_scale__(std::vector<double> const & arr, double const ref_temp = ref_temp_k);
+        void readHDF5DoubleArray(H5::H5File& file, const std::string& datasetName, std::vector<double>& array);
+        void readHDF5Double(H5::H5File& file, const std::string& datasetName, double& value);
+        void readHDF5Int(H5::H5File& file, const std::string& datasetName, int& value);
 };
-
-// Function calls
-void read_file(const std::string& file_path, TslData& data);
-
 #endif

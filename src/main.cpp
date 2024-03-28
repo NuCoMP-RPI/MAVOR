@@ -28,7 +28,7 @@ int main(int argc, char* argv[]){
     //     exit(-1);
     // }
 
-    const std::string file_path = "/home/blakec4/SchoolPrograms/SAB_CDF/bin/data/processed_outputs/HinH2O/HinH2O_283K.h5";
+    const std::string file_path = "/home/blakec4/SchoolPrograms/SAB_CDF/bin/data/processed_outputs/HinH2O/HinH2O_456K.h5";
 
     process_file(file_path);
 

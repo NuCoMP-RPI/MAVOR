@@ -8,8 +8,7 @@
 
 #include "constants.hpp"
 
-// Data Structures
-class TslData {
+class TslFileData {
     public:
         int lat;
         int lasym;
@@ -30,7 +29,7 @@ class TslData {
         std::vector<std::vector<double>> tsl_vals;
 
         // Constructor to read in the data from the HDF5 file
-        TslData(const std::string& file_path);
+        TslFileData(const std::string& file_path);
 
         // Public facing methods to return desired versions of the TSL data
         std::vector<double> return_scaled_alphas(double const & ref_temp = ref_temp_k);
@@ -45,11 +44,12 @@ class TslData {
 
     private:
         // Private methods to handle the TSL data
+        void __matrix_element_exp__(std::vector<std::vector<double>>&matrix);
         void __vec_element_mult__(std::vector<double>&vec, double const val);
         std::vector<std::vector<double>> __vector_to_matrix__(std::vector<double> const & flat_vector, int const n_rows, int const n_cols);
         std::vector<double> __vector_mirror__(std::vector<double> const & arr, bool const del_duplicate);
         std::vector<double> __negative_vector_mirror__(std::vector<double> const & arr, bool const del_duplicate);
-        std::vector<std::vector<double>> __matrix_2d_flip__(std::vector<std::vector<double>> const & matrix2d, bool const del_duplicate, int const axis);
+        std::vector<std::vector<double>> __matrix_2d_mirror__(std::vector<std::vector<double>> const & matrix2d, bool const del_duplicate);
         std::vector<double> __lat_scale__(std::vector<double> const & arr, double const ref_temp = ref_temp_k);
         void readHDF5DoubleArray(H5::H5File& file, const std::string& datasetName, std::vector<double>& array);
         void readHDF5Double(H5::H5File& file, const std::string& datasetName, double& value);

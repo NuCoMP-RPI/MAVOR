@@ -1,13 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <math.h>
 
 #include "H5Cpp.h"
 
 #include "file_read.hpp"
 
 // Class Constructor
-TslData::TslData(const std::string& file_path)
+TslFileData::TslFileData(const std::string& file_path)
 {
     H5::H5Library::open();
     H5::H5File file(file_path, H5F_ACC_RDONLY);
@@ -37,7 +38,7 @@ TslData::TslData(const std::string& file_path)
 // Private Methods //
 // File reading
 
-void TslData::readHDF5DoubleArray(H5::H5File& file, const std::string& datasetName, std::vector<double>& array) {
+void TslFileData::readHDF5DoubleArray(H5::H5File& file, const std::string& datasetName, std::vector<double>& array) {
     H5::DataSet dataset = file.openDataSet(datasetName);
     H5::DataSpace dataspace = dataset.getSpace();
     // Fancy stuff is here to allow reading matrices into a vector
@@ -46,7 +47,7 @@ void TslData::readHDF5DoubleArray(H5::H5File& file, const std::string& datasetNa
     hsize_t dims[rank];
     dataspace.getSimpleExtentDims(dims);
     hsize_t totalSize = 1;
-    for (int i = 0; i < rank; ++i) {
+    for(int i = 0; i<rank; ++i){
         totalSize *= dims[i];
     }
     array.resize(totalSize);
@@ -55,7 +56,7 @@ void TslData::readHDF5DoubleArray(H5::H5File& file, const std::string& datasetNa
     dataspace.close();
 }
 
-void TslData::readHDF5Double(H5::H5File& file, const std::string& datasetName, double& value){
+void TslFileData::readHDF5Double(H5::H5File& file, const std::string& datasetName, double& value){
     H5::DataSet dataset = file.openDataSet(datasetName);
     H5::DataSpace dataspace = dataset.getSpace();
     dataset.read(&value, H5::PredType::NATIVE_DOUBLE);
@@ -63,7 +64,7 @@ void TslData::readHDF5Double(H5::H5File& file, const std::string& datasetName, d
     dataspace.close();
 }
 
-void TslData::readHDF5Int(H5::H5File& file, const std::string& datasetName, int& value){
+void TslFileData::readHDF5Int(H5::H5File& file, const std::string& datasetName, int& value){
     H5::DataSet dataset = file.openDataSet(datasetName);
     H5::DataSpace dataspace = dataset.getSpace();
     dataset.read(&value, H5::PredType::NATIVE_INT);
@@ -73,24 +74,33 @@ void TslData::readHDF5Int(H5::H5File& file, const std::string& datasetName, int&
 
 // Supporting data methods
 
-void TslData::__vec_element_mult__(std::vector<double>&vec, double const val){
-    for(int i = 0; i<vec.size(); i++) vec[i] *= val;
+void TslFileData::__vec_element_mult__(std::vector<double>&vec, double const val){
+    for(int i = 0; i<vec.size(); i++){
+        vec[i] *= val;
+    }
 }
 
-std::vector<std::vector<double>> TslData::__vector_to_matrix__(std::vector<double> const & flat_vector, int const n_rows, int const n_cols){
-    // sanity check
+void TslFileData::__matrix_element_exp__(std::vector<std::vector<double>>&matrix){
+    for(auto vec: matrix){
+        for(int i = 0; i<vec.size(); i++){
+            vec[i] = std::exp(vec[i]);
+        }
+    }
+}
+
+std::vector<std::vector<double>> TslFileData::__vector_to_matrix__(std::vector<double> const & flat_vector, int const n_rows, int const n_cols){
     if(n_rows*n_cols != flat_vector.size()){
         throw std::domain_error("Length of the vector does not match the n_rows*n_cols");
     }
     std::vector<std::vector<double>> matrix;
     const auto begin = std::begin(flat_vector);
-    for(std::size_t row = 0 ; row < n_rows; ++row){ 
+    for(std::size_t row = 0 ; row<n_rows; ++row){ 
         matrix.push_back({begin + row*n_cols, begin + (row+1)*n_cols});
     }
     return matrix;
 }
 
-std::vector<double> TslData::__vector_mirror__(std::vector<double> const & vec, bool const del_duplicate){
+std::vector<double> TslFileData::__vector_mirror__(std::vector<double> const & vec, bool const del_duplicate){
     std::vector<double> new_vec(vec);
     if(del_duplicate){
         new_vec.erase(new_vec.begin());
@@ -102,7 +112,7 @@ std::vector<double> TslData::__vector_mirror__(std::vector<double> const & vec, 
     return new_vec;
 }
 
-std::vector<double> TslData::__negative_vector_mirror__(std::vector<double> const & vec, bool const del_duplicate){
+std::vector<double> TslFileData::__negative_vector_mirror__(std::vector<double> const & vec, bool const del_duplicate){
     std::vector<double> new_vec(vec);
     if(del_duplicate){
         new_vec.erase(new_vec.begin());
@@ -115,23 +125,22 @@ std::vector<double> TslData::__negative_vector_mirror__(std::vector<double> cons
     return new_vec;
 }
 
-std::vector<std::vector<double>> TslData::__matrix_2d_flip__(std::vector<std::vector<double>> const & matrix2d, bool const del_duplicate, int const axis){
-    std::vector<std::vector<double>> result = matrix2d;
-    if (axis == 0) {
-        std::reverse(result.begin(), result.end()); // Flip along rows
-    } else if (axis == 1) {
-        for (auto& row : result) {
-            std::reverse(row.begin(), row.end()); // Flip along columns
-        }
-    } else {
-        std::cerr << "Invalid axis value. Only 0 (rows) and 1 (columns) are supported." << std::endl;
+std::vector<std::vector<double>> TslFileData::__matrix_2d_mirror__(std::vector<std::vector<double>> const & matrix2d, bool const del_duplicate){
+    std::vector<std::vector<double>> result(matrix2d);
+    if(del_duplicate){
+        result.erase(result.begin());
+    }
+    std::reverse(result.begin(), result.end());
+    for(auto vec: matrix2d){
+        result.push_back(vec);
     }
     return result;
 }
 
-std::vector<double> TslData::__lat_scale__(std::vector<double> const & vec, double const ref_temp){
+
+std::vector<double> TslFileData::__lat_scale__(std::vector<double> const & vec, double const ref_temp){
     std::vector<double> new_vec(vec);
-    if ( lat == 1 ) {
+    if (lat == 1){
         __vec_element_mult__(new_vec, ref_temp/temp);
     } 
     return new_vec;
@@ -140,46 +149,67 @@ std::vector<double> TslData::__lat_scale__(std::vector<double> const & vec, doub
 // Public Methods //
 // Alpha and Betas
 
-std::vector<double> TslData::return_scaled_alphas(double const & ref_temp){
+std::vector<double> TslFileData::return_scaled_alphas(double const & ref_temp){
     return __lat_scale__(alphas);
 }
 
-std::vector<double> TslData::return_scaled_betas(double const & ref_temp){
+std::vector<double> TslFileData::return_scaled_betas(double const & ref_temp){
     return __lat_scale__(betas);
 }
 
-std::vector<double> TslData::return_full_betas(){
+std::vector<double> TslFileData::return_full_betas(){
    return __negative_vector_mirror__(betas, betas[0] == 0); 
 }
 
-std::vector<double> TslData::return_full_scaled_betas(double const & ref_temp){
+std::vector<double> TslFileData::return_full_scaled_betas(double const & ref_temp){
     return __negative_vector_mirror__(__lat_scale__(betas), betas[0] == 0);
 }
 
 
 // TSL Values
 
-std::vector<std::vector<double>> TslData:: return_tsl_vals(){
-std::vector<std::vector<double>> new_mat;
-return new_mat;
+std::vector<std::vector<double>> TslFileData::return_tsl_vals(){
+    std::vector<std::vector<double>> new_mat(tsl_vals);
+    if (lln != 0){
+        __matrix_element_exp__(new_mat);
+    }
+    return new_mat;
 }
 
-std::vector<std::vector<double>> TslData:: return_half_sym_tsl_vals(){
-std::vector<std::vector<double>> new_mat;
-return new_mat;
+std::vector<std::vector<double>> TslFileData::return_half_sym_tsl_vals(){
+    std::vector<std::vector<double>> new_mat(return_tsl_vals());
+    std::vector<double> temp_betas = return_scaled_betas();
+    __vec_element_mult__(temp_betas, 0.5);
+    if (lasym != 0){
+        for(int i = 0; i<new_mat.size(); i++){
+            __vec_element_mult__(new_mat[i], std::exp(temp_betas[i]/2));
+        }
+    }
+    return new_mat;
 }
 
-std::vector<std::vector<double>> TslData:: return_half_asym_tsl_vals(){
-std::vector<std::vector<double>> new_mat;
-return new_mat;
+std::vector<std::vector<double>> TslFileData::return_half_asym_tsl_vals(){
+    std::vector<std::vector<double>> new_mat(return_tsl_vals());
+    std::vector<double> temp_betas = return_scaled_betas();
+    __vec_element_mult__(temp_betas, 0.5);
+    if (lasym == 0){
+        for(int i = 0; i<new_mat.size(); i++){
+            __vec_element_mult__(new_mat[i], std::exp(-temp_betas[i]));
+        }
+    }
+    return new_mat;
 }
 
-std::vector<std::vector<double>> TslData:: return_full_sym_tsl_vals(){
-std::vector<std::vector<double>> new_mat;
-return new_mat;
+std::vector<std::vector<double>> TslFileData::return_full_sym_tsl_vals(){
+    return __matrix_2d_mirror__(return_half_sym_tsl_vals(), betas[0] == 0); 
 }
 
-std::vector<std::vector<double>> TslData:: return_full_asym_tsl_vals(){
-std::vector<std::vector<double>> new_mat;
-return new_mat;
+std::vector<std::vector<double>> TslFileData::return_full_asym_tsl_vals(){
+    std::vector<std::vector<double>> new_mat = return_full_sym_tsl_vals();
+    std::vector<double> temp_betas = return_full_scaled_betas();
+    __vec_element_mult__(temp_betas, 0.5);
+    for(int i = 0; i<new_mat.size(); i++){
+        __vec_element_mult__(new_mat[i], std::exp(-temp_betas[i]));
+    }
+    return new_mat;
 }

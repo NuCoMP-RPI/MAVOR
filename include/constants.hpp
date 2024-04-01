@@ -1,5 +1,5 @@
-#ifndef MAVOR_PROCESS_FILE_H 
-#define MAVOR_PROCESS_FILE_H 
+#ifndef MAVOR_CONSTANTS_H
+#define MAVOR_CONSTANTS_H
 
 constexpr double PI{3.14159265358979323846264338327950288};
 constexpr double boltz = 0.00008617385;

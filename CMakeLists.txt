@@ -8,7 +8,8 @@ add_compile_options(-lhdf5_cpp -lhdf5)
 
 add_executable(mavor src/main.cpp
                      src/process_file.cpp
-                     src/file_read.cpp)
+                     src/file_read.cpp
+                     src/interpolation.cpp)
 
 set_target_properties(mavor PROPERTIES OUTPUT_NAME "mavor")
 target_include_directories(mavor PRIVATE include)

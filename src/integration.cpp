@@ -44,10 +44,10 @@ double ENDF_integrate(double const & x1, double const & x2, double const & y1, d
     }
 }
 
-double ENDF_integrate_vector(double const & x1, double const & x2, std::vector<double> const & y_a, int const scheme){
+double ENDF_integrate_vector(std::vector<double> const & x_a, std::vector<double> const & y_a, int const scheme){
     double val = 0;
     for (int i=0; i<y_a.size()-1; i++){
-        val += ENDF_integrate(x1, x2, y_a[i], y_a[i+1], scheme);
+        val += ENDF_integrate(x_a[i], x_a[i+1], y_a[i], y_a[i+1], scheme);
     }
     return val;
 }

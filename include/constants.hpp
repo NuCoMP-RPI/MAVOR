@@ -10,6 +10,7 @@ constexpr double beta_max = 50;
 constexpr double sct_cutoff = 1.9219477278e-98;  // Based off the sabmin value in thermr | sabmin = exp(-225) | Found line 1609 and 1628 of thermr.f90
 constexpr double alpha_min = 1e-10;
 constexpr double e_min = 1e-5;
+constexpr double num_energies = 105;
 
 constexpr int beta_integration_scheme = 2;
 constexpr int beta_interpolation_scheme = 2;

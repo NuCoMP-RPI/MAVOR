@@ -33,7 +33,8 @@ class DistData {
         double return_asym_SCT_alpha_integral(double const& alpha_l, double const& alpha_u, double const& beta);
         std::pair<double, bool> return_arbitrary_TSL_val(double const& alpha, double const& beta);
         std::pair<std::vector<double>, std::vector<double>> return_beta_pdf(double const& inc_energy);
-        double return_incoherent_inelastic_xs(double const& inc_energy);
+        double return_ii_xs_value(double const& inc_energy);
+        std::vector<double> return_ii_xs_vector(std::vector<double> const& inc_energies);
 
     private:
         double __asym_SCT_alpha_integral_bounds__(double const& alpha, double const& beta);

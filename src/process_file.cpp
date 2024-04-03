@@ -7,6 +7,7 @@
 #include "interpolation.hpp"
 #include "file_read.hpp"
 #include "process_file.hpp"
+#include "utilities.hpp"
 
 // Class constructor
 DistData::DistData(TslFileData& file_data){
@@ -81,7 +82,9 @@ std::pair<double, bool> DistData::return_arbitrary_TSL_val(double const& alpha, 
     }
     else {
         int alpha_lo_insert = std::lower_bound(alphas.begin(), alphas.end(), alpha) - alphas.begin();
+        if (alpha_lo_insert == 0){alpha_lo_insert++;}
         int beta_lo_insert = std::lower_bound(betas.begin(), betas.end(), beta) - betas.begin();
+        if (beta_lo_insert == 0){beta_lo_insert++;}
         double& f11 = tsl_vals[beta_lo_insert-1][alpha_lo_insert-1];
         double& f12 = tsl_vals[beta_lo_insert-1][alpha_lo_insert];
         double& f21 = tsl_vals[beta_lo_insert][alpha_lo_insert-1];
@@ -175,9 +178,18 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_beta_pdf(do
     return std::make_pair(beta_vals, beta_pdf);
 }
 
-double DistData::return_incoherent_inelastic_xs(double const& inc_energy){
+double DistData::return_ii_xs_value(double const& inc_energy){
     auto [beta_vals, beta_pdf] = return_beta_pdf(inc_energy);
     return ((a0*boltz*temp*bound_xs)/(4*inc_energy))*ENDF_integrate_vector(beta_vals, beta_pdf, beta_integration_scheme);
+}
+
+std::vector<double> DistData::return_ii_xs_vector(std::vector<double> const& inc_energies){
+    std::vector<double> result(inc_energies.size());
+    for (int i=0; i<inc_energies.size(); i++){
+        std::cout << inc_energies[i] << std::endl;
+        result[i] = return_ii_xs_value(inc_energies[i]);
+    }
+    return result;
 }
 
 void print_array(std::vector<double> array){
@@ -205,5 +217,9 @@ void process_file(const std::string& file_path){
     // std::cout << dist_data.return_arbitrary_TSL_val(10, -1000).first << std::endl;
     // std::cout << dist_data.return_arbitrary_TSL_val(10, 10).first << std::endl;
     // std::cout << dist_data.return_arbitrary_TSL_val(0, 10).first << std::endl;
-    std::cout << dist_data.return_incoherent_inelastic_xs(9) << std::endl;
+    std::cout << dist_data.return_ii_xs_value(10.1) << std::endl;
+    std::vector<double> energies = logspace(e_min, dist_data.e_max, num_energies);
+    print_array(energies);
+    std::vector<double> xs = dist_data.return_ii_xs_vector(energies);
+    print_array(xs);
 }

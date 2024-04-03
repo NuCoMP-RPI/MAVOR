@@ -10,7 +10,9 @@ add_executable(mavor src/main.cpp
                      src/process_file.cpp
                      src/file_read.cpp
                      src/interpolation.cpp
-                     src/integration.cpp)
+                     src/integration.cpp
+                     src/utilities.cpp)
+                     
 
 set_target_properties(mavor PROPERTIES OUTPUT_NAME "mavor")
 target_include_directories(mavor PRIVATE include)

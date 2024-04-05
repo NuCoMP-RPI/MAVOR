@@ -42,7 +42,8 @@ double DistData::__asym_SCT_alpha_integral_bounds__(double const& alpha, double 
 }
 
 double DistData::__calculate_beta_min__(double const& inc_energy){
-    return -inc_energy/(boltz*temp);
+    // Only consider down scattering to e_min
+    return -(inc_energy-e_min)/(boltz*temp);
 }
 
 double DistData::__calculate_beta_max__(double const& inc_energy){
@@ -164,10 +165,14 @@ double DistData::__integrate_alpha_line__(std::vector<double> const& alpha_vals,
     return integral;
 }
 
-double DistData::__get_beta_pdf_val(double const& inc_energy, double const& beta){
+double DistData::__get_beta_pdf_val__(double const& inc_energy, double const& beta){
     std::vector<double> alpha_vals = __get_viable_alphas__(inc_energy, beta);
     auto [vals, truthy] = __get_alpha_line__(alpha_vals, beta);
     return __integrate_alpha_line__(alpha_vals, vals, truthy, beta);
+}
+
+double DistData::__wrapper_get_beta_pdf_val__(double const& beta){
+    return __get_beta_pdf_val__(__inc_ener_hold__, beta);
 }
 
 std::pair<std::vector<double>, std::vector<double>> DistData::return_beta_pdf(double const& inc_energy){
@@ -175,13 +180,27 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_beta_pdf(do
     std::vector<double> beta_pdf;
     beta_pdf.reserve(beta_vals.size());
     for (double beta: beta_vals){
-        beta_pdf.push_back(__get_beta_pdf_val(inc_energy, beta));
+        beta_pdf.push_back(__get_beta_pdf_val__(inc_energy, beta));
     }
     return std::make_pair(beta_vals, beta_pdf);
 }
 
+std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_beta_pdf(double const& inc_energy){
+    __inc_ener_hold__ = inc_energy;
+    std::vector<double> beta_vals = __get_viable_betas__(inc_energy);
+    std::vector<double> beta_pdf;
+    beta_pdf.reserve(beta_vals.size());
+    for (double beta: beta_vals){
+        beta_pdf.push_back(__get_beta_pdf_val__(inc_energy, beta));
+    }
+    auto get_new_beta_pdf_val = [&](double x) {return __wrapper_get_beta_pdf_val__(x);};
+    linearize(beta_vals, beta_pdf, get_new_beta_pdf_val);
+    return std::make_pair(beta_vals, beta_pdf);
+}
+
 double DistData::return_ii_xs_value(double const& inc_energy){
-    auto [beta_vals, beta_pdf] = return_beta_pdf(inc_energy);
+    // auto [beta_vals, beta_pdf] = return_beta_pdf(inc_energy);
+    auto [beta_vals, beta_pdf] = return_linearized_beta_pdf(inc_energy);
     std::cout << inc_energy << std::endl;
     return ((a0*boltz*temp*bound_xs)/(4*inc_energy))*ENDF_integrate_vector(beta_vals, beta_pdf, beta_integration_scheme);
 }
@@ -195,7 +214,7 @@ std::vector<double> DistData::return_ii_xs_vector(std::vector<double> const& inc
 }
 
 std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_ii_xs(){
-    std::vector<double> energies = logspace(e_min, e_max, 5);
+    std::vector<double> energies = logspace(e_min, e_max, 10);
     std::vector<double> xs(energies.size());
     for (int i=0; i<energies.size(); i++){
         xs[i] = return_ii_xs_value(energies[i]);

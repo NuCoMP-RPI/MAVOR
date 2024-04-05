@@ -11,7 +11,8 @@ add_executable(mavor src/main.cpp
                      src/file_read.cpp
                      src/interpolation.cpp
                      src/integration.cpp
-                     src/utilities.cpp)
+                     src/utilities.cpp
+                     src/linearize.cpp)
                      
 
 set_target_properties(mavor PROPERTIES OUTPUT_NAME "mavor")

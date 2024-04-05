@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <math.h>
 #include <algorithm>
 
@@ -8,6 +9,7 @@
 #include "file_read.hpp"
 #include "process_file.hpp"
 #include "utilities.hpp"
+#include "linearize.hpp"
 
 // Class constructor
 DistData::DistData(TslFileData& file_data){
@@ -180,16 +182,27 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_beta_pdf(do
 
 double DistData::return_ii_xs_value(double const& inc_energy){
     auto [beta_vals, beta_pdf] = return_beta_pdf(inc_energy);
+    std::cout << inc_energy << std::endl;
     return ((a0*boltz*temp*bound_xs)/(4*inc_energy))*ENDF_integrate_vector(beta_vals, beta_pdf, beta_integration_scheme);
 }
 
 std::vector<double> DistData::return_ii_xs_vector(std::vector<double> const& inc_energies){
     std::vector<double> result(inc_energies.size());
     for (int i=0; i<inc_energies.size(); i++){
-        std::cout << inc_energies[i] << std::endl;
         result[i] = return_ii_xs_value(inc_energies[i]);
     }
     return result;
+}
+
+std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_ii_xs(){
+    std::vector<double> energies = logspace(e_min, e_max, 5);
+    std::vector<double> xs(energies.size());
+    for (int i=0; i<energies.size(); i++){
+        xs[i] = return_ii_xs_value(energies[i]);
+    }
+    auto get_new_xs = [&](double x) {return return_ii_xs_value(x);};
+    linearize(energies, xs, get_new_xs);
+    return std::make_pair(energies, xs);
 }
 
 void print_array(std::vector<double> array){
@@ -217,9 +230,12 @@ void process_file(const std::string& file_path){
     // std::cout << dist_data.return_arbitrary_TSL_val(10, -1000).first << std::endl;
     // std::cout << dist_data.return_arbitrary_TSL_val(10, 10).first << std::endl;
     // std::cout << dist_data.return_arbitrary_TSL_val(0, 10).first << std::endl;
-    std::cout << dist_data.return_ii_xs_value(10.1) << std::endl;
-    std::vector<double> energies = logspace(e_min, dist_data.e_max, num_energies);
+    // std::cout << dist_data.return_ii_xs_value(10.1) << std::endl;
+    // std::vector<double> energies = logspace(e_min, dist_data.e_max, num_energies);
+    // print_array(energies);
+    // std::vector<double> xs = dist_data.return_ii_xs_vector(energies);
+    // print_array(xs);
+    auto [energies, xs] = dist_data.return_linearized_ii_xs();
     print_array(energies);
-    std::vector<double> xs = dist_data.return_ii_xs_vector(energies);
     print_array(xs);
 }

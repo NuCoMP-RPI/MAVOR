@@ -81,7 +81,7 @@ void TslFileData::__vec_element_mult__(std::vector<double>&vec, double const val
 }
 
 void TslFileData::__matrix_element_exp__(std::vector<std::vector<double>>&matrix){
-    for(auto vec: matrix){
+    for(auto& vec: matrix){
         for(int i = 0; i<vec.size(); i++){
             vec[i] = std::exp(vec[i]);
         }

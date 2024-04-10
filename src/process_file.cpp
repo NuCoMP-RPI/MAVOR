@@ -2,6 +2,7 @@
 #include <fstream>
 #include <math.h>
 #include <algorithm>
+#include <filesystem>
 
 #include "constants.hpp"
 #include "integration.hpp"
@@ -84,10 +85,12 @@ std::pair<double, bool> DistData::return_arbitrary_TSL_val(double const& alpha, 
         return std::make_pair(return_asym_SCT(alpha, beta), true);
     }
     else {
-        int alpha_lo_insert = std::lower_bound(alphas.begin(), alphas.end(), alpha) - alphas.begin();
-        if (alpha_lo_insert == 0){alpha_lo_insert++;}
-        int beta_lo_insert = std::lower_bound(betas.begin(), betas.end(), beta) - betas.begin();
-        if (beta_lo_insert == 0){beta_lo_insert++;}
+        int alpha_lo_insert = std::lower_bound(alphas.begin()+1, alphas.end(), alpha) - alphas.begin();
+        // check may not be needed in practice
+        if (alpha_lo_insert == 0){alpha_lo_insert++; std::cout << "alpha_lo_insert was zero." << std::endl;}
+        // check may not be needed in practice
+        int beta_lo_insert = std::lower_bound(betas.begin()+1, betas.end(), beta) - betas.begin();
+        if (beta_lo_insert == 0){beta_lo_insert++; std::cout << "bets_lo_insert was zero." << std::endl;}
         double& f11 = tsl_vals[beta_lo_insert-1][alpha_lo_insert-1];
         double& f12 = tsl_vals[beta_lo_insert-1][alpha_lo_insert];
         double& f21 = tsl_vals[beta_lo_insert][alpha_lo_insert-1];
@@ -245,16 +248,15 @@ void process_file(const std::string& file_path){
     std::cout << file_path << '\n';
     TslFileData file_data(file_path);
     DistData dist_data(file_data);
-    // std::cout << dist_data.e_max << std::endl;
-    // std::cout << dist_data.return_arbitrary_TSL_val(10, -1000).first << std::endl;
-    // std::cout << dist_data.return_arbitrary_TSL_val(10, 10).first << std::endl;
-    // std::cout << dist_data.return_arbitrary_TSL_val(0, 10).first << std::endl;
-    // std::cout << dist_data.return_ii_xs_value(10.1) << std::endl;
-    // std::vector<double> energies = logspace(e_min, dist_data.e_max, num_energies);
-    // print_array(energies);
-    // std::vector<double> xs = dist_data.return_ii_xs_vector(energies);
-    // print_array(xs);
-    auto [energies, xs] = dist_data.return_linearized_ii_xs();
-    print_array(energies);
-    print_array(xs);
+    auto [energies, xs] = dist_data.return_linearized_beta_pdf(4);
+    // auto [energies, xs] = dist_data.return_linearized_ii_xs();
+    // dist_data.return_ii_xs_value(4);
+
+
+    std::ofstream file("Results.csv");
+    file << "x, y" << std::endl;
+    for (int i=0; i<energies.size(); i++){
+        file << energies[i] << "," << xs[i] << std::endl;
+    }
+    file.close();
 }

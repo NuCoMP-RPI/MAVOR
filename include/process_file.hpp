@@ -24,6 +24,15 @@ class DistData {
         std::vector<double> betas;
         std::vector<std::vector<double>> tsl_vals;
 
+        std::vector<double> inc_energy_grid;
+        std::vector<double> ii_xs;
+        std::vector<std::vector<double>> beta_vals;
+        std::vector<std::vector<double>> beta_pdfs;
+
+        std::vector<double> beta_grid;
+        std::vector<std::vector<double>> alpha_vals;
+        std::vector<std::vector<double>> alpha_pdfs;
+
         // Constructor
         DistData(TslFileData& file_data);
 
@@ -37,9 +46,12 @@ class DistData {
         double return_ii_xs_value(double const& inc_energy);
         std::vector<double> return_ii_xs_vector(std::vector<double> const& inc_energies);
         std::pair<std::vector<double>, std::vector<double>> return_linearized_ii_xs();
+        std::pair<std::vector<double>, std::vector<double>> return_linearized_alpha_pdf(double const& beta);
+        void calculate_sampling_dists();
 
     private:
         double __inc_ener_hold__;
+        double __beta_hold__;
 
         double __asym_SCT_alpha_integral_bounds__(double const& alpha, double const& beta);
         double __calculate_beta_min__(double const& inc_energy);
@@ -52,6 +64,11 @@ class DistData {
         double __integrate_alpha_line__(std::vector<double> const& alpha_vals, std::vector<double> const& vals, std::vector<bool> const& truthy, double const& beta);
         double __get_beta_pdf_val__(double const& inc_energy, double const& beta);
         double __wrapper_get_beta_pdf_val__(double const& beta);
+
+        double __wrapper_get_alpha_pdf_val__(double const& alpha);
+
+        void __get_beta_sampling_dists__();
+        void __get_alpha_sampling_dists__();
 };
 
 // Function calls

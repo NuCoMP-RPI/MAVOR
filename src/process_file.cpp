@@ -43,8 +43,7 @@ double DistData::__asym_SCT_alpha_integral_bounds__(double const& alpha, double 
 }
 
 double DistData::__calculate_beta_min__(double const& inc_energy){
-    // Only consider down scattering to e_min
-    return -(inc_energy-e_min)/(boltz*temp);
+    return -(inc_energy)/(boltz*temp);
 }
 
 double DistData::__calculate_beta_max__(double const& inc_energy){
@@ -227,6 +226,49 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_
     return std::make_pair(energies, xs);
 }
 
+void DistData::__get_beta_sampling_dists__(){
+    beta_vals.reserve(inc_energy_grid.size());
+    beta_pdfs.reserve(inc_energy_grid.size());
+    for (auto inc_energy: inc_energy_grid){
+        auto [vals, pdf] = return_linearized_beta_pdf(inc_energy);
+        beta_vals.push_back(vals);
+        beta_pdfs.push_back(pdf);
+    }
+}
+
+double DistData::__wrapper_get_alpha_pdf_val__(double const& alpha){
+    auto [val, truthy] = return_arbitrary_TSL_val(alpha, __beta_hold__);
+    return val;
+}
+
+std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_alpha_pdf(double const& beta){
+    __beta_hold__ = beta;
+    std::vector<double> a_vals = alphas;
+    auto [alpha_pdf, truthy] = __get_alpha_line__(a_vals, __beta_hold__);
+    auto get_new_alpha_pdf_val = [&](double x) {return __wrapper_get_alpha_pdf_val__(x);};
+    linearize(a_vals, alpha_pdf, get_new_alpha_pdf_val);
+    return std::make_pair(a_vals, alpha_pdf);
+}
+
+void DistData::__get_alpha_sampling_dists__(){
+    alpha_vals.reserve(beta_grid.size());
+    alpha_pdfs.reserve(beta_grid.size());
+    for (auto beta: beta_grid){
+        auto [vals, pdf] = return_linearized_alpha_pdf(beta);
+        alpha_vals.push_back(vals);
+        alpha_pdfs.push_back(pdf);        
+    }
+}
+
+void DistData::calculate_sampling_dists(){
+    auto [ene, xs] = return_linearized_ii_xs();
+    inc_energy_grid = ene;
+    ii_xs = xs;
+    beta_grid = betas;
+    __get_beta_sampling_dists__();
+    __get_alpha_sampling_dists__();
+}
+
 void print_array(std::vector<double> array){
     for(auto val: array){
         std::cout << val << " ";
@@ -248,15 +290,16 @@ void process_file(const std::string& file_path){
     std::cout << file_path << '\n';
     TslFileData file_data(file_path);
     DistData dist_data(file_data);
-    auto [energies, xs] = dist_data.return_linearized_beta_pdf(4);
+    // auto [energies, xs] = dist_data.return_linearized_beta_pdf(4);
     // auto [energies, xs] = dist_data.return_linearized_ii_xs();
     // dist_data.return_ii_xs_value(4);
 
+    dist_data.calculate_sampling_dists();
 
     std::ofstream file("Results.csv");
     file << "x, y" << std::endl;
-    for (int i=0; i<energies.size(); i++){
-        file << energies[i] << "," << xs[i] << std::endl;
+    for (int i=0; i<dist_data.inc_energy_grid.size(); i++){
+        file << dist_data.inc_energy_grid[i] << "," << dist_data.ii_xs[i] << std::endl;
     }
     file.close();
 }

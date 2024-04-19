@@ -153,6 +153,10 @@ std::vector<double> TslFileData::return_scaled_alphas(double const & ref_temp){
     return __lat_scale__(alphas);
 }
 
+std::vector<double> TslFileData::return_betas(){
+    return betas;
+}
+
 std::vector<double> TslFileData::return_scaled_betas(double const & ref_temp){
     return __lat_scale__(betas);
 }

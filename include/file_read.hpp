@@ -33,6 +33,7 @@ class TslFileData {
 
         // Public facing methods to return desired versions of the TSL data
         std::vector<double> return_scaled_alphas(double const & ref_temp = ref_temp_k);
+        std::vector<double> return_betas();
         std::vector<double> return_scaled_betas(double const & ref_temp = ref_temp_k);
         std::vector<double> return_full_betas();
         std::vector<double> return_full_scaled_betas(double const & ref_temp = ref_temp_k);

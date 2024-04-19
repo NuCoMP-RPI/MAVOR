@@ -22,16 +22,23 @@ class DistData {
 
         std::vector<double> alphas;
         std::vector<double> betas;
+        std::vector<double> half_betas;
         std::vector<std::vector<double>> tsl_vals;
 
         std::vector<double> inc_energy_grid;
         std::vector<double> ii_xs;
         std::vector<std::vector<double>> beta_vals;
         std::vector<std::vector<double>> beta_pdfs;
+        std::vector<std::vector<double>> beta_cdfs;
+        std::vector<double> beta_cdf_grid;
+        std::vector<std::vector<double>> fit_beta_vals;
 
         std::vector<double> beta_grid;
         std::vector<std::vector<double>> alpha_vals;
         std::vector<std::vector<double>> alpha_pdfs;
+        std::vector<std::vector<double>> alpha_cdfs;
+        std::vector<double> alpha_cdf_grid;
+        std::vector<std::vector<double>> fit_alpha_vals;
 
         // Constructor
         DistData(TslFileData& file_data);

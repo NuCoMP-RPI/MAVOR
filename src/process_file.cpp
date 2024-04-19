@@ -3,6 +3,7 @@
 #include <math.h>
 #include <algorithm>
 #include <filesystem>
+#include <chrono>
 
 #include "constants.hpp"
 #include "integration.hpp"
@@ -27,7 +28,13 @@ DistData::DistData(TslFileData& file_data){
 
     alphas = file_data.return_scaled_alphas();
     betas = file_data.return_full_scaled_betas();
+    half_betas = file_data.return_scaled_betas();
     tsl_vals = file_data.return_full_asym_tsl_vals();
+
+    beta_grid = file_data.return_betas();
+
+    beta_cdf_grid = sigmoid_space(0, 1, num_beta_cdf_points, beta_cdf_extent);
+    alpha_cdf_grid = sigmoid_space(0, 1, num_alpha_cdf_points, alpha_cdf_extent);
 }
 
 // Private Methods
@@ -85,11 +92,7 @@ std::pair<double, bool> DistData::return_arbitrary_TSL_val(double const& alpha, 
     }
     else {
         int alpha_lo_insert = std::lower_bound(alphas.begin()+1, alphas.end(), alpha) - alphas.begin();
-        // check may not be needed in practice
-        if (alpha_lo_insert == 0){alpha_lo_insert++; std::cout << "alpha_lo_insert was zero." << std::endl;}
-        // check may not be needed in practice
         int beta_lo_insert = std::lower_bound(betas.begin()+1, betas.end(), beta) - betas.begin();
-        if (beta_lo_insert == 0){beta_lo_insert++; std::cout << "bets_lo_insert was zero." << std::endl;}
         double& f11 = tsl_vals[beta_lo_insert-1][alpha_lo_insert-1];
         double& f12 = tsl_vals[beta_lo_insert-1][alpha_lo_insert];
         double& f21 = tsl_vals[beta_lo_insert][alpha_lo_insert-1];
@@ -203,7 +206,7 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_
 double DistData::return_ii_xs_value(double const& inc_energy){
     // auto [beta_vals, beta_pdf] = return_beta_pdf(inc_energy);
     auto [beta_vals, beta_pdf] = return_linearized_beta_pdf(inc_energy);
-    std::cout << inc_energy << std::endl;
+    // std::cout << inc_energy << std::endl;
     return ((a0*boltz*temp*bound_xs)/(4*inc_energy))*ENDF_integrate_vector(beta_vals, beta_pdf, beta_integration_scheme);
 }
 
@@ -229,10 +232,14 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_
 void DistData::__get_beta_sampling_dists__(){
     beta_vals.reserve(inc_energy_grid.size());
     beta_pdfs.reserve(inc_energy_grid.size());
+    beta_cdfs.reserve(inc_energy_grid.size());
+    fit_beta_vals.reserve(inc_energy_grid.size());
     for (auto inc_energy: inc_energy_grid){
         auto [vals, pdf] = return_linearized_beta_pdf(inc_energy);
         beta_vals.push_back(vals);
         beta_pdfs.push_back(pdf);
+        beta_cdfs.push_back(pdf_to_cdf(vals, pdf));
+        fit_beta_vals.push_back(fit_cdf(vals, beta_cdfs.back(), beta_cdf_grid));
     }
 }
 
@@ -251,12 +258,18 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_
 }
 
 void DistData::__get_alpha_sampling_dists__(){
+    // NOTE: Beta grid for storage is determined at initialization and is set to the leapr input grid
+    // NOTE: Alpha distributions are symmetric about b=0 so only do the positive half
     alpha_vals.reserve(beta_grid.size());
     alpha_pdfs.reserve(beta_grid.size());
-    for (auto beta: beta_grid){
+    alpha_cdfs.reserve(beta_grid.size());
+    fit_alpha_vals.reserve(beta_grid.size());
+    for (auto beta: half_betas){
         auto [vals, pdf] = return_linearized_alpha_pdf(beta);
         alpha_vals.push_back(vals);
-        alpha_pdfs.push_back(pdf);        
+        alpha_pdfs.push_back(pdf);
+        alpha_cdfs.push_back(pdf_to_cdf(vals, pdf));
+        fit_alpha_vals.push_back(fit_cdf(vals, alpha_cdfs.back(), alpha_cdf_grid));
     }
 }
 
@@ -264,7 +277,6 @@ void DistData::calculate_sampling_dists(){
     auto [ene, xs] = return_linearized_ii_xs();
     inc_energy_grid = ene;
     ii_xs = xs;
-    beta_grid = betas;
     __get_beta_sampling_dists__();
     __get_alpha_sampling_dists__();
 }
@@ -288,13 +300,31 @@ void print_matrix(std::vector<std::vector<double>> matrix){
 
 void process_file(const std::string& file_path){
     std::cout << file_path << '\n';
+
+    auto file_read_start = std::chrono::high_resolution_clock::now();
     TslFileData file_data(file_path);
     DistData dist_data(file_data);
-    // auto [energies, xs] = dist_data.return_linearized_beta_pdf(4);
-    // auto [energies, xs] = dist_data.return_linearized_ii_xs();
-    // dist_data.return_ii_xs_value(4);
+    auto file_read_end  = std::chrono::high_resolution_clock::now();
+    auto file_read_duration = std::chrono::duration_cast<std::chrono::microseconds>(file_read_end - file_read_start);
+    std::cout << "Time to read in file and prepare data | micro_secs " << file_read_duration.count() << std::endl;
 
+    auto process_start = std::chrono::high_resolution_clock::now();
     dist_data.calculate_sampling_dists();
+    auto process_end = std::chrono::high_resolution_clock::now();
+    auto process_duration = std::chrono::duration_cast<std::chrono::milliseconds>(process_end-process_start);
+    std::cout << "Time to calculate the sampling distributions | milliseconds " << process_duration.count() << std::endl;
+
+    std::cout << dist_data.inc_energy_grid.size() << std::endl;
+    std::cout << dist_data.beta_cdf_grid.size() << std::endl;
+    std::cout << dist_data.fit_beta_vals.size() << std::endl;
+    std::cout << dist_data.fit_beta_vals[0].size() << std::endl;
+    
+    std:: cout << std::endl;
+
+    std::cout << dist_data.beta_grid.size() << std::endl;
+    std::cout << dist_data.alpha_cdf_grid.size() << std::endl;
+    std::cout << dist_data.fit_alpha_vals.size() << std::endl;
+    std::cout << dist_data.fit_alpha_vals[0].size() << std::endl;
 
     std::ofstream file("Results.csv");
     file << "x, y" << std::endl;

@@ -220,7 +220,7 @@ std::vector<double> DistData::return_ii_xs_vector(std::vector<double> const& inc
 }
 
 std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_ii_xs(){
-    std::vector<double> energies = logspace(e_min, e_max, 10);
+    std::vector<double> energies = logspace(e_min, e_max, 100);
     std::vector<double> xs(energies.size());
     for (int i=0; i<energies.size(); i++){
         xs[i] = return_ii_xs_value(energies[i]);

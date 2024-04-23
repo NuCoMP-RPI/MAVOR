@@ -10,7 +10,6 @@
 // Class Constructor
 TslFileData::TslFileData(const std::string& file_path)
 {
-    H5::H5Library::open();
     H5::H5File file(file_path, H5F_ACC_RDONLY);
 
     readHDF5Int(file, "lat", lat);
@@ -32,7 +31,6 @@ TslFileData::TslFileData(const std::string& file_path)
     tsl_vals = __vector_to_matrix__(tsl_vals_array, betas.size(), alphas.size());
     
     file.close();
-    H5::H5Library::close();
 }
 
 // Private Methods //

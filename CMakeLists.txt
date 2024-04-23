@@ -20,6 +20,7 @@ add_compile_options(-lhdf5_cpp -lhdf5)
 add_executable(mavor src/main.cpp
                      src/process_file.cpp
                      src/file_read.cpp
+                     src/file_write.cpp
                      src/interpolation.cpp
                      src/integration.cpp
                      src/utilities.cpp

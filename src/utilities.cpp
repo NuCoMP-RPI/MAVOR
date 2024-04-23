@@ -42,8 +42,6 @@ std::vector<double> sigmoid_space(double const & low, double const & high, int c
         for (auto x:xs){
             ys.push_back((1/(1 + std::exp(-x)))*(high-low) + low);
         }
-        ys.front() = low;
-        ys.back() = high;
         return ys;
     }
 }

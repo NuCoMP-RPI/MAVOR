@@ -18,6 +18,7 @@ find_package(HDF5 COMPONENTS CXX REQUIRED)
 add_compile_options(-lhdf5_cpp -lhdf5)
 
 add_executable(mavor src/main.cpp
+                     src/runtime_variables.cpp
                      src/process_file.cpp
                      src/file_read.cpp
                      src/file_write.cpp
@@ -35,7 +36,8 @@ target_compile_features(mavor PRIVATE cxx_std_20)
 target_link_libraries(mavor PRIVATE ${HDF5_LIBRARIES})
 target_include_directories(mavor PRIVATE ${HDF5_INCLUDE_DIRS})
 
-#===============================================================================
+configure_file(src/test_inputs/HinYH2_293K.h5 test_inputs/HinYH2_293K.h5 COPYONLY)
+
 # Allow for install of executable
 install(TARGETS mavor 
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}

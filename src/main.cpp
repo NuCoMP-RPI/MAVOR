@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "process_file.hpp"
+#include "runtime_variables.hpp"
 
 void print_name(){
     std::cout << R"(
@@ -22,15 +23,20 @@ _________\///______________\///__\///________\///________\///_____________\/////
 int main(int argc, char* argv[]){
     print_name();
 
-    // if ( argc < 2)
-    // {
-    //     std::cout << "You must pass the file path as an argument.\n";
-    //     exit(-1);
-    // }
-
-    const std::string file_path = "/home/blakec4/SchoolPrograms/SAB_CDF/bin/data/processed_outputs/HinH2O/HinH2O_456K.h5";
-
-    process_file(file_path);
-
+    if (argc > 1) {
+        for (int i = 1; i < argc; ++i) {
+            std::string arg = argv[i];
+            if (arg == "-i" && i + 1 < argc) {
+                input_file = argv[i + 1];
+                ++i; // Skip the next argument
+            }
+            else if (arg == "-o" && i + 1 < argc) {
+                output_file = argv[i + 1];
+                ++i; // Skip the next argument
+            }
+        }
+    }
+    
+    process_file(input_file, output_file);
     return 0;
 }

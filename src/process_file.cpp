@@ -12,6 +12,7 @@
 #include "file_write.hpp"
 #include "process_file.hpp"
 #include "utilities.hpp"
+#include "runtime_variables.hpp"
 #include "linearize.hpp"
 
 // Class constructor
@@ -299,7 +300,7 @@ void print_matrix(std::vector<std::vector<double>> matrix){
     std::cout << std::endl;
 }
 
-void process_file(const std::string& file_path){
+void process_file(const std::string& file_path, const std::string& output_file){
     std::cout << file_path << '\n';
 
     auto file_read_start = std::chrono::high_resolution_clock::now();
@@ -316,8 +317,7 @@ void process_file(const std::string& file_path){
     std::cout << "Time to calculate the sampling distributions | milliseconds " << process_duration.count() << std::endl;
 
     auto file_write_start = std::chrono::high_resolution_clock::now();
-    const std::string out_file = "Results.hdf5";
-    write_sampling_data(dist_data, out_file);
+    write_sampling_data(dist_data, output_file);
     auto file_write_end = std::chrono::high_resolution_clock::now();
     auto file_write_duration = std::chrono::duration_cast<std::chrono::microseconds>(file_write_end-file_write_start);
     std::cout << "Time to write the sampling distributions | microseconds " << file_write_duration.count() << std::endl;

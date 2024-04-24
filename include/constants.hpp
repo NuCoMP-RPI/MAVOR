@@ -12,14 +12,4 @@ constexpr double alpha_min = 1e-10;
 constexpr double e_min = 1e-5;
 constexpr double num_energies = 105;
 
-constexpr int beta_integration_scheme = 2;
-constexpr int beta_interpolation_scheme = 2;
-constexpr int alpha_integration_scheme = 2;
-constexpr int alpha_interpolation_scheme = 2;
-
-constexpr int num_beta_cdf_points = 400;
-constexpr int beta_cdf_extent = 5;
-constexpr int num_alpha_cdf_points = 400;
-constexpr int alpha_cdf_extent = 5;
-
 #endif

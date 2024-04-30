@@ -23,22 +23,17 @@ _________\///______________\///__\///________\///________\///_____________\/////
 }
 
 int main(int argc, char* argv[]){
+    // Print the header to terminal
     print_name();
 
-    if (argc > 1) {
-        for (int i = 1; i < argc; ++i) {
-            std::string arg = argv[i];
-            if (arg == "-i" && i + 1 < argc) {
-                input_file = argv[i + 1];
-                ++i; // Skip the next argument
-            }
-            else if (arg == "-o" && i + 1 < argc) {
-                output_file = argv[i + 1];
-                ++i; // Skip the next argument
-            }
-        }
-    }
-    
+    // Parse the command line arguments
+    CLI::App mavor{"Generates S(a,b) TSL sampling distributions."};
+    argv = mavor.ensure_utf8(argv);
+    mavor.add_option("-i,--input_file", input_file, "Sets the file name (and path) to be processed.");
+    mavor.add_option("-o,--output_file", output_file, "Sets the file name (and path) to store the sampling distributions.");
+    CLI11_PARSE(mavor, argc, argv);
+
+    // Process the file    
     process_file(input_file, output_file);
     return 0;
 }

@@ -12,6 +12,18 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+include(FetchContent)
+
+message(STATUS "Retrieving CLI11 version 2.4.1.")
+FetchContent_Declare(
+    CLI11 
+    QUIET
+    GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
+    GIT_TAG v2.4.1
+)
+
+FetchContent_MakeAvailable(CLI11)
+
 # Find HDF5 package
 find_package(HDF5 COMPONENTS CXX REQUIRED)
 
@@ -26,7 +38,6 @@ add_executable(mavor src/main.cpp
                      src/integration.cpp
                      src/utilities.cpp
                      src/linearize.cpp)
-                     
 
 set_target_properties(mavor PROPERTIES OUTPUT_NAME "mavor")
 target_include_directories(mavor PRIVATE include)
@@ -35,6 +46,8 @@ target_compile_features(mavor PRIVATE cxx_std_20)
 # Link HDF5 library
 target_link_libraries(mavor PRIVATE ${HDF5_LIBRARIES})
 target_include_directories(mavor PRIVATE ${HDF5_INCLUDE_DIRS})
+# Link CLI11
+ target_link_libraries(mavor PRIVATE CLI11::CLI11)
 
 configure_file(src/test_inputs/HinYH2_293K.h5 test_inputs/HinYH2_293K.h5 COPYONLY)
 

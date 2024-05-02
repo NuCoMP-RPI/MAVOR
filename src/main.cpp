@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "external/CLI11.hpp"
+#include <CLI/CLI.hpp>
 
 #include "process_file.hpp"
 #include "runtime_variables.hpp"

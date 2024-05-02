@@ -23,3 +23,9 @@ int alpha_cdf_extent = 10;
 // Default files
 std::string input_file = "test_inputs/HinYH2_293K.h5";
 std::string output_file = "Results.h5";
+
+// Just shut it 
+bool silence = false;
+bool verbose = false;
+bool log_run = false;
+bool no_process = false;

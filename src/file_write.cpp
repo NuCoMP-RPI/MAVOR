@@ -42,8 +42,6 @@ void __write_matrix__(H5::H5File file, std::vector<std::vector<double>> const & 
 }
 
 void write_sampling_data(DistData const & sampling_data, std::string const & file_name){
-    std::cout << file_name << std::endl;
-
     H5::FileCreatPropList fcpl;
     H5::FileAccPropList fapl;
     H5::H5File file(file_name, H5F_ACC_TRUNC, fcpl, fapl);

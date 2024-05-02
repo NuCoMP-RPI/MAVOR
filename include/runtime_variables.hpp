@@ -16,4 +16,9 @@ extern int alpha_cdf_extent;
 extern std::string input_file;
 extern std::string output_file; 
 
+extern bool silence;
+extern bool verbose;
+extern bool log_run;
+extern bool no_process;
+
 #endif

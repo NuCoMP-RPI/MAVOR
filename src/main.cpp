@@ -1,8 +1,6 @@
-
-
 #include <iostream>
-
 #include <CLI/CLI.hpp>
+#include <chrono>
 
 #include "process_file.hpp"
 #include "runtime_variables.hpp"
@@ -23,9 +21,7 @@ _________\///______________\///__\///________\///________\///_____________\/////
 }
 
 int main(int argc, char* argv[]){
-    // Print the header to terminal
-    print_name();
-
+    auto main_process_start = std::chrono::high_resolution_clock::now();
     // Parse the command line arguments
     CLI::App mavor{"Generates S(a,b) TSL sampling distributions."};
     argv = mavor.ensure_utf8(argv);
@@ -39,9 +35,25 @@ int main(int argc, char* argv[]){
     mavor.add_option("--beta_cdf_extent", beta_cdf_extent, "Sets the extent of the logistic regression function used to generate the beta CDF points.  The higher the value, the denser the points close to 0 and 1");
     mavor.add_option("--alpha_cdf_points", num_alpha_cdf_points, "Sets the number of CDF points to be used in fitting the beta sampling distributions");
     mavor.add_option("--alpha_cdf_extent", alpha_cdf_extent, "Sets the extent fo the logistic regression function used to generate the alpha CDF points.  The higher the value, the denser the points close to 0 and 1");
+    mavor.add_flag("-s,--silent", silence, "Disables the terminal output");
+    mavor.add_flag("-v,--verbose", verbose, "Enables additional terminal output (NOT SUPPORTED YET)");
+    mavor.add_flag("-l,--log", log_run, "Enables logging (NOT SUPPORTED YET)");
+    mavor.add_flag("-n,--no_process", no_process, "Disables the processing of the data.  Allows for immediate program termination.");
     CLI11_PARSE(mavor, argc, argv);
 
+    // Print the header to terminal
+    if (!silence){
+        print_name();
+    }
+
     // Process the file    
-    process_file(input_file, output_file);
+    if (!no_process){
+        process_file(input_file, output_file);
+    }
+    auto main_process_end = std::chrono::high_resolution_clock::now();
+    auto main_process_duration = std::chrono::duration_cast<std::chrono::milliseconds>(main_process_end-main_process_start);
+    if (!silence){
+        std::cout << "Time to process the file | milliseconds " << main_process_duration.count() << std::endl;
+    }
     return 0;
 }

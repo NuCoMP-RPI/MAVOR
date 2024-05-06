@@ -1,5 +1,5 @@
 # Build Location
 build
 
-# VSCode settings
-.vscode
+# Hidden folders
+.*

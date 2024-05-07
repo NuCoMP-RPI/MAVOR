@@ -6,6 +6,8 @@
 
 #include "constants.hpp"
 #include "file_read.hpp"
+#include "runtime_variables.hpp"
+#include "energy_grid.hpp"
 
 class DistData {
     public:

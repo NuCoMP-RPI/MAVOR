@@ -1,14 +1,17 @@
 #include <iostream>
 #include <vector>
 
+#include "runtime_variables.hpp"
 #include "energy_grid.hpp"
 
 std::vector<double> return_incident_energy_grid(){
-
+    std::vector<double> vec;
+    return vec;
 }
 
 std::vector<double> read_energy_file(std::string const & file_path){
-
+    std::vector<double> vec;
+    return vec;
 }
 
 std::vector<double> BeinBeO_energy_grid {

@@ -4,8 +4,6 @@
 #include <iostream>
 #include <vector>
 
-#include "runtime_variables.hpp"
-
 std::vector<double> return_incident_energy_grid();
 
 #endif

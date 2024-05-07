@@ -32,6 +32,7 @@ add_compile_options(-lhdf5_cpp -lhdf5)
 add_executable(mavor src/main.cpp
                      src/runtime_variables.cpp
                      src/process_file.cpp
+                     src/energy_grid.cpp
                      src/file_read.cpp
                      src/file_write.cpp
                      src/interpolation.cpp

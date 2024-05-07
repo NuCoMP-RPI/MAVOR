@@ -34,3 +34,27 @@ bool use_external_energy_grid = false;
 std::string energy_grid_loc;
 bool use_internal_energy_grid = false;
 int predefined_energy_grid_key;
+
+std::vector<std::string> known_materials_predefined_energies{
+    "BeinBeO",
+    "CinSiC",
+    "Crystalline_graphite",
+    "DinD2O",
+    "HinCH2",
+    "HinH2O",
+    "HinIcelh",
+    "HinYH2",
+    "HinZrH",
+    "NinUN",
+    "OinBeO",
+    "OinD2O",
+    "OinIcelh",
+    "OinUO2",
+    "Reactor_graphite_10P",
+    "Reactor_graphite_30P",
+    "SiinSiC",
+    "UinUN",
+    "UinUO2",
+    "YinYH2",
+    "ZrinZrH"
+};

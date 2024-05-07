@@ -21,4 +21,9 @@ extern bool verbose;
 extern bool log_run;
 extern bool no_process;
 
+extern bool use_external_energy_grid;
+extern std::string energy_grid_loc;
+extern bool use_internal_energy_grid;
+extern int predefined_energy_grid_key;
+
 #endif

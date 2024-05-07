@@ -29,3 +29,8 @@ bool silence = false;
 bool verbose = false;
 bool log_run = false;
 bool no_process = false;
+
+bool use_external_energy_grid = false;
+std::string energy_grid_loc;
+bool use_internal_energy_grid = false;
+int predefined_energy_grid_key;

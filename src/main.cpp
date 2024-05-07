@@ -39,7 +39,16 @@ int main(int argc, char* argv[]){
     mavor.add_flag("-v,--verbose", verbose, "Enables additional terminal output (NOT SUPPORTED YET)");
     mavor.add_flag("-l,--log", log_run, "Enables logging (NOT SUPPORTED YET)");
     mavor.add_flag("-n,--no_process", no_process, "Disables the processing of the data.  Allows for immediate program termination.");
+
+    auto *energy = mavor.add_option_group("Incident Energy Settings", "Sets how the incident energy grid is determined");
+    auto user_energy_option = energy->add_option("-u,--user_energy_grid", energy_grid_loc, "Sets the location for a user defined energy grid to be used");
+    auto predefined_energy_option = energy->add_option("-p,--predefined_energy_grid", predefined_energy_grid_key, "Sets the material key for the predefined energy grids");
+    energy->require_option(0,1);
+
     CLI11_PARSE(mavor, argc, argv);
+
+    if (*user_energy_option){use_external_energy_grid = true;}
+    if (*predefined_energy_option){use_internal_energy_grid = true;}
 
     // Print the header to terminal
     if (!silence){

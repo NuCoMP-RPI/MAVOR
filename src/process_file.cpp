@@ -14,6 +14,7 @@
 #include "utilities.hpp"
 #include "runtime_variables.hpp"
 #include "linearize.hpp"
+#include "energy_grid.hpp"
 
 // Class constructor
 DistData::DistData(TslFileData& file_data){
@@ -222,13 +223,23 @@ std::vector<double> DistData::return_ii_xs_vector(std::vector<double> const& inc
 
 std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_ii_xs(){
     std::vector<double> energies = logspace(e_min, e_max, 100);
-    std::vector<double> xs(energies.size());
-    for (int i=0; i<energies.size(); i++){
-        xs[i] = return_ii_xs_value(energies[i]);
-    }
+    std::vector<double> xs = return_ii_xs_vector(energies);
     auto get_new_xs = [&](double x) {return return_ii_xs_value(x);};
     linearize(energies, xs, get_new_xs);
     return std::make_pair(energies, xs);
+}
+
+std::pair<std::vector<double>, std::vector<double>> DistData::return_final_ii_xs(){
+    if (use_external_energy_grid || use_internal_energy_grid)
+    {
+        std::vector<double> energies = return_incident_energy_grid(e_max);
+        std::vector<double> xs = return_ii_xs_vector(energies);
+        return std::make_pair(energies, xs);
+    }
+    else
+    {
+        return return_linearized_ii_xs();
+    }
 }
 
 void DistData::__get_beta_sampling_dists__(){
@@ -276,7 +287,7 @@ void DistData::__get_alpha_sampling_dists__(){
 }
 
 void DistData::calculate_sampling_dists(){
-    auto [ene, xs] = return_linearized_ii_xs();
+    auto [ene, xs] = return_final_ii_xs();
     inc_energy_grid = ene;
     ii_xs = xs;
     __get_beta_sampling_dists__();

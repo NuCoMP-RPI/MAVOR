@@ -55,6 +55,7 @@ class DistData {
         double return_ii_xs_value(double const& inc_energy);
         std::vector<double> return_ii_xs_vector(std::vector<double> const& inc_energies);
         std::pair<std::vector<double>, std::vector<double>> return_linearized_ii_xs();
+        std::pair<std::vector<double>, std::vector<double>> return_final_ii_xs();
         std::pair<std::vector<double>, std::vector<double>> return_linearized_alpha_pdf(double const& beta);
         void calculate_sampling_dists();
 

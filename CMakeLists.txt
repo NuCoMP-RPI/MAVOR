@@ -33,6 +33,7 @@ add_executable(mavor src/main.cpp
                      src/runtime_variables.cpp
                      src/process_file.cpp
                      src/energy_grid.cpp
+                     src/predefined_energy_grids.cpp
                      src/file_read.cpp
                      src/file_write.cpp
                      src/interpolation.cpp
@@ -50,7 +51,8 @@ target_include_directories(mavor PRIVATE ${HDF5_INCLUDE_DIRS})
 # Link CLI11
  target_link_libraries(mavor PRIVATE CLI11::CLI11)
 
-configure_file(src/test_inputs/HinYH2_293K.h5 test_inputs/HinYH2_293K.h5 COPYONLY)
+configure_file(test_files/HinYH2_293K.h5 test_files/HinYH2_293K.h5 COPYONLY)
+configure_file(test_files/HinYH2_energies.txt test_files/HinYH2_energies.txt COPYONLY)
 
 # Allow for install of executable
 install(TARGETS mavor 

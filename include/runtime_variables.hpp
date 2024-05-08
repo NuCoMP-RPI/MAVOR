@@ -27,6 +27,4 @@ extern std::string energy_grid_loc;
 extern bool use_internal_energy_grid;
 extern int predefined_energy_grid_key;
 
-extern std::vector<std::string> known_materials_predefined_energies;
-
 #endif

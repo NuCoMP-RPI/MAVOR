@@ -6,6 +6,7 @@
 #include "H5Cpp.h"
 
 #include "file_read.hpp"
+#include "runtime_variables.hpp"
 
 // Class Constructor
 TslFileData::TslFileData(const std::string& file_path)
@@ -17,6 +18,7 @@ TslFileData::TslFileData(const std::string& file_path)
     readHDF5Int(file, "lln", lln);
     readHDF5Int(file, "za", za);
     readHDF5Int(file, "mat", mat);
+    predefined_energy_grid_key = mat;
     readHDF5Double(file, "temp", temp);
     readHDF5Double(file, "t_eff", t_eff);
     readHDF5Double(file, "temp_ratio", temp_ratio);

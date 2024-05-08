@@ -3,7 +3,8 @@
 
 #include <map>
 #include <vector>
+#include <iostream>
 
-extern std::map<int, std::vector<double>> predefined_energy_grids;
+extern std::map<int, std::pair<std::string, std::vector<double>>> predefined_energy_grids;
 
 #endif

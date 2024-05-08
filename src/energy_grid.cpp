@@ -25,9 +25,13 @@ std::vector<double> return_incident_energy_grid(double const & e_max){
     if (use_internal_energy_grid){
         auto it = predefined_energy_grids.find(predefined_energy_grid_key);
         if (it != predefined_energy_grids.end()) {
-            return it->second;
+            if (!silence)
+            {
+                std::cout << "Using the predefined energy grid | " << it->second.first << std::endl;
+            }
+            return it->second.second;
         } else {
-            throw std::domain_error("Selected Material not found.");
+            throw std::domain_error("Material does not match a predefined energy grid");
         }
     }
     else if (use_external_energy_grid)

@@ -1,5 +1,6 @@
 #include <vector>
 #include <map>
+#include <iostream>
 
 #include "predefined_energy_grids.hpp"
 
@@ -4620,26 +4621,26 @@ std::vector<double> ZrinZrH_energy_grid {
     1.0002e+00
 };
 
-std::map<int, std::vector<double>> predefined_energy_grids = {
-    {27, BeinBeO_energy_grid},
-    {44, CinSiC_energy_grid},
-    {30, crystalline_graphite_energy_grid},
-    {11, DinD2O_energy_grid},
-    {37, HinCH2_energy_grid},
-    {1, HinH2O_energy_grid},
-    {10, HinIcelh_energy_grid},
-    {5, HinYH2_energy_grid},
-    {7, HinZrH_energy_grid},
-    {71, NinUN_energy_grid},
-    {46, OinBeO_energy_grid},
-    {51, OinD2O_energy_grid},
-    {50, OinIcelh_energy_grid},
-    {75, OinUO2_energy_grid},
-    {31, reactor_graphite_10P_energy_grid},
-    {32, reactor_graphite_30P_energy_grid},
-    {43, SiinSiC_energy_grid},
-    {72, UinUN_energy_grid},
-    {48, UinUO2_energy_grid},
-    {55, YinYH2_energy_grid},
-    {58, ZrinZrH_energy_grid},
+std::map<int, std::pair<std::string, std::vector<double>>> predefined_energy_grids = {
+    {27, {"BeinBeO", BeinBeO_energy_grid}},
+    {44, {"CinSiC", CinSiC_energy_grid}},
+    {30, {"crystalline_graphite", crystalline_graphite_energy_grid}},
+    {11, {"DinD2O", DinD2O_energy_grid}},
+    {37, {"HinCH2", HinCH2_energy_grid}},
+    {1, {"HinH2O", HinH2O_energy_grid}},
+    {10, {"HinIcelh", HinIcelh_energy_grid}},
+    {5, {"HinYH2", HinYH2_energy_grid}},
+    {7, {"HinZrH", HinZrH_energy_grid}},
+    {71, {"NinUN", NinUN_energy_grid}},
+    {46, {"OinBeO", OinBeO_energy_grid}},
+    {51, {"OinD2O", OinD2O_energy_grid}},
+    {50, {"OinIcelh", OinIcelh_energy_grid}},
+    {75, {"OinUO2", OinUO2_energy_grid}},
+    {31, {"reactor_graphite_10P", reactor_graphite_10P_energy_grid}},
+    {32, {"reactor_graphite_30P", reactor_graphite_30P_energy_grid}},
+    {43, {"SiinSiC", SiinSiC_energy_grid}},
+    {72, {"UinUN", UinUN_energy_grid}},
+    {48, {"UinUO2", UinUO2_energy_grid}},
+    {55, {"YinYH2", YinYH2_energy_grid}},
+    {58, {"ZrinZrH", ZrinZrH_energy_grid}},
 };

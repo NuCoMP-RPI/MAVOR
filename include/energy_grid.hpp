@@ -4,6 +4,6 @@
 #include <iostream>
 #include <vector>
 
-std::vector<double> return_incident_energy_grid(double const & e_max);
+std::vector<double> return_incident_energy_grid();
 
 #endif

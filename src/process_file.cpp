@@ -232,7 +232,7 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_
 std::pair<std::vector<double>, std::vector<double>> DistData::return_final_ii_xs(){
     if (use_external_energy_grid || use_internal_energy_grid)
     {
-        std::vector<double> energies = return_incident_energy_grid(e_max);
+        std::vector<double> energies = return_incident_energy_grid();
         std::vector<double> xs = return_ii_xs_vector(energies);
         return std::make_pair(energies, xs);
     }

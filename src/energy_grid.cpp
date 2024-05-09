@@ -21,7 +21,7 @@ std::vector<double> read_energy_file(std::string const & file_path){
     return grid;
 }
 
-std::vector<double> return_incident_energy_grid(double const & e_max){
+std::vector<double> return_incident_energy_grid(){
     if (use_internal_energy_grid){
         auto it = predefined_energy_grids.find(predefined_energy_grid_key);
         if (it != predefined_energy_grids.end()) {
@@ -39,6 +39,6 @@ std::vector<double> return_incident_energy_grid(double const & e_max){
         return read_energy_file(energy_grid_loc);
     }
     else {
-        return logspace(e_min, e_max, num_energies);
+        throw std::logic_error("You shouldn't be here. IDK what happened.");
     }
 }

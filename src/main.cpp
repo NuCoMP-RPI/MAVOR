@@ -2,7 +2,7 @@
 #include <CLI/CLI.hpp>
 #include <chrono>
 
-// #include "process_file.hpp"
+#include "process_file.hpp"
 #include "runtime_variables.hpp"
 
 void print_name(){
@@ -63,26 +63,42 @@ int main(int argc, char* argv[]){
     CLI::App &otf = *mavor.add_subcommand("otf", "Generates the OTF sampling coefficients given unionized Sab TSL sampling distributions");
     otf.ignore_case();
 
-    // Require that at most one subcommand is passed
-    mavor.require_subcommand(0, 1);
+    // Require at least one subcommand
+    mavor.require_subcommand();
 
+    // Parse the command line arguments
     CLI11_PARSE(mavor, argc, argv);
 
-    if (*user_energy_option){use_external_energy_grid = true;}
 
     // Print the header to terminal
     if (!silence){
         print_name();
     }
+    
+    if (njoy.parsed()){
+        if (!silence){
+            std::cout << "Running njoy subroutines" << std::endl;
+        }
+    }
 
-    // // Process the file    
-    // if (!no_process){
-    //     process_file(input_file, output_file);
-    // }
+    if (sab.parsed()){
+        if (!silence){std::cout << "Running sab subroutines" << std::endl;}
+        if (*user_energy_option){use_external_energy_grid = true;}
+        if (!no_process){process_file();}
+    }
+
+    if (otf.parsed()){
+        if (!silence){
+            std::cout << "Running otf subroutines" << std::endl;
+        }
+    }
+
+
+    
     auto main_process_end = std::chrono::high_resolution_clock::now();
     auto main_process_duration = std::chrono::duration_cast<std::chrono::milliseconds>(main_process_end-main_process_start);
-    // if (!silence){
-        std::cout << "Time to process the file | milliseconds " << main_process_duration.count() << std::endl;
-    // }
+    if (!silence){
+        std::cout << "Total elaspsed time | milliseconds " << main_process_duration.count() << std::endl;
+    }
     return 0;
 }

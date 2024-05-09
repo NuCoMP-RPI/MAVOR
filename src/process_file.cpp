@@ -311,13 +311,13 @@ void print_matrix(std::vector<std::vector<double>> matrix){
     std::cout << std::endl;
 }
 
-void process_file(const std::string& file_path, const std::string& output_file){
+void process_file(){
     if (!silence){
-        std::cout << "Input file to process | " << file_path << '\n';
+        std::cout << "Input file to process | " << input_file << '\n';
     }
 
     auto file_read_start = std::chrono::high_resolution_clock::now();
-    TslFileData file_data(file_path);
+    TslFileData file_data(input_file);
     DistData dist_data(file_data);
     auto file_read_end  = std::chrono::high_resolution_clock::now();
     auto file_read_duration = std::chrono::duration_cast<std::chrono::milliseconds>(file_read_end - file_read_start);

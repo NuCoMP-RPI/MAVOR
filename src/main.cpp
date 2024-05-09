@@ -35,6 +35,11 @@ int main(int argc, char* argv[]){
     mavor.add_option("--beta_cdf_extent", beta_cdf_extent, "Sets the extent of the logistic regression function used to generate the beta CDF points.  The higher the value, the denser the points close to 0 and 1");
     mavor.add_option("--alpha_cdf_points", num_alpha_cdf_points, "Sets the number of CDF points to be used in fitting the beta sampling distributions");
     mavor.add_option("--alpha_cdf_extent", alpha_cdf_extent, "Sets the extent fo the logistic regression function used to generate the alpha CDF points.  The higher the value, the denser the points close to 0 and 1");
+    mavor.add_option("--beta_max", beta_max, "Sets the maximum beta value to consider.");    
+    mavor.add_option("--sct_cutoff", sct_cutoff, "Sets the cutoff for the transition to the Short Collision Time Approximation.");
+    mavor.add_option("--alpha_min", alpha_min, "Sets the minimum integration alpha value");
+    mavor.add_option("--e_min", e_min, "Sets the minimum incident energy to consider.");
+    mavor.add_option("--num_energies", num_energies, "Sets the number of energies that are used to initialize the incident energy grid.");
     mavor.add_flag("-s,--silent", silence, "Disables the terminal output");
     mavor.add_flag("-v,--verbose", verbose, "Enables additional terminal output (NOT SUPPORTED YET)");
     mavor.add_flag("-l,--log", log_run, "Enables logging (NOT SUPPORTED YET)");

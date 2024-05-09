@@ -27,4 +27,10 @@ extern std::string energy_grid_loc;
 extern bool use_internal_energy_grid;
 extern int predefined_energy_grid_key;
 
+extern double beta_max;
+extern double sct_cutoff;
+extern double alpha_min;
+extern double e_min;
+extern int num_energies;
+
 #endif

@@ -80,9 +80,4 @@ class DistData {
         void __get_beta_sampling_dists__();
         void __get_alpha_sampling_dists__();
 };
-
-// Function calls
-void process_file();
-void print_array(std::vector<double> array);
-
 #endif

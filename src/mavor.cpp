@@ -2,8 +2,10 @@
 #include <CLI/CLI.hpp>
 #include <chrono>
 
-#include "process_file.hpp"
 #include "runtime_variables.hpp"
+#include "njoy.hpp"
+#include "sab.hpp"
+#include "otf.hpp"
 
 void print_name(){
     std::cout << R"(
@@ -74,23 +76,21 @@ int main(int argc, char* argv[]){
     if (!silence){
         print_name();
     }
-    
+
     if (njoy.parsed()){
-        if (!silence){
-            std::cout << "Running njoy subroutines" << std::endl;
-        }
+        if (!silence){std::cout << "Running njoy subroutines" << std::endl;}
+        if (!no_process){run_njoy();}
     }
 
     if (sab.parsed()){
         if (!silence){std::cout << "Running sab subroutines" << std::endl;}
         if (*user_energy_option){use_external_energy_grid = true;}
-        if (!no_process){process_file();}
+        if (!no_process){run_sab();}
     }
 
     if (otf.parsed()){
-        if (!silence){
-            std::cout << "Running otf subroutines" << std::endl;
-        }
+        if (!silence){std::cout << "Running otf subroutines" << std::endl;}
+        if (!no_process){run_otf();}
     }
 
 

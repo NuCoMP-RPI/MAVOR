@@ -4,6 +4,11 @@
 #include <iostream>
 #include <vector>
 
+// Control variables for the main program
+extern bool silence;
+extern bool verbose;
+extern bool log_run;
+
 extern int beta_integration_scheme;
 extern int beta_interpolation_scheme;
 extern int alpha_integration_scheme;
@@ -16,11 +21,6 @@ extern int alpha_cdf_extent;
 
 extern std::string input_file;
 extern std::string output_file; 
-
-extern bool silence;
-extern bool verbose;
-extern bool log_run;
-extern bool no_process;
 
 extern bool use_external_energy_grid;
 extern std::string energy_grid_loc;

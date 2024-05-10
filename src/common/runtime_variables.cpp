@@ -28,7 +28,6 @@ std::string output_file = "Results.h5";
 bool silence = false;
 bool verbose = false;
 bool log_run = false;
-bool no_process = false;
 
 bool use_external_energy_grid = false;
 std::string energy_grid_loc;

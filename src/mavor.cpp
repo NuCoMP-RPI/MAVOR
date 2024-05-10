@@ -32,7 +32,6 @@ int main(int argc, char* argv[]){
     mavor.add_flag("-s,--silent", silence, "Disables the terminal output");
     mavor.add_flag("-v,--verbose", verbose, "Enables additional terminal output (NOT SUPPORTED YET)");
     mavor.add_flag("-l,--log", log_run, "Enables logging (NOT SUPPORTED YET)");
-    mavor.add_flag("-n,--no_process", no_process, "Disables the processing of the data.  Allows for immediate program termination.");
 
     // NJOY subcommand
     CLI::App &njoy = *mavor.add_subcommand("njoy", "Runs NJOY and LEAPR to generate TSL data.");
@@ -65,9 +64,6 @@ int main(int argc, char* argv[]){
     CLI::App &otf = *mavor.add_subcommand("otf", "Generates the OTF sampling coefficients given unionized Sab TSL sampling distributions");
     otf.ignore_case();
 
-    // Require at least one subcommand
-    mavor.require_subcommand();
-
     // Parse the command line arguments
     CLI11_PARSE(mavor, argc, argv);
 
@@ -79,21 +75,17 @@ int main(int argc, char* argv[]){
 
     if (njoy.parsed()){
         if (!silence){std::cout << "Running njoy subroutines" << std::endl;}
-        if (!no_process){run_njoy();}
+        run_njoy();
     }
-
     if (sab.parsed()){
         if (!silence){std::cout << "Running sab subroutines" << std::endl;}
         if (*user_energy_option){use_external_energy_grid = true;}
-        if (!no_process){run_sab();}
+        run_sab();
     }
-
     if (otf.parsed()){
         if (!silence){std::cout << "Running otf subroutines" << std::endl;}
-        if (!no_process){run_otf();}
+        run_otf();
     }
-
-
     
     auto main_process_end = std::chrono::high_resolution_clock::now();
     auto main_process_duration = std::chrono::duration_cast<std::chrono::milliseconds>(main_process_end-main_process_start);

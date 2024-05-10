@@ -8,7 +8,6 @@
 extern bool silence;
 extern bool verbose;
 extern bool log_run;
-extern bool no_process;
 
 extern int beta_integration_scheme;
 extern int beta_interpolation_scheme;

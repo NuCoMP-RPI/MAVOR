@@ -3,5 +3,5 @@
 #include "otf.hpp"
 
 void run_otf(){
-    std::cout << "Hello from OTF" << std::endl;
+    std::cout << "Hello from OTF, I am not implemented yet." << std::endl;
 }

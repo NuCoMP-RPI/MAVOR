@@ -7,7 +7,6 @@
 #include "file_write.hpp"
 
 void run_sab(){
-    std::cout << "Hello from SAB" << std::endl;
     if (!silence){
         std::cout << "Input file to process | " << input_file << '\n';
     }

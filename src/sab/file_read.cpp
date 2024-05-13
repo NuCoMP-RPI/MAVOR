@@ -7,6 +7,7 @@
 
 #include "file_read.hpp"
 #include "runtime_variables.hpp"
+#include "hdf5_file.hpp"
 
 // Class Constructor
 TslFileData::TslFileData(const std::string& file_path)
@@ -27,51 +28,15 @@ TslFileData::TslFileData(const std::string& file_path)
     readHDF5Double(file, "m0", m0);
     readHDF5Double(file, "free_xs", free_xs);
     readHDF5Double(file, "bound_xs", bound_xs);
-    readHDF5DoubleArray(file, "alphas", alphas);
-    readHDF5DoubleArray(file, "betas", betas);
-    readHDF5DoubleArray(file, "tsl_vals", tsl_vals_array);
+    readHDF5DoubleVector(file, "alphas", alphas);
+    readHDF5DoubleVector(file, "betas", betas);
+    readHDF5DoubleVector(file, "tsl_vals", tsl_vals_array);
     tsl_vals = __vector_to_matrix__(tsl_vals_array, betas.size(), alphas.size());
     
     file.close();
 }
 
 // Private Methods //
-// File reading
-
-void TslFileData::readHDF5DoubleArray(H5::H5File& file, const std::string& datasetName, std::vector<double>& array) {
-    H5::DataSet dataset = file.openDataSet(datasetName);
-    H5::DataSpace dataspace = dataset.getSpace();
-    // Fancy stuff is here to allow reading matrices into a vector
-    // HDF5 does not support reading directly into nested vectors
-    int rank = dataspace.getSimpleExtentNdims();
-    hsize_t dims[rank];
-    dataspace.getSimpleExtentDims(dims);
-    hsize_t totalSize = 1;
-    for(int i = 0; i<rank; ++i){
-        totalSize *= dims[i];
-    }
-    array.resize(totalSize);
-    dataset.read(array.data(), H5::PredType::NATIVE_DOUBLE);
-    dataset.close();
-    dataspace.close();
-}
-
-void TslFileData::readHDF5Double(H5::H5File& file, const std::string& datasetName, double& value){
-    H5::DataSet dataset = file.openDataSet(datasetName);
-    H5::DataSpace dataspace = dataset.getSpace();
-    dataset.read(&value, H5::PredType::NATIVE_DOUBLE);
-    dataset.close();
-    dataspace.close();
-}
-
-void TslFileData::readHDF5Int(H5::H5File& file, const std::string& datasetName, int& value){
-    H5::DataSet dataset = file.openDataSet(datasetName);
-    H5::DataSpace dataspace = dataset.getSpace();
-    dataset.read(&value, H5::PredType::NATIVE_INT);
-    dataset.close();
-    dataspace.close();
-}
-
 // Supporting data methods
 
 void TslFileData::__vec_element_mult__(std::vector<double>&vec, double const val){

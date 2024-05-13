@@ -52,8 +52,5 @@ class TslFileData {
         std::vector<double> __negative_vector_mirror__(std::vector<double> const & arr, bool const del_duplicate);
         std::vector<std::vector<double>> __matrix_2d_mirror__(std::vector<std::vector<double>> const & matrix2d, bool const del_duplicate);
         std::vector<double> __lat_scale__(std::vector<double> const & arr, double const ref_temp = ref_temp_k);
-        void readHDF5DoubleArray(H5::H5File& file, const std::string& datasetName, std::vector<double>& array);
-        void readHDF5Double(H5::H5File& file, const std::string& datasetName, double& value);
-        void readHDF5Int(H5::H5File& file, const std::string& datasetName, int& value);
 };
 #endif

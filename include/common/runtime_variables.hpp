@@ -19,8 +19,8 @@ extern int beta_cdf_extent;
 extern int num_alpha_cdf_points;
 extern int alpha_cdf_extent;
 
-extern std::string input_file;
-extern std::string output_file; 
+extern std::string sab_input_file;
+extern std::string sab_output_file; 
 
 extern bool use_external_energy_grid;
 extern std::string energy_grid_loc;

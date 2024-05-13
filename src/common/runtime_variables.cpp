@@ -21,8 +21,8 @@ int num_alpha_cdf_points = 400;
 int alpha_cdf_extent = 10;
 
 // Default files
-std::string input_file = "test_files/HinYH2_293K.h5";
-std::string output_file = "Results.h5";
+std::string sab_input_file = "test_files/HinYH2_293K.h5";
+std::string sab_output_file = "Results.h5";
 
 // Just shut it 
 bool silence = false;

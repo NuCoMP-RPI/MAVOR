@@ -8,11 +8,11 @@
 
 void run_sab(){
     if (!silence){
-        std::cout << "Input file to process | " << input_file << '\n';
+        std::cout << "Input file to process | " << sab_input_file << '\n';
     }
 
     auto file_read_start = std::chrono::high_resolution_clock::now();
-    TslFileData file_data(input_file);
+    TslFileData file_data(sab_input_file);
     DistData dist_data(file_data);
     auto file_read_end  = std::chrono::high_resolution_clock::now();
     auto file_read_duration = std::chrono::duration_cast<std::chrono::milliseconds>(file_read_end - file_read_start);
@@ -29,10 +29,10 @@ void run_sab(){
     }
 
     if (!silence){
-        std::cout << "Results file | " << output_file << '\n';
+        std::cout << "Results file | " << sab_output_file << '\n';
     }
     auto file_write_start = std::chrono::high_resolution_clock::now();
-    write_sampling_data(dist_data, output_file);
+    write_sampling_data(dist_data, sab_output_file);
     auto file_write_end = std::chrono::high_resolution_clock::now();
     auto file_write_duration = std::chrono::duration_cast<std::chrono::milliseconds>(file_write_end-file_write_start);
     if (!silence){

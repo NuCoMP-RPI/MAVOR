@@ -63,6 +63,8 @@ int main(int argc, char* argv[]){
     // OTF subcommand
     CLI::App &otf = *mavor.add_subcommand("otf", "Generates the OTF sampling coefficients given unionized Sab TSL sampling distributions");
     otf.ignore_case();
+    otf.add_option("-i, --input_directory", otf_input_directory, "Sets the location of the SAB sampling distributions.");
+    otf.add_option("-o,--output_file", otf_output_file, "Sets the file name (and path) to store the OTF sampling coefficients.");
 
     // Parse the command line arguments
     CLI11_PARSE(mavor, argc, argv);

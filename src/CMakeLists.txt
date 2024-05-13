@@ -23,7 +23,7 @@ target_include_directories(mavor PRIVATE "${CMAKE_SOURCE_DIR}/include/common")
 target_include_directories(mavor PRIVATE "${CMAKE_SOURCE_DIR}/include/njoy")
 target_include_directories(mavor PRIVATE "${CMAKE_SOURCE_DIR}/include/otf")
 target_include_directories(mavor PRIVATE "${CMAKE_SOURCE_DIR}/include/sab")
-target_compile_features(mavor PRIVATE cxx_std_20)
+target_compile_features(mavor PRIVATE cxx_std_17)
 
 # Link CLI11
 target_link_libraries(mavor PRIVATE CLI11::CLI11)

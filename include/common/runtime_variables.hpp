@@ -5,9 +5,16 @@
 #include <vector>
 
 // Control variables for the main program
+
 extern bool silence;
 extern bool verbose;
 extern bool log_run;
+
+// NJOY subcommand variables
+
+
+
+// Sab subcommand variables
 
 extern int beta_integration_scheme;
 extern int beta_interpolation_scheme;
@@ -32,5 +39,10 @@ extern double sct_cutoff;
 extern double alpha_min;
 extern double e_min;
 extern int num_energies;
+
+// OTF subcommand variables
+
+extern std::string otf_input_directory;
+extern std::string otf_output_file;
 
 #endif

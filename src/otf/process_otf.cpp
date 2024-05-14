@@ -78,6 +78,7 @@ OTFData::OTFData(const std::string & directory){
         temps[k] = it->second.temp;
         // load in beta vals
         for (size_t i; i<inc_energy_grid.size(); i++){
+            ii_xs[i][k] = it->second.ii_xs[i];
             for (size_t j; j<beta_cdf_grid.size(); j++){
                 fit_beta_vals[i][j][k] = it->second.fit_beta_vals[i][j];
             }

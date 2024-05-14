@@ -1,6 +1,8 @@
 #ifndef MAVOR_PROCESS_OTF_H
 #define MAVOR_PROCESS_OTF_H
 
+#include "Eigen/Dense"
+
 #include <iostream>
 #include <vector>
 

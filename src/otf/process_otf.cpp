@@ -3,6 +3,8 @@
 #include <filesystem>
 #include <map>
 
+#include "Eigen/Dense"
+
 #include "process_otf.hpp"
 #include "sab_file.hpp"
 

@@ -19,7 +19,7 @@ OTFData::OTFData(const std::string & directory){
     size_t num_files = files.size();
 
     // Extract the first files contents that should be the same across all files
-    size_t k = 0;
+    int k = 0;
     auto it = files.begin();
     za = it->second.za;
     mat = it->second.mat;
@@ -45,9 +45,9 @@ OTFData::OTFData(const std::string & directory){
     fit_alpha_vals.resize(beta_grid.size(), std::vector<std::vector<double>>(alpha_cdf_grid.size(), std::vector<double>(num_files)));
 
     // load in beta vals and xs
-    for (size_t i; i<inc_energy_grid.size(); i++){
+    for (int i = 0; i<inc_energy_grid.size(); i++){
         ii_xs[i][k] = it->second.ii_xs[i];
-        for (size_t j; j<beta_cdf_grid.size(); j++){
+        for (int j = 0; j<beta_cdf_grid.size(); j++){
             fit_beta_vals[i][j][k] = it->second.fit_beta_vals[i][j];
         }
     }
@@ -79,16 +79,16 @@ OTFData::OTFData(const std::string & directory){
         __check__(alpha_cdf_grid, it->second.alpha_cdf_grid, "ALPHA CDF GRID");
         temps[k] = it->second.temp;
         // load in beta vals
-        for (size_t i; i<inc_energy_grid.size(); i++){
+        for (int i = 0; i<inc_energy_grid.size(); i++){
             ii_xs[i][k] = it->second.ii_xs[i];
-            for (size_t j; j<beta_cdf_grid.size(); j++){
+            for (int j = 0; j<beta_cdf_grid.size(); j++){
                 fit_beta_vals[i][j][k] = it->second.fit_beta_vals[i][j];
             }
         }
 
         // load in alpha vals
-        for (size_t i; i<beta_grid.size(); i++){
-            for (size_t j; j<alpha_cdf_grid.size(); j++){
+        for (int i = 0; i<beta_grid.size(); i++){
+            for (int j = 0; j<alpha_cdf_grid.size(); j++){
                 fit_alpha_vals[i][j][k] = it->second.fit_alpha_vals[i][j];
             }
         }

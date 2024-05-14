@@ -38,11 +38,11 @@ OTFData::OTFData(const std::string & directory){
     temps[k] = it->second.temp;
 
     // Initialize xs vector
-    ii_xs.resize(inc_energy_grid.size(), std::vector<double>(num_files));
+    ii_xs.resize(inc_energy_grid.size(), Eigen::VectorXd(num_files));
 
     // Initialize the vectors for storing the fit values (ordering needs to be <g1, g2, temps>)
-    fit_beta_vals.resize(inc_energy_grid.size(), std::vector<std::vector<double>>(beta_cdf_grid.size(), std::vector<double>(num_files)));
-    fit_alpha_vals.resize(beta_grid.size(), std::vector<std::vector<double>>(alpha_cdf_grid.size(), std::vector<double>(num_files)));
+    fit_beta_vals.resize(inc_energy_grid.size(), std::vector<Eigen::VectorXd>(beta_cdf_grid.size(), Eigen::VectorXd(num_files)));
+    fit_alpha_vals.resize(beta_grid.size(), std::vector<Eigen::VectorXd>(alpha_cdf_grid.size(), Eigen::VectorXd(num_files)));
 
     // load in beta vals and xs
     for (int i = 0; i<inc_energy_grid.size(); i++){

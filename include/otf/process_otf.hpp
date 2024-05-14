@@ -18,7 +18,8 @@ class OTFData{
         std::vector<double> temps;
 
         std::vector<double> inc_energy_grid;
-        std::vector<double> ii_xs;
+        // order is <inc_ene, temp>
+        std::vector<std::vector<double>> ii_xs;
         std::vector<double> beta_cdf_grid;
         // order is <inc_ene, b_cdf, temp>
         std::vector<std::vector<std::vector<double>>> fit_beta_vals;
@@ -31,8 +32,11 @@ class OTFData{
         // Constructor
         OTFData(const std::string & directory);
 
+        void generate_coefficients();
+
     private:
         template<typename T> void __check__(T const & val_1, T const & val_2, std::string const item_name);
+        void __generate_A_matrix__();
 
 };
 

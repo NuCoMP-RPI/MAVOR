@@ -35,12 +35,16 @@ OTFData::OTFData(const std::string & directory){
     temps.resize(num_files);
     temps[k] = it->second.temp;
 
+    // Initialize xs vector
+    ii_xs.resize(inc_energy_grid.size(), std::vector<double>(num_files));
+
     // Initialize the vectors for storing the fit values (ordering needs to be <g1, g2, temps>)
     fit_beta_vals.resize(inc_energy_grid.size(), std::vector<std::vector<double>>(beta_cdf_grid.size(), std::vector<double>(num_files)));
     fit_alpha_vals.resize(beta_grid.size(), std::vector<std::vector<double>>(alpha_cdf_grid.size(), std::vector<double>(num_files)));
 
-    // load in beta vals
+    // load in beta vals and xs
     for (size_t i; i<inc_energy_grid.size(); i++){
+        ii_xs[i][k] = it->second.ii_xs[i];
         for (size_t j; j<beta_cdf_grid.size(); j++){
             fit_beta_vals[i][j][k] = it->second.fit_beta_vals[i][j];
         }
@@ -88,6 +92,14 @@ OTFData::OTFData(const std::string & directory){
         it++;
         k++;
     }
+}
+
+void OTFData::generate_coefficients(){
+    __generate_A_matrix__();
+}
+
+void OTFData::__generate_A_matrix__(){
+
 }
 
 template<typename T> void OTFData::__check__(T const & val_1, T const & val_2, std::string const item_name){

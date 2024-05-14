@@ -19,7 +19,7 @@ void run_otf(){
     }
 
     auto process_start = std::chrono::high_resolution_clock::now();
-    // calculate the coefficients
+    data.generate_coefficients();
     auto process_end = std::chrono::high_resolution_clock::now();
     auto process_duration = std::chrono::duration_cast<std::chrono::milliseconds>(process_end-process_start);
     if (!silence){

@@ -13,7 +13,7 @@
 #include "hdf5_file.hpp"
 
 void __write_xs_Coeffs__(H5::H5File file, std::vector<Eigen::VectorXd> const & matrix, std::string const & matrix_name){
-    hsize_t dims[2] = {matrix.size(), matrix[0].size()};
+    hsize_t dims[2] = {matrix.size(), static_cast<hsize_t>(matrix[0].size())};
     H5::DataSpace dataspace(2, dims);
     H5::FloatType datatype(H5::PredType::NATIVE_DOUBLE);
     H5::DataSet dataset = file.createDataSet(matrix_name, datatype, dataspace);
@@ -27,7 +27,7 @@ void __write_xs_Coeffs__(H5::H5File file, std::vector<Eigen::VectorXd> const & m
 }
 
 void __write_fit_Coeffs__(H5::H5File file, std::vector<std::vector<Eigen::VectorXd>> const & matrix, std::string const & matrix_name){
-    hsize_t dims[3] = {matrix.size(), matrix[0].size(), matrix[0][0].size()};
+    hsize_t dims[3] = {matrix.size(), matrix[0].size(), static_cast<hsize_t>(matrix[0][0].size())};
     H5::DataSpace dataspace(3, dims);
     H5::FloatType datatype(H5::PredType::NATIVE_DOUBLE);
     H5::DataSet dataset = file.createDataSet(matrix_name, datatype, dataspace);

@@ -46,3 +46,6 @@ std::string otf_output_file = "OTF_Coefficients.h5";
 int num_xs_coeffs = 6;
 int num_beta_coeffs = 6;
 int num_alpha_coeffs = 6;
+
+double temp_scale_min = -1;
+double temp_scale_max = 1;

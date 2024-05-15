@@ -30,7 +30,7 @@ void run_otf(){
         std::cout << "Coefficients File | " << otf_output_file << '\n';
     }
     auto file_write_start = std::chrono::high_resolution_clock::now();
-    // write coefficients file
+    data.write_coefficients();
     auto file_write_end = std::chrono::high_resolution_clock::now();
     auto file_write_duration = std::chrono::duration_cast<std::chrono::milliseconds>(file_write_end-file_write_start);
     if (!silence){

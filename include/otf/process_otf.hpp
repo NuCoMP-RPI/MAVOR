@@ -44,6 +44,8 @@ class OTFData{
 
         void generate_coefficients();
 
+        void write_coefficients();
+
     private:
         template<typename T> void __check__(T const & val_1, T const & val_2, std::string const item_name);
         void __generate_A_matrices__();

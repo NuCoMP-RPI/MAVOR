@@ -4,11 +4,43 @@
 #include <map>
 
 #include "Eigen/Dense"
+#include "H5Cpp.h"
 
 #include "process_otf.hpp"
 #include "sab_file.hpp"
 #include "scale_basis.hpp"
 #include "runtime_variables.hpp"
+#include "hdf5_file.hpp"
+
+void __write_xs_Coeffs__(H5::H5File file, std::vector<Eigen::VectorXd> const & matrix, std::string const & matrix_name){
+    hsize_t dims[2] = {matrix.size(), matrix[0].size()};
+    H5::DataSpace dataspace(2, dims);
+    H5::FloatType datatype(H5::PredType::NATIVE_DOUBLE);
+    H5::DataSet dataset = file.createDataSet(matrix_name, datatype, dataspace);
+    // Flatten matrix to be able to write
+    // Don't think HDF5 supports vec<vec>> writing 
+    std::vector<double> flattenedMatrix;
+    for (const auto& row : matrix) {
+        flattenedMatrix.insert(flattenedMatrix.end(), row.begin(), row.end());
+    }
+    dataset.write(flattenedMatrix.data(), H5::PredType::NATIVE_DOUBLE);
+}
+
+void __write_fit_Coeffs__(H5::H5File file, std::vector<std::vector<Eigen::VectorXd>> const & matrix, std::string const & matrix_name){
+    hsize_t dims[3] = {matrix.size(), matrix[0].size(), matrix[0][0].size()};
+    H5::DataSpace dataspace(3, dims);
+    H5::FloatType datatype(H5::PredType::NATIVE_DOUBLE);
+    H5::DataSet dataset = file.createDataSet(matrix_name, datatype, dataspace);
+    // Flatten matrix to be able to write
+    // Don't think HDF5 supports vec<vec>> writing 
+    std::vector<double> flattenedMatrix;
+    for (const auto& row : matrix) {
+        for (const auto& col : row){
+            flattenedMatrix.insert(flattenedMatrix.end(), col.begin(), col.end());
+        }
+    }
+    dataset.write(flattenedMatrix.data(), H5::PredType::NATIVE_DOUBLE);
+}
 
 OTFData::OTFData(const std::string & directory){
     std::map<double, SabData, std::less<double>> files;
@@ -109,6 +141,34 @@ OTFData::OTFData(const std::string & directory){
 void OTFData::generate_coefficients(){
     __generate_A_matrices__();
     __solve__();
+}
+
+void OTFData::write_coefficients(){
+    H5::FileCreatPropList fcpl;
+    H5::FileAccPropList fapl;
+    H5::H5File file(otf_output_file, H5F_ACC_TRUNC, fcpl, fapl);
+
+    writeHDF5Int(file, za, "ZA");
+    writeHDF5Int(file, mat, "MAT");
+    writeHDF5Double(file, a0, "A0");
+    writeHDF5Double(file, e_max, "E_MAX");
+    writeHDF5Double(file, m0, "M0");
+    writeHDF5Double(file, free_xs, "FREE_XS");
+    writeHDF5Double(file, bound_xs, "BOUND_XS");
+
+    writeHDF5Double(file, temps.front(), "Minimum Temperature");
+    writeHDF5Double(file, temps.back(), "Maximum Temperature");
+    writeHDF5Double(file, temp_scale_min, "Minimum Scaled Temperature");
+    writeHDF5Double(file, temp_scale_max, "Maximum Scaled Temperature");
+
+    writeHDF5DoubleVector(file, inc_energy_grid, "Incident Energy Grid");
+    writeHDF5DoubleVector(file, beta_cdf_grid, "Beta CDF Grid");
+    writeHDF5DoubleVector(file, beta_grid, "Beta Grid");
+    writeHDF5DoubleVector(file, alpha_cdf_grid, "Alpha CDF Grid");
+
+    __write_xs_Coeffs__(file, xs_coeffs, "XS_Coefficients");
+    __write_fit_Coeffs__(file, beta_coeffs, "Beta Coefficients");
+    __write_fit_Coeffs__(file, alpha_coeffs, "Alpha Coefficients");
 }
 
 void OTFData::__generate_A_matrices__(){

@@ -49,4 +49,7 @@ extern int num_xs_coeffs;
 extern int num_beta_coeffs;
 extern int num_alpha_coeffs;
 
+extern double temp_scale_min;
+extern double temp_scale_max;
+
 #endif

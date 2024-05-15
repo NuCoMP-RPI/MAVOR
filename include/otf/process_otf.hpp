@@ -49,7 +49,7 @@ class OTFData{
         void __generate_A_matrices__();
         void __fill_A_matrices__();
         Eigen::VectorXd __eval_fit_func__(double const & x, int const & number);
-
+        void __solve__();
 };
 
 #endif

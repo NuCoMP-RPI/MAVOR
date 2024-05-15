@@ -42,9 +42,16 @@ OTFData::OTFData(const std::string & directory){
     // Initialize xs vector
     ii_xs.resize(inc_energy_grid.size(), Eigen::VectorXd(num_files));
 
+    // Initialize xs coefficient vector
+    xs_coeffs.resize(inc_energy_grid.size(), Eigen::VectorXd(num_xs_coeffs));
+
     // Initialize the vectors for storing the fit values (ordering needs to be <g1, g2, temps>)
     fit_beta_vals.resize(inc_energy_grid.size(), std::vector<Eigen::VectorXd>(beta_cdf_grid.size(), Eigen::VectorXd(num_files)));
     fit_alpha_vals.resize(beta_grid.size(), std::vector<Eigen::VectorXd>(alpha_cdf_grid.size(), Eigen::VectorXd(num_files)));
+
+    // Initialize the vectors for storing the coefficients (ordering needs to be <g1, g2, coeffs>)
+    beta_coeffs.resize(inc_energy_grid.size(), std::vector<Eigen::VectorXd>(beta_cdf_grid.size(), Eigen::VectorXd(num_beta_coeffs)));
+    alpha_coeffs.resize(beta_grid.size(), std::vector<Eigen::VectorXd>(alpha_cdf_grid.size(), Eigen::VectorXd(num_alpha_coeffs)));
 
     // load in beta vals and xs
     for (int i = 0; i<inc_energy_grid.size(); i++){
@@ -101,6 +108,7 @@ OTFData::OTFData(const std::string & directory){
 
 void OTFData::generate_coefficients(){
     __generate_A_matrices__();
+    __solve__();
 }
 
 void OTFData::__generate_A_matrices__(){
@@ -130,6 +138,40 @@ Eigen::VectorXd OTFData::__eval_fit_func__(double const & x, int const & number)
         eval(i) = eval(i-1) * x;
     }
     return eval;
+}
+
+void OTFData::__solve__(){
+    // XS
+    for (int i = 0; i<inc_energy_grid.size(); i++){
+        // // SVD
+        // xs_coeffs[i] = xs_A.template bdcSvd<Eigen::ComputeThinU | Eigen::ComputeThinV>().solve(ii_xs[i]);
+        // // Full pivot QR
+        // xs_coeffs[i] = xs_A.fullPivHouseholderQr().solve(ii_xs[i]);
+        // // Normal Equations
+        xs_coeffs[i] = (xs_A.transpose() * xs_A).ldlt().solve(xs_A.transpose() * ii_xs[i]);
+    }
+    // BETA
+    for (int i = 0; i<inc_energy_grid.size(); i++){
+        for (int j = 0; j<beta_cdf_grid.size(); j++){
+            // // SVD
+            // beta_coeffs[i][j] = beta_A.template bdcSvd<Eigen::ComputeThinU | Eigen::ComputeThinV>().solve(fit_beta_vals[i][j]);
+            // // Full pivot QR
+            // beta_coeffs[i][j] = beta_A.fullPivHouseholderQr().solve(fit_beta_vals[i][j]);
+            // // Normal Equations
+            beta_coeffs[i][j] = (beta_A.transpose() * beta_A).ldlt().solve(beta_A.transpose() * fit_beta_vals[i][j]);
+        }
+    }
+    //ALPHA
+    for (int i = 0; i<beta_grid.size(); i++){
+        for (int j = 0; j<alpha_cdf_grid.size(); j++){
+            // // SVD
+            // alpha_coeffs[i][j] = alpha_A.template bdcSvd<Eigen::ComputeThinU | Eigen::ComputeThinV>().solve(fit_alpha_vals[i][j]);
+            // // Full pivot QR
+            // alpha_coeffs[i][j] = alpha_A.fullPivHouseholderQr().solve(fit_alpha_vals[i][j]);
+            // // Normal Equations
+            alpha_coeffs[i][j] = (alpha_A.transpose() * alpha_A).ldlt().solve(alpha_A.transpose() * fit_alpha_vals[i][j]);
+        }
+    }
 }
 
 template<typename T> void OTFData::__check__(T const & val_1, T const & val_2, std::string const item_name){

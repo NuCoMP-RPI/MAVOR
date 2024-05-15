@@ -18,6 +18,7 @@ class OTFData{
         double bound_xs;
 
         std::vector<double> temps;
+        std::vector<double> scaled_temps;
 
         std::vector<double> inc_energy_grid;
         // order is <inc_ene, temp>
@@ -31,6 +32,13 @@ class OTFData{
         //order is <beta, a_cdf, temp>
         std::vector<std::vector<Eigen::VectorXd>> fit_alpha_vals;
 
+        Eigen::MatrixXd xs_A;
+        Eigen::MatrixXd beta_A;
+        Eigen::MatrixXd alpha_A;
+        std::vector<Eigen::VectorXd> xs_coeffs;
+        std::vector<std::vector<Eigen::VectorXd>> beta_coeffs;
+        std::vector<std::vector<Eigen::VectorXd>> alpha_coeffs;
+
         // Constructor
         OTFData(const std::string & directory);
 
@@ -38,7 +46,9 @@ class OTFData{
 
     private:
         template<typename T> void __check__(T const & val_1, T const & val_2, std::string const item_name);
-        void __generate_A_matrix__();
+        void __generate_A_matrices__();
+        void __fill_A_matrices__();
+        Eigen::VectorXd __eval_fit_func__(double const & x, int const & number);
 
 };
 

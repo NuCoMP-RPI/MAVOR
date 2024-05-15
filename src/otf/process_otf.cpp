@@ -7,6 +7,8 @@
 
 #include "process_otf.hpp"
 #include "sab_file.hpp"
+#include "scale_basis.hpp"
+#include "runtime_variables.hpp"
 
 OTFData::OTFData(const std::string & directory){
     std::map<double, SabData, std::less<double>> files;
@@ -98,11 +100,36 @@ OTFData::OTFData(const std::string & directory){
 }
 
 void OTFData::generate_coefficients(){
-    __generate_A_matrix__();
+    __generate_A_matrices__();
 }
 
-void OTFData::__generate_A_matrix__(){
+void OTFData::__generate_A_matrices__(){
+    scaled_temps = scale_array(temps);
+    xs_A.resize(scaled_temps.size(), num_xs_coeffs);
+    beta_A.resize(scaled_temps.size(), num_beta_coeffs);
+    alpha_A.resize(scaled_temps.size(), num_alpha_coeffs);
+    __fill_A_matrices__();
+}
 
+void OTFData::__fill_A_matrices__(){
+    for (int i = 0; i<scaled_temps.size(); i++){
+        Eigen::VectorXd evaled_xs_points = __eval_fit_func__(scaled_temps[i], num_xs_coeffs);
+        xs_A(i, Eigen::placeholders::all) = evaled_xs_points;
+        Eigen::VectorXd evaled_beta_points = __eval_fit_func__(scaled_temps[i], num_beta_coeffs);
+        beta_A(i, Eigen::placeholders::all) = evaled_beta_points;
+        Eigen::VectorXd evaled_alpha_points = __eval_fit_func__(scaled_temps[i], num_alpha_coeffs);
+        alpha_A(i, Eigen::placeholders::all) = evaled_alpha_points;
+    }
+}
+
+Eigen::VectorXd OTFData::__eval_fit_func__(double const & x, int const & number){
+    // NOTE: Only basic polynomial fitting is implemented here.  
+    Eigen::VectorXd eval(number);
+    eval(0) = 1;
+    for (int i = 1; i<number; i++){
+        eval(i) = eval(i-1) * x;
+    }
+    return eval;
 }
 
 template<typename T> void OTFData::__check__(T const & val_1, T const & val_2, std::string const item_name){

@@ -45,4 +45,8 @@ extern int num_energies;
 extern std::string otf_input_directory;
 extern std::string otf_output_file;
 
+extern int num_xs_coeffs;
+extern int num_beta_coeffs;
+extern int num_alpha_coeffs;
+
 #endif

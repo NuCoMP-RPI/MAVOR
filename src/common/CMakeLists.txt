@@ -6,6 +6,7 @@ target_sources(common_lib PRIVATE
                "${CMAKE_CURRENT_LIST_DIR}/interpolation.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/linearize.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/hdf5_file.cpp"
+               "${CMAKE_CURRENT_LIST_DIR}/scale_basis.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/utilities.cpp")
 
 # Link HDF5 library

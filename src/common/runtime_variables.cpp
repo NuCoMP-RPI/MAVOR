@@ -42,3 +42,7 @@ int num_energies = 105;
 
 std::string otf_input_directory = "/home/blakec4/extra_space/My_Programs/test_Mavor/Unioned_Results/HinYH2";
 std::string otf_output_file = "OTF_Coefficients.h5";
+
+int num_xs_coeffs = 6;
+int num_beta_coeffs = 6;
+int num_alpha_coeffs = 6;

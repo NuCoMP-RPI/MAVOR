@@ -206,9 +206,8 @@ void OTFData::__fill_A_matrices__(){
 Eigen::VectorXd OTFData::__eval_fit_func__(double const & x, int const & number, FuncPointer func){
     // NOTE: Only basic polynomial fitting is implemented here.  
     Eigen::VectorXd eval(number);
-    eval(0) = 1;
-    for (int i = 1; i<number; i++){
-        eval(i) = eval(i-1) * x;
+    for (int i = 0; i<number; i++){
+        eval(i) = func(x, i);
     }
     return eval;
 }

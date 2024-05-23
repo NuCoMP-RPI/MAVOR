@@ -65,6 +65,12 @@ int main(int argc, char* argv[]){
     otf.ignore_case();
     otf.add_option("-i, --input_directory", otf_input_directory, "Sets the location of the SAB sampling distributions.");
     otf.add_option("-o,--output_file", otf_output_file, "Sets the file name (and path) to store the OTF sampling coefficients.");
+    otf.add_flag("--no_temp_scale", scale_temp, "Disables the scaling of the temperature for OTF fitting.");
+    otf.add_option("--min_scale", temp_scale_min, "Sets the minimum value to which the minimum temperature is scaled.");
+    otf.add_option("--max_scale", temp_scale_max, "Sets the maximum value to which the maximum temperature is scaled.");
+    auto energy_fitting_function_option = otf.add_option("--energy_fit_func", energy_fit_function, "Sets the fitting function to be used for the OTF fitting of the energies.");
+    auto beta_fitting_function_option = otf.add_option("--beta_fit_func", beta_fit_function, "Sets the fitting function to be used for the OTF fitting of the betas.");
+    auto alpha_fitting_function_option = otf.add_option("--alpha_fit_func", alpha_fit_function, "Sets the fitting function to be used for the OTF fitting of the alphas.");
 
     // Parse the command line arguments
     CLI11_PARSE(mavor, argc, argv);

@@ -47,5 +47,9 @@ int num_xs_coeffs = 6;
 int num_beta_coeffs = 6;
 int num_alpha_coeffs = 6;
 
+bool scale_temp = true;
 double temp_scale_min = -1;
 double temp_scale_max = 1;
+int energy_fit_function = 4;
+int beta_fit_function = 8;
+int alpha_fit_function = 13;

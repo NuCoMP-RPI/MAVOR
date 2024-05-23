@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 
+#include "fitting_function.hpp"
+
 class OTFData{
     public:
         // Variables 
@@ -50,7 +52,7 @@ class OTFData{
         template<typename T> void __check__(T const & val_1, T const & val_2, std::string const item_name);
         void __generate_A_matrices__();
         void __fill_A_matrices__();
-        Eigen::VectorXd __eval_fit_func__(double const & x, int const & number);
+        Eigen::VectorXd __eval_fit_func__(double const & x, int const & number, FuncPointer func);
         void __solve__();
 };
 

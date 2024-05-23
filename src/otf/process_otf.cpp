@@ -12,6 +12,8 @@
 #include "runtime_variables.hpp"
 #include "hdf5_file.hpp"
 
+#include "fitting_function.hpp"
+
 void __write_xs_Coeffs__(H5::H5File file, std::vector<Eigen::VectorXd> const & matrix, std::string const & matrix_name){
     hsize_t dims[2] = {matrix.size(), static_cast<hsize_t>(matrix[0].size())};
     H5::DataSpace dataspace(2, dims);
@@ -180,17 +182,28 @@ void OTFData::__generate_A_matrices__(){
 }
 
 void OTFData::__fill_A_matrices__(){
+    std::pair<std::string, FuncPointer> energy_fit_func_pair = fitting_functions.find(energy_fit_function)->second;
+    FuncPointer energy_func = energy_fit_func_pair.second;
+    std::pair<std::string, FuncPointer> beta_fit_func_pair = fitting_functions.find(beta_fit_function)->second;
+    FuncPointer beta_func = beta_fit_func_pair.second;
+    std::pair<std::string, FuncPointer> alpha_fit_func_pair = fitting_functions.find(alpha_fit_function)->second;
+    FuncPointer alpha_func = alpha_fit_func_pair.second;
+    if (!silence){
+        std::cout << "Energy fitting function selected | " << energy_fit_func_pair.first << std::endl;
+        std::cout << "Beta fitting function selected | " << beta_fit_func_pair.first << std::endl;
+        std::cout << "Alpha fitting function selected | " << alpha_fit_func_pair.first << std::endl;
+    }
     for (int i = 0; i<scaled_temps.size(); i++){
-        Eigen::VectorXd evaled_xs_points = __eval_fit_func__(scaled_temps[i], num_xs_coeffs);
+        Eigen::VectorXd evaled_xs_points = __eval_fit_func__(scaled_temps[i], num_xs_coeffs, energy_func);
         xs_A(i, Eigen::placeholders::all) = evaled_xs_points;
-        Eigen::VectorXd evaled_beta_points = __eval_fit_func__(scaled_temps[i], num_beta_coeffs);
+        Eigen::VectorXd evaled_beta_points = __eval_fit_func__(scaled_temps[i], num_beta_coeffs, beta_func);
         beta_A(i, Eigen::placeholders::all) = evaled_beta_points;
-        Eigen::VectorXd evaled_alpha_points = __eval_fit_func__(scaled_temps[i], num_alpha_coeffs);
+        Eigen::VectorXd evaled_alpha_points = __eval_fit_func__(scaled_temps[i], num_alpha_coeffs, alpha_func);
         alpha_A(i, Eigen::placeholders::all) = evaled_alpha_points;
     }
 }
 
-Eigen::VectorXd OTFData::__eval_fit_func__(double const & x, int const & number){
+Eigen::VectorXd OTFData::__eval_fit_func__(double const & x, int const & number, FuncPointer func){
     // NOTE: Only basic polynomial fitting is implemented here.  
     Eigen::VectorXd eval(number);
     eval(0) = 1;

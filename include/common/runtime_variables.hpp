@@ -49,7 +49,11 @@ extern int num_xs_coeffs;
 extern int num_beta_coeffs;
 extern int num_alpha_coeffs;
 
+extern bool scale_temp;
 extern double temp_scale_min;
 extern double temp_scale_max;
+extern int energy_fit_function;
+extern int beta_fit_function;
+extern int alpha_fit_function;
 
 #endif

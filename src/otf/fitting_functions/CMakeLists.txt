@@ -2,7 +2,7 @@ add_library(fitting_functions_lib)
 
 target_sources(fitting_functions_lib PRIVATE
                "${CMAKE_CURRENT_LIST_DIR}/fitting_function.cpp"
-               "${CMAKE_CURRENT_LIST_DIR}/chebychev.cpp"
+               "${CMAKE_CURRENT_LIST_DIR}/chebyshev.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/cosine.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/exponential.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/inverse_exponential.cpp"

@@ -19,4 +19,5 @@ target_sources(fitting_functions_lib PRIVATE
                "${CMAKE_CURRENT_LIST_DIR}/sqrt_power.cpp"
                )
 
-target_include_directories(fitting_functions_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/otf/fitting_functions")
+target_include_directories(fitting_functions_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/otf/fitting_functions"
+                                                         "${CMAKE_SOURCE_DIR}/include/common")

@@ -1,5 +1,9 @@
+#include <math.h>
+
 #include "cosine.hpp"
 
+#include "constants.hpp"
+
 double eval_cosine_order(double const & x, int const order){
-    return 1;
+    return cos(order*2*PI*x);
 }

@@ -16,7 +16,7 @@
 #include "sqrt_log_power.hpp"
 #include "sqrt_power.hpp"
 
-std::map<int, std::pair<std::string, FuncPointer>> fitting_functions = {
+std::map<int, FitFunction> fitting_functions = {
     {0, {"Chebyshev", eval_chebyshev_order}},
     {1, {"cosine", eval_cosine_order}},
     {2, {"exponential", eval_exponential_order}},

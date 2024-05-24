@@ -5,7 +5,8 @@
 #include <iostream>
 
 typedef double(*FuncPointer)(const double &, const int);
+typedef std::pair<std::string, FuncPointer> FitFunction;
 
-extern std::map<int, std::pair<std::string, FuncPointer>> fitting_functions;
+extern std::map<int, FitFunction> fitting_functions;
 
 #endif

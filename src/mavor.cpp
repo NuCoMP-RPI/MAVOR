@@ -65,12 +65,33 @@ int main(int argc, char* argv[]){
     otf.ignore_case();
     otf.add_option("-i, --input_directory", otf_input_directory, "Sets the location of the SAB sampling distributions.");
     otf.add_option("-o,--output_file", otf_output_file, "Sets the file name (and path) to store the OTF sampling coefficients.");
-    otf.add_flag("--no_temp_scale", scale_temp, "Disables the scaling of the temperature for OTF fitting.");
-    otf.add_option("--min_scale", temp_scale_min, "Sets the minimum value to which the minimum temperature is scaled.");
-    otf.add_option("--max_scale", temp_scale_max, "Sets the maximum value to which the maximum temperature is scaled.");
-    auto energy_fitting_function_option = otf.add_option("--energy_fit_func", energy_fit_function, "Sets the fitting function to be used for the OTF fitting of the energies.");
-    auto beta_fitting_function_option = otf.add_option("--beta_fit_func", beta_fit_function, "Sets the fitting function to be used for the OTF fitting of the betas.");
-    auto alpha_fitting_function_option = otf.add_option("--alpha_fit_func", alpha_fit_function, "Sets the fitting function to be used for the OTF fitting of the alphas.");
+
+    auto xs_override_flag = otf.add_flag("--xs_fit", xs_fit_override, "Flag to indicate overriding the XS fitting settings. Invokes Override XS option group.");
+    auto &xs = *otf.add_option_group("Override XS fitting function settings.");
+    xs.needs(xs_override_flag);
+    xs.add_option("--xs_num", xs_num_coeffs, "Sets the number of coefficient to generate.")->required();
+    xs.add_option("--xs_scale", xs_scale_temp, "Sets whether to scale the temperatures before fitting.")->required();
+    xs.add_option("--xs_scale_min", xs_temp_scale_min, "Sets the minimum value to scale the temperature.")->required();
+    xs.add_option("--xs_scale_max", xs_temp_scale_max, "Sets the maximum value to scale the temperature")->required();
+    xs.add_option("--xs_fit_func", xs_fit_function, "Sets the fitting function to be used.")->required();
+
+    auto beta_override_flag = otf.add_flag("--beta_fit", beta_fit_override, "Flag to indicate overriding the BETA fitting settings. Invokes Override BETA option group.");
+    auto &beta = *otf.add_option_group("Override BETA fitting function settings.");
+    beta.needs(beta_override_flag);
+    beta.add_option("--beta_num", beta_num_coeffs, "Sets the number of coefficient to generate.")->required();
+    beta.add_option("--beta_scale", beta_scale_temp, "Sets whether to scale the temperatures before fitting.")->required();
+    beta.add_option("--beta_scale_min", beta_temp_scale_min, "Sets the minimum value to scale the temperature.")->required();
+    beta.add_option("--beta_scale_max", beta_temp_scale_max, "Sets the maximum value to scale the temperature")->required();
+    beta.add_option("--beta_fit_func", beta_fit_function, "Sets the fitting function to be used.")->required();
+
+    auto alpha_override_flag = otf.add_flag("--alpha_fit", alpha_fit_override, "Flag to indicate overriding the ALPHA fitting settings. Invokes Override ALPHA option group.");
+    auto &alpha = *otf.add_option_group("Override ALPHA fitting function settings.");
+    alpha.needs(alpha_override_flag);
+    alpha.add_option("--alpha_num", alpha_num_coeffs, "Sets the number of XS coefficient to generate.")->required();
+    alpha.add_option("--alpha_scale", alpha_scale_temp, "Sets whether to scale the temperatures before fitting.")->required();
+    alpha.add_option("--alpha_scale_min", alpha_temp_scale_min, "Sets the minimum value to scale the temperature.")->required();
+    alpha.add_option("--alpha_scale_max", alpha_temp_scale_max, "Sets the maximum value to scale the temperature")->required();
+    alpha.add_option("--alpha_fit_func", alpha_fit_function, "Sets the fitting function to be used.")->required();
 
     // Parse the command line arguments
     CLI11_PARSE(mavor, argc, argv);

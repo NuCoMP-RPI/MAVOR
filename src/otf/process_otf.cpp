@@ -77,15 +77,15 @@ OTFData::OTFData(const std::string & directory){
     ii_xs.resize(inc_energy_grid.size(), Eigen::VectorXd(num_files));
 
     // Initialize xs coefficient vector
-    xs_coeffs.resize(inc_energy_grid.size(), Eigen::VectorXd(num_xs_coeffs));
+    xs_coeffs.resize(inc_energy_grid.size(), Eigen::VectorXd(xs_num_coeffs));
 
     // Initialize the vectors for storing the fit values (ordering needs to be <g1, g2, temps>)
     fit_beta_vals.resize(inc_energy_grid.size(), std::vector<Eigen::VectorXd>(beta_cdf_grid.size(), Eigen::VectorXd(num_files)));
     fit_alpha_vals.resize(beta_grid.size(), std::vector<Eigen::VectorXd>(alpha_cdf_grid.size(), Eigen::VectorXd(num_files)));
 
     // Initialize the vectors for storing the coefficients (ordering needs to be <g1, g2, coeffs>)
-    beta_coeffs.resize(inc_energy_grid.size(), std::vector<Eigen::VectorXd>(beta_cdf_grid.size(), Eigen::VectorXd(num_beta_coeffs)));
-    alpha_coeffs.resize(beta_grid.size(), std::vector<Eigen::VectorXd>(alpha_cdf_grid.size(), Eigen::VectorXd(num_alpha_coeffs)));
+    beta_coeffs.resize(inc_energy_grid.size(), std::vector<Eigen::VectorXd>(beta_cdf_grid.size(), Eigen::VectorXd(beta_num_coeffs)));
+    alpha_coeffs.resize(beta_grid.size(), std::vector<Eigen::VectorXd>(alpha_cdf_grid.size(), Eigen::VectorXd(alpha_num_coeffs)));
 
     // load in beta vals and xs
     for (int i = 0; i<inc_energy_grid.size(); i++){
@@ -160,8 +160,12 @@ void OTFData::write_coefficients(){
 
     writeHDF5Double(file, temps.front(), "Minimum Temperature");
     writeHDF5Double(file, temps.back(), "Maximum Temperature");
-    writeHDF5Double(file, temp_scale_min, "Minimum Scaled Temperature");
-    writeHDF5Double(file, temp_scale_max, "Maximum Scaled Temperature");
+    writeHDF5Double(file, xs_temp_scale_min, "XS Minimum Scaled Value");
+    writeHDF5Double(file, xs_temp_scale_max, "XS Maximum Scaled Value");
+    writeHDF5Double(file, beta_temp_scale_min, "Beta Minimum Scaled Value");
+    writeHDF5Double(file, beta_temp_scale_max, "Beta Maximum Scaled Value");
+    writeHDF5Double(file, alpha_temp_scale_min, "Alpha Minimum Scaled Value");
+    writeHDF5Double(file, alpha_temp_scale_max, "Alpha Maximum Scaled Value");
 
     writeHDF5DoubleVector(file, inc_energy_grid, "Incident Energy Grid");
     writeHDF5DoubleVector(file, beta_cdf_grid, "Beta CDF Grid");
@@ -175,14 +179,14 @@ void OTFData::write_coefficients(){
 
 void OTFData::__generate_A_matrices__(){
     scaled_temps = scale_array(temps);
-    xs_A.resize(scaled_temps.size(), num_xs_coeffs);
-    beta_A.resize(scaled_temps.size(), num_beta_coeffs);
-    alpha_A.resize(scaled_temps.size(), num_alpha_coeffs);
+    xs_A.resize(scaled_temps.size(), xs_num_coeffs);
+    beta_A.resize(scaled_temps.size(), beta_num_coeffs);
+    alpha_A.resize(scaled_temps.size(), alpha_num_coeffs);
     __fill_A_matrices__();
 }
 
 void OTFData::__fill_A_matrices__(){
-    std::pair<std::string, FuncPointer> energy_fit_func_pair = fitting_functions.find(energy_fit_function)->second;
+    std::pair<std::string, FuncPointer> energy_fit_func_pair = fitting_functions.find(xs_fit_function)->second;
     FuncPointer energy_func = energy_fit_func_pair.second;
     std::pair<std::string, FuncPointer> beta_fit_func_pair = fitting_functions.find(beta_fit_function)->second;
     FuncPointer beta_func = beta_fit_func_pair.second;
@@ -194,11 +198,11 @@ void OTFData::__fill_A_matrices__(){
         std::cout << "Alpha fitting function selected | " << alpha_fit_func_pair.first << std::endl;
     }
     for (int i = 0; i<scaled_temps.size(); i++){
-        Eigen::VectorXd evaled_xs_points = __eval_fit_func__(scaled_temps[i], num_xs_coeffs, energy_func);
+        Eigen::VectorXd evaled_xs_points = __eval_fit_func__(scaled_temps[i], xs_num_coeffs, energy_func);
         xs_A(i, Eigen::placeholders::all) = evaled_xs_points;
-        Eigen::VectorXd evaled_beta_points = __eval_fit_func__(scaled_temps[i], num_beta_coeffs, beta_func);
+        Eigen::VectorXd evaled_beta_points = __eval_fit_func__(scaled_temps[i], beta_num_coeffs, beta_func);
         beta_A(i, Eigen::placeholders::all) = evaled_beta_points;
-        Eigen::VectorXd evaled_alpha_points = __eval_fit_func__(scaled_temps[i], num_alpha_coeffs, alpha_func);
+        Eigen::VectorXd evaled_alpha_points = __eval_fit_func__(scaled_temps[i], alpha_num_coeffs, alpha_func);
         alpha_A(i, Eigen::placeholders::all) = evaled_alpha_points;
     }
 }

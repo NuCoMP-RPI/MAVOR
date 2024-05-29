@@ -43,6 +43,20 @@ int num_energies = 105;
 std::string otf_input_directory = "/home/blakec4/extra_space/My_Programs/test_Mavor/Unioned_Results/HinYH2";
 std::string otf_output_file = "OTF_Coefficients.h5";
 
+bool basic_xs_fit_override = false;
+bool basic_beta_fit_override = false;
+bool basic_alpha_fit_override = false;
+bool full_xs_fit_override = false;
+bool full_beta_fit_override = false;
+bool full_alpha_fit_override = false;
+
+int user_predefined_xs_fit = 0;
+int user_predefined_xs_num_coeffs = 5;
+int user_predefined_beta_fit = 0;
+int user_predefined_beta_num_coeffs = 5;
+int user_predefined_alpha_fit = 0;
+int user_predefined_alpha_num_coeffs = 5;
+
 // These defaults don't mean anything and should be overwritten later when processing
 int xs_num_coeffs = 5;
 bool xs_scale_temp = true;

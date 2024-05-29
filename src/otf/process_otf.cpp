@@ -264,12 +264,21 @@ void OTFData::write_coefficients(){
 
     writeHDF5Double(file, temps.front(), "Minimum Temperature");
     writeHDF5Double(file, temps.back(), "Maximum Temperature");
-    writeHDF5Double(file, xs_temp_scale_min, "XS Minimum Scaled Value");
-    writeHDF5Double(file, xs_temp_scale_max, "XS Maximum Scaled Value");
-    writeHDF5Double(file, beta_temp_scale_min, "Beta Minimum Scaled Value");
-    writeHDF5Double(file, beta_temp_scale_max, "Beta Maximum Scaled Value");
-    writeHDF5Double(file, alpha_temp_scale_min, "Alpha Minimum Scaled Value");
-    writeHDF5Double(file, alpha_temp_scale_max, "Alpha Maximum Scaled Value");
+
+    writeHDF5Bool(file, class_xs_scale_temp, "Scale XS temperatures");
+    writeHDF5Double(file, class_xs_temp_scale_min, "XS Minimum Scaled Value");
+    writeHDF5Double(file, class_xs_temp_scale_max, "XS Maximum Scaled Value");
+    writeHDF5String(file, class_xs_fit_function.first, "XS Fitting Function");
+    
+    writeHDF5Bool(file, class_beta_scale_temp, "Scale Beta temperatures");
+    writeHDF5Double(file, class_beta_temp_scale_min, "Beta Minimum Scaled Value");
+    writeHDF5Double(file, class_beta_temp_scale_max, "Beta Maximum Scaled Value");
+    writeHDF5String(file, class_beta_fit_function.first, "Beta Fitting Function");
+
+    writeHDF5Bool(file, class_alpha_scale_temp, "Scale Alpha temperatures");
+    writeHDF5Double(file, class_alpha_temp_scale_min, "Alpha Minimum Scaled Value");
+    writeHDF5Double(file, class_alpha_temp_scale_max, "Alpha Maximum Scaled Value");
+    writeHDF5String(file, class_alpha_fit_function.first, "Alpha Fitting Function");
 
     writeHDF5DoubleVector(file, inc_energy_grid, "Incident Energy Grid");
     writeHDF5DoubleVector(file, beta_cdf_grid, "Beta CDF Grid");

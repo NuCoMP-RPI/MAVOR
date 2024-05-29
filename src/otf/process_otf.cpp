@@ -12,7 +12,7 @@
 #include "runtime_variables.hpp"
 #include "hdf5_file.hpp"
 
-#include "fitting_function.hpp"
+#include "predefined_fit_settings.hpp"
 
 void __write_xs_Coeffs__(H5::H5File file, std::vector<Eigen::VectorXd> const & matrix, std::string const & matrix_name){
     hsize_t dims[2] = {matrix.size(), static_cast<hsize_t>(matrix[0].size())};
@@ -138,6 +138,110 @@ OTFData::OTFData(const std::string & directory){
         it++;
         k++;
     }
+
+    // Load in the fit settings
+    load_fit_settings__();
+}
+
+void OTFData::load_fit_settings__(){
+    MatPredefinedFitMap::iterator default_fits_it = material_predefined_fits.find(mat);
+    if (default_fits_it != material_predefined_fits.end()) {
+        if (!silence){std::cout << "Found the material fit settings." << std::endl;}
+        load_material_fit_settings__(default_fits_it);
+    } 
+    else {
+        if (!silence){std::cout << "Material does not have predefined settings.  Loading the default fit.";}
+        load_default_fit_settings__();
+    }
+    if (!silence){std::cout << "Overriding fit settings if desired." << std::endl;}
+    override_fit_settings__();
+}
+
+void OTFData::load_material_fit_settings__(MatPredefinedFitMap::iterator mat_it){
+    MatPredefinedFits all_fits = mat_it->second;
+    PredefinedFit xs_fit = std::get<0>(all_fits);
+    PredefinedFit beta_fit = std::get<1>(all_fits);
+    PredefinedFit alpha_fit = std::get<2>(all_fits);
+
+    PredefinedFitSettings xs_fit_settings = xs_fit.first;
+    class_xs_num_coeffs = xs_fit.second;
+    class_xs_scale_temp = std::get<0>(xs_fit_settings.second);
+    class_xs_temp_scale_min = std::get<1>(xs_fit_settings.second);
+    class_xs_temp_scale_max = std::get<2>(xs_fit_settings.second);
+    class_xs_fit_function = std::get<3>(xs_fit_settings.second);
+
+    PredefinedFitSettings beta_fit_settings = beta_fit.first;
+    class_beta_num_coeffs = beta_fit.second;
+    class_beta_scale_temp = std::get<0>(beta_fit_settings.second);
+    class_beta_temp_scale_min = std::get<1>(beta_fit_settings.second);
+    class_beta_temp_scale_max = std::get<2>(beta_fit_settings.second);
+    class_beta_fit_function = std::get<3>(beta_fit_settings.second);
+
+    PredefinedFitSettings alpha_fit_settings = alpha_fit.first;
+    class_alpha_num_coeffs = alpha_fit.second;
+    class_alpha_scale_temp = std::get<0>(alpha_fit_settings.second);
+    class_alpha_temp_scale_min = std::get<1>(alpha_fit_settings.second);
+    class_alpha_temp_scale_max = std::get<2>(alpha_fit_settings.second);
+    class_alpha_fit_function = std::get<3>(alpha_fit_settings.second);
+}
+
+void OTFData::load_default_fit_settings__(){
+    FitSettings fitset = default_fit.first.second;
+    int num = default_fit.second;
+    bool scale = std::get<0>(fitset);
+    double min = std::get<1>(fitset);
+    double max = std::get<2>(fitset);
+    FitFunction func = std::get<3>(fitset);
+
+    class_xs_num_coeffs = num;
+    class_xs_scale_temp = scale;
+    class_xs_temp_scale_min = min;
+    class_xs_temp_scale_max = max;
+    class_xs_fit_function = func;
+
+    class_beta_num_coeffs = num;
+    class_beta_scale_temp = scale;
+    class_beta_temp_scale_min = min;
+    class_beta_temp_scale_max = max;
+    class_beta_fit_function = func;
+
+    class_alpha_num_coeffs = num;
+    class_alpha_scale_temp = scale;
+    class_alpha_temp_scale_min = min;
+    class_alpha_temp_scale_max = max;
+    class_alpha_fit_function = func;
+}
+
+void OTFData::override_fit_settings__(){
+    if(xs_override_num_coeffs){class_xs_num_coeffs = xs_num_coeffs;}
+    if(xs_override_scale_temp){class_xs_scale_temp = xs_scale_temp;}
+    if(xs_override_temp_scale_min){class_xs_temp_scale_min = xs_temp_scale_min;}
+    if(xs_override_temp_scale_max){class_xs_temp_scale_max = xs_temp_scale_max;}
+    if(xs_override_fit_function){
+        MapFittingFunctions::iterator fit_func_it = fitting_functions.find(xs_fit_function);
+        if (fit_func_it != fitting_functions.end()){class_xs_fit_function = fit_func_it->second;}
+        else {throw std::range_error("Unknown XS fitting function.");}
+    }
+    
+    if(beta_override_num_coeffs){class_beta_num_coeffs = beta_num_coeffs;}
+    if(beta_override_scale_temp){class_beta_scale_temp = beta_scale_temp;}
+    if(beta_override_temp_scale_min){class_beta_temp_scale_min = beta_temp_scale_min;}
+    if(beta_override_temp_scale_max){class_beta_temp_scale_max = beta_temp_scale_max;}
+    if(beta_override_fit_function){        
+        MapFittingFunctions::iterator fit_func_it = fitting_functions.find(beta_fit_function);
+        if (fit_func_it != fitting_functions.end()){class_beta_fit_function = fit_func_it->second;}
+        else {throw std::range_error("Unknown BETA fitting function.");}
+    }
+    
+    if(alpha_override_num_coeffs){class_alpha_num_coeffs = alpha_num_coeffs;}
+    if(alpha_override_scale_temp){class_alpha_scale_temp = alpha_scale_temp;}
+    if(alpha_override_temp_scale_min){class_alpha_temp_scale_min = alpha_temp_scale_min;}
+    if(alpha_override_temp_scale_max){class_alpha_temp_scale_max = alpha_temp_scale_max;}
+    if(alpha_override_fit_function){        
+        MapFittingFunctions::iterator fit_func_it = fitting_functions.find(alpha_fit_function);
+        if (fit_func_it != fitting_functions.end()){class_alpha_fit_function = fit_func_it->second;}
+        else {throw std::range_error("Unknown ALPHA fitting function.");}
+    }
 }
 
 void OTFData::generate_coefficients(){
@@ -178,37 +282,35 @@ void OTFData::write_coefficients(){
 }
 
 void OTFData::__generate_A_matrices__(){
-    scaled_temps = scale_array(temps);
-    xs_A.resize(scaled_temps.size(), xs_num_coeffs);
-    beta_A.resize(scaled_temps.size(), beta_num_coeffs);
-    alpha_A.resize(scaled_temps.size(), alpha_num_coeffs);
+    if (class_xs_scale_temp){xs_temps = scale_array(temps, class_xs_temp_scale_min, class_xs_temp_scale_max);}
+    else {xs_temps = temps;}
+    if (class_beta_scale_temp){beta_temps = scale_array(temps, class_beta_temp_scale_min, class_beta_temp_scale_max);}
+    else {beta_temps = temps;}
+    if (class_alpha_scale_temp){alpha_temps = scale_array(temps, class_alpha_temp_scale_min, class_alpha_temp_scale_max);}
+    else {alpha_temps = temps;}
+    xs_A.resize(temps.size(), class_xs_num_coeffs);
+    beta_A.resize(temps.size(), class_beta_num_coeffs);
+    alpha_A.resize(temps.size(), class_alpha_num_coeffs);
     __fill_A_matrices__();
 }
 
 void OTFData::__fill_A_matrices__(){
-    std::pair<std::string, FuncPointer> energy_fit_func_pair = fitting_functions.find(xs_fit_function)->second;
-    FuncPointer energy_func = energy_fit_func_pair.second;
-    std::pair<std::string, FuncPointer> beta_fit_func_pair = fitting_functions.find(beta_fit_function)->second;
-    FuncPointer beta_func = beta_fit_func_pair.second;
-    std::pair<std::string, FuncPointer> alpha_fit_func_pair = fitting_functions.find(alpha_fit_function)->second;
-    FuncPointer alpha_func = alpha_fit_func_pair.second;
     if (!silence){
-        std::cout << "Energy fitting function selected | " << energy_fit_func_pair.first << std::endl;
-        std::cout << "Beta fitting function selected | " << beta_fit_func_pair.first << std::endl;
-        std::cout << "Alpha fitting function selected | " << alpha_fit_func_pair.first << std::endl;
+        std::cout << "Energy fitting function selected | " << class_xs_fit_function.first << std::endl;
+        std::cout << "Beta fitting function selected | " << class_beta_fit_function.first << std::endl;
+        std::cout << "Alpha fitting function selected | " << class_alpha_fit_function.first << std::endl;
     }
-    for (int i = 0; i<scaled_temps.size(); i++){
-        Eigen::VectorXd evaled_xs_points = __eval_fit_func__(scaled_temps[i], xs_num_coeffs, energy_func);
+    for (int i = 0; i<temps.size(); i++){
+        Eigen::VectorXd evaled_xs_points = __eval_fit_func__(xs_temps[i], class_xs_num_coeffs, class_xs_fit_function.second);
         xs_A(i, Eigen::placeholders::all) = evaled_xs_points;
-        Eigen::VectorXd evaled_beta_points = __eval_fit_func__(scaled_temps[i], beta_num_coeffs, beta_func);
+        Eigen::VectorXd evaled_beta_points = __eval_fit_func__(beta_temps[i], class_beta_num_coeffs, class_beta_fit_function.second);
         beta_A(i, Eigen::placeholders::all) = evaled_beta_points;
-        Eigen::VectorXd evaled_alpha_points = __eval_fit_func__(scaled_temps[i], alpha_num_coeffs, alpha_func);
+        Eigen::VectorXd evaled_alpha_points = __eval_fit_func__(alpha_temps[i], class_alpha_num_coeffs, class_alpha_fit_function.second);
         alpha_A(i, Eigen::placeholders::all) = evaled_alpha_points;
     }
 }
 
 Eigen::VectorXd OTFData::__eval_fit_func__(double const & x, int const & number, FuncPointer func){
-    // NOTE: Only basic polynomial fitting is implemented here.  
     Eigen::VectorXd eval(number);
     for (int i = 0; i<number; i++){
         eval(i) = func(x, i);

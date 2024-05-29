@@ -5,18 +5,23 @@
 #include <vector>
 #include <iostream>
 
-#include "fitting_function.hpp"
-
+typedef double(*FuncPointer)(const double &, const int);
+typedef std::pair<std::string, FuncPointer> FitFunction;
 typedef std::tuple<bool, double, double, FitFunction> FitSettings;
-
 typedef std::pair<std::string, FitSettings> PredefinedFitSettings;
-typedef std::map<int, PredefinedFitSettings> PredefinedFitSettingsMap;
 
 typedef std::pair<PredefinedFitSettings, int> PredefinedFit;
+typedef std::tuple<PredefinedFit, PredefinedFit, PredefinedFit> MatPredefinedFits;
 
-typedef std::map<int, std::tuple<PredefinedFit, PredefinedFit, PredefinedFit>> MatPredefinedFitMap;
+typedef std::map<int, FitFunction> MapFittingFunctions;
+extern MapFittingFunctions fitting_functions;
 
+typedef std::map<int, PredefinedFitSettings> PredefinedFitSettingsMap;
 extern PredefinedFitSettingsMap predefined_fit_settings;
+
+typedef std::map<int, MatPredefinedFits> MatPredefinedFitMap;
 extern MatPredefinedFitMap material_predefined_fits;
+
+extern PredefinedFit default_fit;
 
 #endif

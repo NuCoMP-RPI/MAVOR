@@ -45,25 +45,37 @@ extern int num_energies;
 extern std::string otf_input_directory;
 extern std::string otf_output_file;
 
-extern bool xs_fit_override;
 extern int xs_num_coeffs;
 extern bool xs_scale_temp;
 extern double xs_temp_scale_min;
 extern double xs_temp_scale_max;
 extern int xs_fit_function;
+extern bool xs_override_num_coeffs;
+extern bool xs_override_scale_temp;
+extern bool xs_override_temp_scale_min;
+extern bool xs_override_temp_scale_max;
+extern bool xs_override_fit_function;
 
-extern bool beta_fit_override;
 extern int beta_num_coeffs;
 extern bool beta_scale_temp;
 extern double beta_temp_scale_min;
 extern double beta_temp_scale_max;
 extern int beta_fit_function;
+extern bool beta_override_num_coeffs;
+extern bool beta_override_scale_temp;
+extern bool beta_override_temp_scale_min;
+extern bool beta_override_temp_scale_max;
+extern bool beta_override_fit_function;
 
-extern bool alpha_fit_override;
 extern int alpha_num_coeffs;
 extern bool alpha_scale_temp;
 extern double alpha_temp_scale_min;
 extern double alpha_temp_scale_max;
 extern int alpha_fit_function;
+extern bool alpha_override_num_coeffs;
+extern bool alpha_override_scale_temp;
+extern bool alpha_override_temp_scale_min;
+extern bool alpha_override_temp_scale_max;
+extern bool alpha_override_fit_function;
 
 #endif

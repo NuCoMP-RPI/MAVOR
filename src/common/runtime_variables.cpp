@@ -43,23 +43,38 @@ int num_energies = 105;
 std::string otf_input_directory = "/home/blakec4/extra_space/My_Programs/test_Mavor/Unioned_Results/HinYH2";
 std::string otf_output_file = "OTF_Coefficients.h5";
 
-bool xs_fit_override = false;
+// These defaults don't mean anything and should be overwritten later when processing
 int xs_num_coeffs = 5;
 bool xs_scale_temp = true;
 double xs_temp_scale_min = -1;
 double xs_temp_scale_max = 1;
 int xs_fit_function = 10;
+bool xs_override_num_coeffs = false;
+bool xs_override_scale_temp = false;
+bool xs_override_temp_scale_min = false;
+bool xs_override_temp_scale_max = false;
+bool xs_override_fit_function = false;
 
-bool beta_fit_override = false;
+// These defaults don't mean anything and should be overwritten later when processing
 int beta_num_coeffs = 5;
 bool beta_scale_temp = true;
 double beta_temp_scale_min = -1;
 double beta_temp_scale_max = 1;
 int beta_fit_function = 10;
+bool beta_override_num_coeffs = false;
+bool beta_override_scale_temp = false;
+bool beta_override_temp_scale_min = false;
+bool beta_override_temp_scale_max = false;
+bool beta_override_fit_function = false;
 
-bool alpha_fit_override = false;
+// These defaults don't mean anything and should be overwritten later when processing
 int alpha_num_coeffs = 5;
 bool alpha_scale_temp = true;
 double alpha_temp_scale_min = -1;
 double alpha_temp_scale_max = 1;
 int alpha_fit_function = 10;
+bool alpha_override_num_coeffs = false;
+bool alpha_override_scale_temp = false;
+bool alpha_override_temp_scale_min = false;
+bool alpha_override_temp_scale_max = false;
+bool alpha_override_fit_function = false;

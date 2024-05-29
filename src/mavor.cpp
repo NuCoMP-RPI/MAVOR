@@ -66,32 +66,29 @@ int main(int argc, char* argv[]){
     otf.add_option("-i, --input_directory", otf_input_directory, "Sets the location of the SAB sampling distributions.");
     otf.add_option("-o,--output_file", otf_output_file, "Sets the file name (and path) to store the OTF sampling coefficients.");
 
-    auto xs_override_flag = otf.add_flag("--xs_fit", xs_fit_override, "Flag to indicate overriding the XS fitting settings. Invokes Override XS option group.");
     auto &xs = *otf.add_option_group("Override XS fitting function settings.");
-    xs.needs(xs_override_flag);
-    xs.add_option("--xs_num", xs_num_coeffs, "Sets the number of coefficient to generate.")->required();
-    xs.add_option("--xs_scale", xs_scale_temp, "Sets whether to scale the temperatures before fitting.")->required();
-    xs.add_option("--xs_scale_min", xs_temp_scale_min, "Sets the minimum value to scale the temperature.")->required();
-    xs.add_option("--xs_scale_max", xs_temp_scale_max, "Sets the maximum value to scale the temperature")->required();
-    xs.add_option("--xs_fit_func", xs_fit_function, "Sets the fitting function to be used.")->required();
+    // xs.needs(xs_override_flag);
+    auto xs_num_coeffs_option = xs.add_option("--xs_num", xs_num_coeffs, "Sets the number of coefficient to generate.");
+    auto xs_scale_temp_option = xs.add_option("--xs_scale", xs_scale_temp, "Sets whether to scale the temperatures before fitting.");
+    auto xs_temp_scale_min_option = xs.add_option("--xs_scale_min", xs_temp_scale_min, "Sets the minimum value to scale the temperature.");
+    auto xs_temp_scale_max_option = xs.add_option("--xs_scale_max", xs_temp_scale_max, "Sets the maximum value to scale the temperature");
+    auto xs_fit_function_option = xs.add_option("--xs_fit_func", xs_fit_function, "Sets the fitting function to be used.");
 
-    auto beta_override_flag = otf.add_flag("--beta_fit", beta_fit_override, "Flag to indicate overriding the BETA fitting settings. Invokes Override BETA option group.");
     auto &beta = *otf.add_option_group("Override BETA fitting function settings.");
-    beta.needs(beta_override_flag);
-    beta.add_option("--beta_num", beta_num_coeffs, "Sets the number of coefficient to generate.")->required();
-    beta.add_option("--beta_scale", beta_scale_temp, "Sets whether to scale the temperatures before fitting.")->required();
-    beta.add_option("--beta_scale_min", beta_temp_scale_min, "Sets the minimum value to scale the temperature.")->required();
-    beta.add_option("--beta_scale_max", beta_temp_scale_max, "Sets the maximum value to scale the temperature")->required();
-    beta.add_option("--beta_fit_func", beta_fit_function, "Sets the fitting function to be used.")->required();
+    // beta.needs(beta_override_flag);
+    auto beta_num_coeffs_option = beta.add_option("--beta_num", beta_num_coeffs, "Sets the number of coefficient to generate.");
+    auto beta_scale_temp_option = beta.add_option("--beta_scale", beta_scale_temp, "Sets whether to scale the temperatures before fitting.");
+    auto beta_temp_scale_min_option = beta.add_option("--beta_scale_min", beta_temp_scale_min, "Sets the minimum value to scale the temperature.");
+    auto beta_temp_scale_max_option = beta.add_option("--beta_scale_max", beta_temp_scale_max, "Sets the maximum value to scale the temperature");
+    auto beta_fit_function_option = beta.add_option("--beta_fit_func", beta_fit_function, "Sets the fitting function to be used.");
 
-    auto alpha_override_flag = otf.add_flag("--alpha_fit", alpha_fit_override, "Flag to indicate overriding the ALPHA fitting settings. Invokes Override ALPHA option group.");
     auto &alpha = *otf.add_option_group("Override ALPHA fitting function settings.");
-    alpha.needs(alpha_override_flag);
-    alpha.add_option("--alpha_num", alpha_num_coeffs, "Sets the number of XS coefficient to generate.")->required();
-    alpha.add_option("--alpha_scale", alpha_scale_temp, "Sets whether to scale the temperatures before fitting.")->required();
-    alpha.add_option("--alpha_scale_min", alpha_temp_scale_min, "Sets the minimum value to scale the temperature.")->required();
-    alpha.add_option("--alpha_scale_max", alpha_temp_scale_max, "Sets the maximum value to scale the temperature")->required();
-    alpha.add_option("--alpha_fit_func", alpha_fit_function, "Sets the fitting function to be used.")->required();
+    // alpha.needs(alpha_override_flag);
+    auto alpha_num_coeffs_option = alpha.add_option("--alpha_num", alpha_num_coeffs, "Sets the number of XS coefficient to generate.");
+    auto alpha_scale_temp_option = alpha.add_option("--alpha_scale", alpha_scale_temp, "Sets whether to scale the temperatures before fitting.");
+    auto alpha_temp_scale_min_option = alpha.add_option("--alpha_scale_min", alpha_temp_scale_min, "Sets the minimum value to scale the temperature.");
+    auto alpha_temp_scale_max_option = alpha.add_option("--alpha_scale_max", alpha_temp_scale_max, "Sets the maximum value to scale the temperature");
+    auto alpha_fit_function_option = alpha.add_option("--alpha_fit_func", alpha_fit_function, "Sets the fitting function to be used.");
 
     // Parse the command line arguments
     CLI11_PARSE(mavor, argc, argv);
@@ -113,6 +110,24 @@ int main(int argc, char* argv[]){
     }
     if (otf.parsed()){
         if (!silence){std::cout << "Running otf subroutines" << std::endl;}
+
+        // Just look at this abomination, IDK how to make it any better
+        if (*xs_num_coeffs_option){xs_override_num_coeffs = true;}
+        if (*xs_scale_temp_option){xs_override_scale_temp = true;}
+        if (*xs_temp_scale_min_option){xs_override_temp_scale_min = true;}
+        if (*xs_temp_scale_max_option){xs_override_temp_scale_max = true;}
+        if (*xs_fit_function_option){xs_override_fit_function = true;}
+        if (*beta_num_coeffs_option){beta_override_num_coeffs = true;}
+        if (*beta_scale_temp_option){beta_override_scale_temp = true;}
+        if (*beta_temp_scale_min_option){beta_override_temp_scale_min = true;}
+        if (*beta_temp_scale_max_option){beta_override_temp_scale_max = true;}
+        if (*beta_fit_function_option){beta_override_fit_function = true;}
+        if (*alpha_num_coeffs_option){alpha_override_num_coeffs = true;}
+        if (*alpha_scale_temp_option){alpha_override_scale_temp = true;}
+        if (*alpha_temp_scale_min_option){alpha_override_temp_scale_min = true;}
+        if (*alpha_temp_scale_max_option){alpha_override_temp_scale_max = true;}
+        if (*alpha_fit_function_option){alpha_override_fit_function = true;}
+
         run_otf();
     }
     

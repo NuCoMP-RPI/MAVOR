@@ -36,9 +36,22 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(EIGEN)
 
+message(STATUS "Retrieving GTest")
+FetchContent_Declare(
+    GTEST
+    QUIET
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG v1.14.0
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE)
+
+FetchContent_MakeAvailable(GTEST)
+
 # Find HDF5 package
 find_package(HDF5 COMPONENTS CXX REQUIRED)
 add_compile_options(-lhdf5_cpp -lhdf5)
+
+enable_testing()
 
 add_subdirectory(src)
 

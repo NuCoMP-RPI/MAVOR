@@ -51,9 +51,16 @@ FetchContent_MakeAvailable(GTEST)
 find_package(HDF5 COMPONENTS CXX REQUIRED)
 add_compile_options(-lhdf5_cpp -lhdf5)
 
-enable_testing()
-
-add_subdirectory(src)
-
 configure_file(test_files/HinYH2_293K.h5 test_files/HinYH2_293K.h5 COPYONLY)
 configure_file(test_files/HinYH2_energies.txt test_files/HinYH2_energies.txt COPYONLY)
+
+set(COMPILE_TESTS off)
+
+option(generate_tests "Option to generate compile tests." ${COMPILE_TESTS})
+
+if(COMPILE_TESTS)
+    enable_testing()
+endif(COMPILE_TESTS)
+
+
+add_subdirectory(src)

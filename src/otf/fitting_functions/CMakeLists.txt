@@ -20,3 +20,6 @@ target_sources(fitting_functions_lib PRIVATE
 
 target_include_directories(fitting_functions_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/otf/fitting_functions"
                                                          "${CMAKE_SOURCE_DIR}/include/common")
+if(COMPILE_TESTS)
+    add_subdirectory(unit_tests)
+endif(COMPILE_TESTS)

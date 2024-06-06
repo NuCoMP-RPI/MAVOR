@@ -131,66 +131,87 @@ PredefinedFitSettingsMap predefined_fit_settings = {
 };
 
 MatPredefinedFitMap material_predefined_fits = {
+      // BeinBeO
     {27, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // CinSiC
     {44, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // Cystalline Graphite
     {30, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // DinD2O
     {11, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // HinCH2
     {37, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // HinH2O
     {1,  {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // HinIcelh
     {10, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // HinYH2
     {5,  {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // HinZrH
     {7,  {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // NinUN
     {71, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // OinBeO
     {46, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // OinD2O
     {51, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // OinIcelh
     {50, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // OinUO2
     {75, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // Reactor Graphite 10P
     {31, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // Reactor Graphite 30P
     {32, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // SiinSiC
     {43, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // UinUN
     {72, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // UinUO2
     {48, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // YinYH2
     {55, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},
+      // ZrinZrH
     {58, {{scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5},
           {scaled_inverse_exponential_fit_settings, 5}}},

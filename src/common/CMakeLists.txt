@@ -14,3 +14,7 @@ target_link_libraries(common_lib PRIVATE ${HDF5_LIBRARIES})
 target_include_directories(common_lib PRIVATE ${HDF5_INCLUDE_DIRS})
                               
 target_include_directories(common_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/common")
+
+if(COMPILE_TESTS)
+    add_subdirectory(unit_tests)
+    

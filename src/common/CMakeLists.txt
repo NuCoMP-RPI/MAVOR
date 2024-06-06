@@ -17,4 +17,4 @@ target_include_directories(common_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/commo
 
 if(COMPILE_TESTS)
     add_subdirectory(unit_tests)
-    
+endif(COMPILE_TESTS) 

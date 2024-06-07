@@ -34,35 +34,31 @@ FitFunction sqrt_power = {"sqrt_power", eval_sqrt_power_order};
 
 FitSettings chebyshev_settings = {true, -1, 1, chebyshev};
 FitSettings cosine_settings = {true, 0, 1, cosine};
-FitSettings exponential_settings = {false, -1, 1, exponential};
 FitSettings scaled_exponential_settings = {true, -1, 1, exponential};
-FitSettings inverse_exponential_settings = {false, -1, 1, inverse_exponential};
 FitSettings scaled_inverse_exponential_settings = {true, -1, 1, inverse_exponential};
-FitSettings inverse_log_power_settings = {false, 0, 1, inverse_log_power};
-FitSettings scaled_inverse_log_power_settings = {true, 0, 1, inverse_log_power};
+FitSettings inverse_log_power_settings = {false, 1, 2, inverse_log_power};
+FitSettings scaled_inverse_log_power_settings = {true, 2, 3, inverse_log_power};
 FitSettings inverse_power_settings = {false, -1, 1, inverse_power};
 FitSettings scaled_inverse_power_settings = {true, -1, 1, inverse_power};
-FitSettings inverse_sqrt_log_power_settings = {false, 0, 1, inverse_sqrt_log_power};
-FitSettings scaled_inverse_sqrt_log_power_settings = {true, 0, 1, inverse_sqrt_log_power};
-FitSettings inverse_sqrt_power_settings = {true, 0, 1, inverse_sqrt_power};
-FitSettings scaled_inverse_sqrt_power_settings = {true, 0, 1, inverse_sqrt_power};
+FitSettings inverse_sqrt_log_power_settings = {false, 2, 3, inverse_sqrt_log_power};
+FitSettings scaled_inverse_sqrt_log_power_settings = {true, 2, 3, inverse_sqrt_log_power};
+FitSettings inverse_sqrt_power_settings = {false, 1, 2, inverse_sqrt_power};
+FitSettings scaled_inverse_sqrt_power_settings = {true, 1, 2, inverse_sqrt_power};
 FitSettings legendre_settings = {true, -1, 1, legendre};
-FitSettings log_power_settings = {false, 0, 1, log_power};
-FitSettings scaled_log_power_settings = {true, 0, 1, log_power};
+FitSettings log_power_settings = {false, 1, 2, log_power};
+FitSettings scaled_log_power_settings = {true, 1, 2, log_power};
 FitSettings power_settings = {false, -1, 1, power};
 FitSettings scaled_power_settings = {true, -1, 1, power};
 FitSettings sine_cosine_settings = {true, 0, 1, sine_cosine};
 FitSettings sine_settings = {true, 0, 1, sine};
-FitSettings sqrt_log_power_settings = {false, 0, 1, sqrt_log_power};
-FitSettings scaled_sqrt_log_power_settings = {true, 0, 1, sqrt_log_power};
+FitSettings sqrt_log_power_settings = {false, 1, 2, sqrt_log_power};
+FitSettings scaled_sqrt_log_power_settings = {true, 1, 2, sqrt_log_power};
 FitSettings sqrt_power_settings = {false, 0, 1, sqrt_power};
 FitSettings scaled_sqrt_power_settings = {true, 0, 1, sqrt_power};
 
 PredefinedFitSettings chebyshev_fit_settings = {"Chebyshev", chebyshev_settings};
 PredefinedFitSettings cosine_fit_settings = {"Cosine", cosine_settings};
-PredefinedFitSettings exponential_fit_settings = {"Exponential", exponential_settings};
 PredefinedFitSettings scaled_exponential_fit_settings = {"Scaled Exponential", scaled_exponential_settings};
-PredefinedFitSettings inverse_exponential_fit_settings = {"Inverse Exponential", inverse_exponential_settings};
 PredefinedFitSettings scaled_inverse_exponential_fit_settings = {"Scaled Inverse Exponential", scaled_inverse_exponential_settings};
 PredefinedFitSettings inverse_log_power_fit_settings = {"Inverse Log Power", inverse_log_power_settings};
 PredefinedFitSettings scaled_inverse_log_power_fit_settings = {"Scaled Inverse Log Power", scaled_inverse_log_power_settings};
@@ -105,29 +101,27 @@ MapFittingFunctions fitting_functions = {
 PredefinedFitSettingsMap predefined_fit_settings = {
     {0, chebyshev_fit_settings},
     {1, cosine_fit_settings},
-    {2, exponential_fit_settings},
-    {3, scaled_exponential_fit_settings},
-    {4, inverse_exponential_fit_settings},
-    {5, scaled_inverse_exponential_fit_settings},
-    {6, inverse_log_power_fit_settings},
-    {7, scaled_inverse_log_power_fit_settings},
-    {8, inverse_power_fit_settings},
-    {9, scaled_inverse_power_fit_settings},
-    {10, inverse_sqrt_log_power_fit_settings},
-    {11, scaled_inverse_sqrt_log_power_fit_settings},
-    {12, inverse_sqrt_power_fit_settings},
-    {13, scaled_inverse_sqrt_power_fit_settings},
-    {14, legendre_fit_settings},
-    {15, log_power_fit_settings},
-    {16, scaled_log_power_fit_settings},
-    {17, power_fit_settings},
-    {18, scaled_power_fit_settings},
-    {19, sine_cosine_fit_settings},
-    {20, sine_fit_settings},
-    {21, sqrt_log_power_fit_settings},
-    {22, scaled_sqrt_log_power_fit_settings},
-    {23, sqrt_power_fit_settings},
-    {24, scaled_sqrt_power_fit_settings}
+    {2, scaled_exponential_fit_settings},
+    {3, scaled_inverse_exponential_fit_settings},
+    {4, inverse_log_power_fit_settings},
+    {5, scaled_inverse_log_power_fit_settings},
+    {6, inverse_power_fit_settings},
+    {7, scaled_inverse_power_fit_settings},
+    {8, inverse_sqrt_log_power_fit_settings},
+    {9, scaled_inverse_sqrt_log_power_fit_settings},
+    {10, inverse_sqrt_power_fit_settings},
+    {11, scaled_inverse_sqrt_power_fit_settings},
+    {12, legendre_fit_settings},
+    {13, log_power_fit_settings},
+    {14, scaled_log_power_fit_settings},
+    {15, power_fit_settings},
+    {16, scaled_power_fit_settings},
+    {17, sine_cosine_fit_settings},
+    {18, sine_fit_settings},
+    {19, sqrt_log_power_fit_settings},
+    {20, scaled_sqrt_log_power_fit_settings},
+    {21, sqrt_power_fit_settings},
+    {22, scaled_sqrt_power_fit_settings}
 };
 
 MatPredefinedFitMap material_predefined_fits = {

@@ -19,9 +19,9 @@ int beta_interpolation_scheme = 2;
 int alpha_integration_scheme = 2;
 int alpha_interpolation_scheme = 2;
 
-int num_beta_cdf_points = 400;
+int num_beta_cdf_points = 100;
 int beta_cdf_extent = 10;
-int num_alpha_cdf_points = 400;
+int num_alpha_cdf_points = 100;
 int alpha_cdf_extent = 10;
 
 std::string sab_input_file = "test_files/HinYH2_293K.h5";

@@ -36,16 +36,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(EIGEN)
 
-message(STATUS "Retrieving GTest")
-FetchContent_Declare(
-    GTEST
-    QUIET
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG v1.14.0
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE)
-
-FetchContent_MakeAvailable(GTEST)
+# GTEST is added if compile test are set to true
 
 # Find HDF5 package
 find_package(HDF5 COMPONENTS CXX REQUIRED)
@@ -59,6 +50,18 @@ set(COMPILE_TESTS off)
 option(generate_tests "Option to generate compile tests." ${COMPILE_TESTS})
 
 if(COMPILE_TESTS)
+
+    message(STATUS "Retrieving GTest")
+    FetchContent_Declare(
+        GTEST
+        QUIET
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG v1.14.0
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE)
+
+    FetchContent_MakeAvailable(GTEST)
+
     enable_testing()
 endif(COMPILE_TESTS)
 

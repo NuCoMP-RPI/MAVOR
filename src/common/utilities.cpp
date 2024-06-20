@@ -5,6 +5,7 @@
 
 #include "integration.hpp"
 #include "interpolation.hpp"
+#include "runtime_variables.hpp"
 
 std::vector<double> linspace(double const& start, double const& stop, int const& num_points){
     std::vector<double> result(num_points);
@@ -60,8 +61,8 @@ std::vector<double> pdf_to_cdf(std::vector<double> const & x, std::vector<double
     }
     else{ 
         double factor = 1/cdf.back();
-        for (int i=1; i<cdf.size(); i++){
-            cdf[i-1] *= factor;
+        for (int i=0; i<cdf.size(); i++){
+            cdf[i] *= factor;
         }
     }
     return cdf;

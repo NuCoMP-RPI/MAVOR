@@ -20,23 +20,9 @@ class OTFData{
         double bound_xs;
 
         // Fit settings
-        int class_xs_num_coeffs;
-        bool class_xs_scale_temp;
-        double class_xs_temp_scale_min;
-        double class_xs_temp_scale_max;
-        FitFunction class_xs_fit_function;
-
-        int class_beta_num_coeffs;
-        bool class_beta_scale_temp;
-        double class_beta_temp_scale_min;
-        double class_beta_temp_scale_max;
-        FitFunction class_beta_fit_function;
-
-        int class_alpha_num_coeffs;
-        bool class_alpha_scale_temp;
-        double class_alpha_temp_scale_min;
-        double class_alpha_temp_scale_max;
-        FitFunction class_alpha_fit_function;
+        AlphaFit class_alpha_fit;
+        BetaFit class_beta_fit;
+        XSFit class_xs_fit;
 
         std::vector<double> temps;
         std::vector<double> xs_temps;
@@ -70,9 +56,8 @@ class OTFData{
         void write_coefficients();
 
     private:
-        void load_fit_settings__();
-        void load_material_fit_settings__(MatPredefinedFitMap::iterator mat_it);
-        void load_default_fit_settings__();
+        void load_material_fits__();
+        void load_default_fits__();
         void override_fit_settings__();
         template<typename T> void __check__(T const & val_1, T const & val_2, std::string const item_name);
         void __generate_A_matrices__();

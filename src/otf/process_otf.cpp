@@ -140,157 +140,96 @@ OTFData::OTFData(const std::string & directory){
     }
 
     // Load in the fit settings
-    load_fit_settings__();
-}
-
-void OTFData::load_fit_settings__(){
-    MatPredefinedFitMap::iterator default_fits_it = material_predefined_fits.find(mat);
-    if (default_fits_it != material_predefined_fits.end()) {
-        if (!silence){std::cout << "Found the material fit settings." << std::endl;}
-        load_material_fit_settings__(default_fits_it);
-    } 
-    else {
-        if (!silence){std::cout << "Material does not have predefined settings.  Loading the default fit.";}
-        load_default_fit_settings__();
-    }
-    if (!silence){std::cout << "Overriding fit settings if desired." << std::endl;}
+    load_material_fits__();
     override_fit_settings__();
 }
 
-void OTFData::load_material_fit_settings__(MatPredefinedFitMap::iterator mat_it){
-    MatPredefinedFits all_fits = mat_it->second;
-    PredefinedFit xs_fit = std::get<0>(all_fits);
-    PredefinedFit beta_fit = std::get<1>(all_fits);
-    PredefinedFit alpha_fit = std::get<2>(all_fits);
-
-    PredefinedFitSettings xs_fit_settings = xs_fit.first;
-    class_xs_num_coeffs = xs_fit.second;
-    class_xs_scale_temp = std::get<0>(xs_fit_settings.second);
-    class_xs_temp_scale_min = std::get<1>(xs_fit_settings.second);
-    class_xs_temp_scale_max = std::get<2>(xs_fit_settings.second);
-    class_xs_fit_function = std::get<3>(xs_fit_settings.second);
-
-    PredefinedFitSettings beta_fit_settings = beta_fit.first;
-    class_beta_num_coeffs = beta_fit.second;
-    class_beta_scale_temp = std::get<0>(beta_fit_settings.second);
-    class_beta_temp_scale_min = std::get<1>(beta_fit_settings.second);
-    class_beta_temp_scale_max = std::get<2>(beta_fit_settings.second);
-    class_beta_fit_function = std::get<3>(beta_fit_settings.second);
-
-    PredefinedFitSettings alpha_fit_settings = alpha_fit.first;
-    class_alpha_num_coeffs = alpha_fit.second;
-    class_alpha_scale_temp = std::get<0>(alpha_fit_settings.second);
-    class_alpha_temp_scale_min = std::get<1>(alpha_fit_settings.second);
-    class_alpha_temp_scale_max = std::get<2>(alpha_fit_settings.second);
-    class_alpha_fit_function = std::get<3>(alpha_fit_settings.second);
+void OTFData::load_material_fits__(){
+    PredefinedFitGroups::iterator fit_group_it = predefined_material_fits_groups.find(fit_group);
+    if (fit_group_it != predefined_material_fits_groups.end()){
+        PredefinedMaterialFitsMap::iterator mat_it = fit_group_it->second.find(mat);
+        if (mat_it != fit_group_it->second.end()){
+            MaterialFitSettings mat_fit_settings = mat_it->second;
+            std::string mat_name = std::get<0>(mat_fit_settings);
+            MaterialFit mat_fits = std::get<1>(mat_fit_settings);
+            class_xs_fit = std::get<0>(mat_fits);
+            class_beta_fit = std::get<1>(mat_fits);
+            class_alpha_fit = std::get<2>(mat_fits);
+        }
+        else{load_default_fits__();};
+    }
+    else{load_default_fits__();};
 }
 
-void OTFData::load_default_fit_settings__(){
-    FitSettings fitset = default_fit.first.second;
-    int num = default_fit.second;
-    bool scale = std::get<0>(fitset);
-    double min = std::get<1>(fitset);
-    double max = std::get<2>(fitset);
-    FitFunction func = std::get<3>(fitset);
-
-    class_xs_num_coeffs = num;
-    class_xs_scale_temp = scale;
-    class_xs_temp_scale_min = min;
-    class_xs_temp_scale_max = max;
-    class_xs_fit_function = func;
-
-    class_beta_num_coeffs = num;
-    class_beta_scale_temp = scale;
-    class_beta_temp_scale_min = min;
-    class_beta_temp_scale_max = max;
-    class_beta_fit_function = func;
-
-    class_alpha_num_coeffs = num;
-    class_alpha_scale_temp = scale;
-    class_alpha_temp_scale_min = min;
-    class_alpha_temp_scale_max = max;
-    class_alpha_fit_function = func;
+void OTFData::load_default_fits__(){
+    class_xs_fit = default_fit;
+    class_beta_fit = default_fit;
+    class_alpha_fit = default_fit;
 }
 
 void OTFData::override_fit_settings__(){
     if (basic_xs_fit_override){
-        PredefinedFitSettingsMap::iterator fit_it = predefined_fit_settings.find(user_predefined_xs_fit);
-        if (fit_it != predefined_fit_settings.end()) {
+        FittingFunctionMap::iterator fit_it = fitting_functions.find(user_predefined_xs_fit);
+        if (fit_it != fitting_functions.end()) {
             if (!silence){std::cout << "Found the predefined fit for XS." << std::endl;}
-            PredefinedFitSettings fit = fit_it->second;
-            FitSettings fit_set = fit.second;
-            class_xs_scale_temp = std::get<0>(fit_set);
-            class_xs_temp_scale_min = std::get<1>(fit_set);
-            class_xs_temp_scale_max = std::get<2>(fit_set);
-            class_xs_fit_function = std::get<3>(fit_set);
-            class_xs_num_coeffs = user_predefined_xs_num_coeffs;
+            class_xs_fit = {fit_it->second, user_predefined_xs_num_coeffs};
         } 
         else {throw std::range_error("Predefined XS fit unknown.");}
     }
 
     if (full_xs_fit_override)
     {
-        if(xs_override_num_coeffs){class_xs_num_coeffs = xs_num_coeffs;}
-        if(xs_override_scale_temp){class_xs_scale_temp = xs_scale_temp;}
-        if(xs_override_temp_scale_min){class_xs_temp_scale_min = xs_temp_scale_min;}
-        if(xs_override_temp_scale_max){class_xs_temp_scale_max = xs_temp_scale_max;}
+        if(xs_override_num_coeffs){class_xs_fit.second = xs_num_coeffs;}
+        if(xs_override_scale_temp){std::get<0>(class_xs_fit.first.second) = xs_scale_temp;}
+        if(xs_override_temp_scale_min){std::get<1>(class_xs_fit.first.second) = xs_temp_scale_min;}
+        if(xs_override_temp_scale_max){std::get<2>(class_xs_fit.first.second) = xs_temp_scale_max;}
         if(xs_override_fit_function){
-            MapFittingFunctions::iterator fit_func_it = fitting_functions.find(xs_fit_function);
-            if (fit_func_it != fitting_functions.end()){class_xs_fit_function = fit_func_it->second;}
+            BasisFunctionMap::iterator basis_it = basis_functions.find(xs_basis_function);
+            if (basis_it != basis_functions.end()){std::get<3>(class_xs_fit.first.second) = basis_it->second;}
             else {throw std::range_error("Unknown XS fitting function.");}
         }
-    }
+    }    
     
     if (basic_beta_fit_override){
-        PredefinedFitSettingsMap::iterator fit_it = predefined_fit_settings.find(user_predefined_beta_fit);
-        if (fit_it != predefined_fit_settings.end()) {
+        FittingFunctionMap::iterator fit_it = fitting_functions.find(user_predefined_beta_fit);
+        if (fit_it != fitting_functions.end()) {
             if (!silence){std::cout << "Found the predefined fit for BETA." << std::endl;}
-            PredefinedFitSettings fit = fit_it->second;
-            FitSettings fit_set = fit.second;
-            class_beta_scale_temp = std::get<0>(fit_set);
-            class_beta_temp_scale_min = std::get<1>(fit_set);
-            class_beta_temp_scale_max = std::get<2>(fit_set);
-            class_beta_fit_function = std::get<3>(fit_set);
-            class_beta_num_coeffs = user_predefined_beta_num_coeffs;
+            class_beta_fit = {fit_it->second, user_predefined_beta_num_coeffs};
         } 
         else {throw std::range_error("Predefined BETA fit unknown.");}
     }
 
-    if (full_beta_fit_override){
-        if(beta_override_num_coeffs){class_beta_num_coeffs = beta_num_coeffs;}
-        if(beta_override_scale_temp){class_beta_scale_temp = beta_scale_temp;}
-        if(beta_override_temp_scale_min){class_beta_temp_scale_min = beta_temp_scale_min;}
-        if(beta_override_temp_scale_max){class_beta_temp_scale_max = beta_temp_scale_max;}
-        if(beta_override_fit_function){        
-            MapFittingFunctions::iterator fit_func_it = fitting_functions.find(beta_fit_function);
-            if (fit_func_it != fitting_functions.end()){class_beta_fit_function = fit_func_it->second;}
+    if (full_beta_fit_override)
+    {
+        if(beta_override_num_coeffs){class_beta_fit.second = beta_num_coeffs;}
+        if(beta_override_scale_temp){std::get<0>(class_beta_fit.first.second) = beta_scale_temp;}
+        if(beta_override_temp_scale_min){std::get<1>(class_beta_fit.first.second) = beta_temp_scale_min;}
+        if(beta_override_temp_scale_max){std::get<2>(class_beta_fit.first.second) = beta_temp_scale_max;}
+        if(beta_override_fit_function){
+            BasisFunctionMap::iterator basis_it = basis_functions.find(beta_basis_function);
+            if (basis_it != basis_functions.end()){std::get<3>(class_beta_fit.first.second) = basis_it->second;}
             else {throw std::range_error("Unknown BETA fitting function.");}
         }
     }
     
     if (basic_alpha_fit_override){
-        PredefinedFitSettingsMap::iterator fit_it = predefined_fit_settings.find(user_predefined_alpha_fit);
-        if (fit_it != predefined_fit_settings.end()) {
+        FittingFunctionMap::iterator fit_it = fitting_functions.find(user_predefined_alpha_fit);
+        if (fit_it != fitting_functions.end()) {
             if (!silence){std::cout << "Found the predefined fit for ALPHA." << std::endl;}
-            PredefinedFitSettings fit = fit_it->second;
-            FitSettings fit_set = fit.second;
-            class_alpha_scale_temp = std::get<0>(fit_set);
-            class_alpha_temp_scale_min = std::get<1>(fit_set);
-            class_alpha_temp_scale_max = std::get<2>(fit_set);
-            class_alpha_fit_function = std::get<3>(fit_set);
-            class_alpha_num_coeffs = user_predefined_alpha_num_coeffs;
+            class_alpha_fit = {fit_it->second, user_predefined_alpha_num_coeffs};
         } 
         else {throw std::range_error("Predefined ALPHA fit unknown.");}
     }
 
-    if (full_alpha_fit_override){
-        if(alpha_override_num_coeffs){class_alpha_num_coeffs = alpha_num_coeffs;}
-        if(alpha_override_scale_temp){class_alpha_scale_temp = alpha_scale_temp;}
-        if(alpha_override_temp_scale_min){class_alpha_temp_scale_min = alpha_temp_scale_min;}
-        if(alpha_override_temp_scale_max){class_alpha_temp_scale_max = alpha_temp_scale_max;}
-        if(alpha_override_fit_function){        
-            MapFittingFunctions::iterator fit_func_it = fitting_functions.find(alpha_fit_function);
-            if (fit_func_it != fitting_functions.end()){class_alpha_fit_function = fit_func_it->second;}
+    if (full_alpha_fit_override)
+    {
+        if(alpha_override_num_coeffs){class_alpha_fit.second = alpha_num_coeffs;}
+        if(alpha_override_scale_temp){std::get<0>(class_alpha_fit.first.second) = alpha_scale_temp;}
+        if(alpha_override_temp_scale_min){std::get<1>(class_alpha_fit.first.second) = alpha_temp_scale_min;}
+        if(alpha_override_temp_scale_max){std::get<2>(class_alpha_fit.first.second) = alpha_temp_scale_max;}
+        if(alpha_override_fit_function){
+            BasisFunctionMap::iterator basis_it = basis_functions.find(alpha_basis_function);
+            if (basis_it != basis_functions.end()){std::get<3>(class_alpha_fit.first.second) = basis_it->second;}
             else {throw std::range_error("Unknown ALPHA fitting function.");}
         }
     }
@@ -317,20 +256,20 @@ void OTFData::write_coefficients(){
     writeHDF5Double(file, temps.front(), "Minimum Temperature");
     writeHDF5Double(file, temps.back(), "Maximum Temperature");
 
-    writeHDF5Bool(file, class_xs_scale_temp, "Scale XS temperatures");
-    writeHDF5Double(file, class_xs_temp_scale_min, "XS Minimum Scaled Value");
-    writeHDF5Double(file, class_xs_temp_scale_max, "XS Maximum Scaled Value");
-    writeHDF5String(file, class_xs_fit_function.first, "XS Fitting Function");
+    writeHDF5Bool(file, std::get<0>(class_xs_fit.first.second), "Scale XS temperatures");
+    writeHDF5Double(file, std::get<1>(class_xs_fit.first.second), "XS Minimum Scaled Value");
+    writeHDF5Double(file, std::get<2>(class_xs_fit.first.second), "XS Maximum Scaled Value");
+    writeHDF5String(file, std::get<3>(class_xs_fit.first.second).first, "XS Fitting Function");
     
-    writeHDF5Bool(file, class_beta_scale_temp, "Scale Beta temperatures");
-    writeHDF5Double(file, class_beta_temp_scale_min, "Beta Minimum Scaled Value");
-    writeHDF5Double(file, class_beta_temp_scale_max, "Beta Maximum Scaled Value");
-    writeHDF5String(file, class_beta_fit_function.first, "Beta Fitting Function");
+    writeHDF5Bool(file, std::get<0>(class_beta_fit.first.second), "Scale BETA temperatures");
+    writeHDF5Double(file, std::get<1>(class_beta_fit.first.second), "BETA Minimum Scaled Value");
+    writeHDF5Double(file, std::get<2>(class_beta_fit.first.second), "BETA Maximum Scaled Value");
+    writeHDF5String(file, std::get<3>(class_beta_fit.first.second).first, "BETA Fitting Function");
 
-    writeHDF5Bool(file, class_alpha_scale_temp, "Scale Alpha temperatures");
-    writeHDF5Double(file, class_alpha_temp_scale_min, "Alpha Minimum Scaled Value");
-    writeHDF5Double(file, class_alpha_temp_scale_max, "Alpha Maximum Scaled Value");
-    writeHDF5String(file, class_alpha_fit_function.first, "Alpha Fitting Function");
+    writeHDF5Bool(file, std::get<0>(class_alpha_fit.first.second), "Scale ALPHA temperatures");
+    writeHDF5Double(file, std::get<1>(class_alpha_fit.first.second), "ALPHA Minimum Scaled Value");
+    writeHDF5Double(file, std::get<2>(class_alpha_fit.first.second), "ALPHA Maximum Scaled Value");
+    writeHDF5String(file, std::get<3>(class_alpha_fit.first.second).first, "ALPHA Fitting Function");
 
     writeHDF5DoubleVector(file, inc_energy_grid, "Incident Energy Grid");
     writeHDF5DoubleVector(file, beta_cdf_grid, "Beta CDF Grid");
@@ -343,30 +282,30 @@ void OTFData::write_coefficients(){
 }
 
 void OTFData::__generate_A_matrices__(){
-    if (class_xs_scale_temp){xs_temps = scale_array(temps, class_xs_temp_scale_min, class_xs_temp_scale_max);}
+    if (std::get<0>(class_xs_fit.first.second)){xs_temps = scale_array(temps, std::get<1>(class_xs_fit.first.second), std::get<2>(class_xs_fit.first.second));}
     else {xs_temps = temps;}
-    if (class_beta_scale_temp){beta_temps = scale_array(temps, class_beta_temp_scale_min, class_beta_temp_scale_max);}
+    if (std::get<0>(class_beta_fit.first.second)){beta_temps = scale_array(temps, std::get<1>(class_beta_fit.first.second), std::get<2>(class_beta_fit.first.second));}
     else {beta_temps = temps;}
-    if (class_alpha_scale_temp){alpha_temps = scale_array(temps, class_alpha_temp_scale_min, class_alpha_temp_scale_max);}
+    if (std::get<0>(class_alpha_fit.first.second)){alpha_temps = scale_array(temps, std::get<1>(class_alpha_fit.first.second), std::get<2>(class_alpha_fit.first.second));}
     else {alpha_temps = temps;}
-    xs_A.resize(temps.size(), class_xs_num_coeffs);
-    beta_A.resize(temps.size(), class_beta_num_coeffs);
-    alpha_A.resize(temps.size(), class_alpha_num_coeffs);
+    xs_A.resize(temps.size(), class_xs_fit.second);
+    beta_A.resize(temps.size(), class_beta_fit.second);
+    alpha_A.resize(temps.size(), class_alpha_fit.second);
     __fill_A_matrices__();
 }
 
 void OTFData::__fill_A_matrices__(){
     if (!silence){
-        std::cout << "Energy fitting function selected | " << class_xs_fit_function.first << std::endl;
-        std::cout << "Beta fitting function selected | " << class_beta_fit_function.first << std::endl;
-        std::cout << "Alpha fitting function selected | " << class_alpha_fit_function.first << std::endl;
+        std::cout << "Energy fitting function selected | " << class_xs_fit.first.first << std::endl;
+        std::cout << "Beta fitting function selected | " << class_beta_fit.first.first << std::endl;
+        std::cout << "Alpha fitting function selected | " << class_alpha_fit.first.first << std::endl;
     }
     for (int i = 0; i<temps.size(); i++){
-        Eigen::VectorXd evaled_xs_points = __eval_fit_func__(xs_temps[i], class_xs_num_coeffs, class_xs_fit_function.second);
+        Eigen::VectorXd evaled_xs_points = __eval_fit_func__(xs_temps[i], class_xs_fit.second, std::get<3>(class_xs_fit.first.second).second);
         xs_A(i, Eigen::placeholders::all) = evaled_xs_points;
-        Eigen::VectorXd evaled_beta_points = __eval_fit_func__(beta_temps[i], class_beta_num_coeffs, class_beta_fit_function.second);
+        Eigen::VectorXd evaled_beta_points = __eval_fit_func__(beta_temps[i], class_beta_fit.second, std::get<3>(class_beta_fit.first.second).second);
         beta_A(i, Eigen::placeholders::all) = evaled_beta_points;
-        Eigen::VectorXd evaled_alpha_points = __eval_fit_func__(alpha_temps[i], class_alpha_num_coeffs, class_alpha_fit_function.second);
+        Eigen::VectorXd evaled_alpha_points = __eval_fit_func__(alpha_temps[i], class_alpha_fit.second, std::get<3>(class_alpha_fit.first.second).second);
         alpha_A(i, Eigen::placeholders::all) = evaled_alpha_points;
     }
 }

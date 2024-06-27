@@ -6,6 +6,7 @@
 #include "njoy.hpp"
 #include "sab.hpp"
 #include "otf.hpp"
+#include "sample.hpp"
 
 void print_name(){
     std::cout << R"(
@@ -121,6 +122,16 @@ int main(int argc, char* argv[]){
     auto alpha_temp_scale_max_option = full_alpha.add_option("--alpha_scale_max", alpha_temp_scale_max, "Sets the maximum value to scale the temperature");
     auto alpha_fit_function_option = full_alpha.add_option("--alpha_fit_func", alpha_basis_function, "Sets the fitting function to be used.");
 
+    CLI::App &sample = *mavor.add_subcommand("sample", "Samples the base CDF or the OTF distributions for comparisons.");
+    sample.ignore_case();
+    sample.add_option("-i,--input_file", sample_input_file, "Sets the file name (and path) to be sampled.");
+    sample.add_option("-o,--output_file", sample_output_file, "Sets the file name (and path) to store the sampling results.");
+
+    auto &sample_file = *sample.add_option_group("Tells Mavor what type of data is in the input file.");
+    sample_file.add_flag("--coeff", sample_coeff_file);
+    sample_file.add_flag("--cdf", sample_cdf_file);
+    sample_file.require_option(1);
+
     // Parse the command line arguments
     CLI11_PARSE(mavor, argc, argv);
 
@@ -160,6 +171,10 @@ int main(int argc, char* argv[]){
         if (*alpha_fit_function_option){alpha_override_fit_function = true;}
 
         run_otf();
+    }
+
+    if (sample.parsed()){
+        run_sample();
     }
     
     auto main_process_end = std::chrono::high_resolution_clock::now();

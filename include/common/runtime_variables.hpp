@@ -94,4 +94,11 @@ extern bool alpha_override_temp_scale_min;
 extern bool alpha_override_temp_scale_max;
 extern bool alpha_override_fit_function;
 
+// sample subcommand variables
+
+extern std::string sample_input_file;
+extern std::string sample_output_file;
+extern bool sample_cdf_file;
+extern bool sample_coeff_file;
+
 #endif

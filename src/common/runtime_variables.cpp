@@ -24,8 +24,8 @@ int beta_cdf_extent = 10;
 int num_alpha_cdf_points = 100;
 int alpha_cdf_extent = 10;
 
-std::string sab_input_file = "test_files/HinYH2_293K.h5";
-std::string sab_output_file = "Results.h5";
+std::string sab_input_file = "test_files/HinYH2_293K_tsl.h5";
+std::string sab_output_file = "CDF_distributions.h5";
 
 bool use_external_energy_grid = false;
 std::string energy_grid_loc;
@@ -94,3 +94,10 @@ bool alpha_override_scale_temp = false;
 bool alpha_override_temp_scale_min = false;
 bool alpha_override_temp_scale_max = false;
 bool alpha_override_fit_function = false;
+
+// sample subcommand variables
+
+std::string sample_input_file = "test_files/HinYH2_coeffs.h5";
+std::string sample_output_file = "Sampling_results.h5";
+bool sample_cdf_file = false;
+bool sample_coeff_file = false;

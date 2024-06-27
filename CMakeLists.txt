@@ -42,8 +42,10 @@ FetchContent_MakeAvailable(EIGEN)
 find_package(HDF5 COMPONENTS CXX REQUIRED)
 add_compile_options(-lhdf5_cpp -lhdf5)
 
-configure_file(test_files/HinYH2_293K.h5 test_files/HinYH2_293K.h5 COPYONLY)
 configure_file(test_files/HinYH2_energies.txt test_files/HinYH2_energies.txt COPYONLY)
+configure_file(test_files/HinYH2_293K_tsl.h5 test_files/HinYH2_293K_tsl.h5 COPYONLY)
+configure_file(test_files/HinYH2_293K_CDFs.h5 test_files/HinYH2_293K_CDFs.h5 COPYONLY)
+configure_file(test_files/HinYH2_coeffs.h5 test_files/HinYH2_coeffs.h5 COPYONLY)
 
 set(COMPILE_TESTS off)
 

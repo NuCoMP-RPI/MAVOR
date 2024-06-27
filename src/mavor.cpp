@@ -65,6 +65,7 @@ int main(int argc, char* argv[]){
     otf.ignore_case();
     otf.add_option("-i, --input_directory", otf_input_directory, "Sets the location of the SAB sampling distributions.");
     otf.add_option("-o,--output_file", otf_output_file, "Sets the file name (and path) to store the OTF sampling coefficients.");
+    otf.add_option("-g, --fit_group", fit_group, "Sets the fit group to use for defaults.");
 
     auto &xs_fit_override = *otf.add_option_group("Controls how the user wishes to override the XS fit.");
     auto basic_xs_override_flag = xs_fit_override.add_flag("--b_xs", basic_xs_fit_override, "Enables basic override options.");
@@ -92,7 +93,7 @@ int main(int argc, char* argv[]){
     auto xs_scale_temp_option = full_xs.add_option("--xs_scale", xs_scale_temp, "Sets whether to scale the temperatures before fitting.");
     auto xs_temp_scale_min_option = full_xs.add_option("--xs_scale_min", xs_temp_scale_min, "Sets the minimum value to scale the temperature.");
     auto xs_temp_scale_max_option = full_xs.add_option("--xs_scale_max", xs_temp_scale_max, "Sets the maximum value to scale the temperature");
-    auto xs_fit_function_option = full_xs.add_option("--xs_fit_func", xs_fit_function, "Sets the fitting function to be used.");
+    auto xs_fit_function_option = full_xs.add_option("--xs_fit_func", xs_basis_function, "Sets the fitting function to be used.");
 
     auto &basic_beta = *otf.add_option_group("Basic Beta fitting function override.");
     basic_beta.needs(basic_beta_override_flag);
@@ -105,7 +106,7 @@ int main(int argc, char* argv[]){
     auto beta_scale_temp_option = full_beta.add_option("--beta_scale", beta_scale_temp, "Sets whether to scale the temperatures before fitting.");
     auto beta_temp_scale_min_option = full_beta.add_option("--beta_scale_min", beta_temp_scale_min, "Sets the minimum value to scale the temperature.");
     auto beta_temp_scale_max_option = full_beta.add_option("--beta_scale_max", beta_temp_scale_max, "Sets the maximum value to scale the temperature");
-    auto beta_fit_function_option = full_beta.add_option("--beta_fit_func", beta_fit_function, "Sets the fitting function to be used.");
+    auto beta_fit_function_option = full_beta.add_option("--beta_fit_func", beta_basis_function, "Sets the fitting function to be used.");
 
     auto &basic_alpha = *otf.add_option_group("Basic Alpha fitting function override.");
     basic_alpha.needs(basic_alpha_override_flag);
@@ -118,7 +119,7 @@ int main(int argc, char* argv[]){
     auto alpha_scale_temp_option = full_alpha.add_option("--alpha_scale", alpha_scale_temp, "Sets whether to scale the temperatures before fitting.");
     auto alpha_temp_scale_min_option = full_alpha.add_option("--alpha_scale_min", alpha_temp_scale_min, "Sets the minimum value to scale the temperature.");
     auto alpha_temp_scale_max_option = full_alpha.add_option("--alpha_scale_max", alpha_temp_scale_max, "Sets the maximum value to scale the temperature");
-    auto alpha_fit_function_option = full_alpha.add_option("--alpha_fit_func", alpha_fit_function, "Sets the fitting function to be used.");
+    auto alpha_fit_function_option = full_alpha.add_option("--alpha_fit_func", alpha_basis_function, "Sets the fitting function to be used.");
 
     // Parse the command line arguments
     CLI11_PARSE(mavor, argc, argv);

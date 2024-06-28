@@ -126,10 +126,13 @@ int main(int argc, char* argv[]){
     sample.ignore_case();
     sample.add_option("-i,--input_file", sample_input_file, "Sets the file name (and path) to be sampled.");
     sample.add_option("-o,--output_file", sample_output_file, "Sets the file name (and path) to store the sampling results.");
+    sample.add_option("-e,--inc_energy", sample_incident_energy, "Sets the incident energy to sample.");
+    sample.add_option("-n,--number", sample_num_samples, "Sets the number of samples.");
+    sample.add_option("-t,--temperature", sample_temperature, "Sets the temperature to sample for OTF data.");
 
     auto &sample_file = *sample.add_option_group("Tells Mavor what type of data is in the input file.");
-    sample_file.add_flag("--coeff", sample_coeff_file);
-    sample_file.add_flag("--cdf", sample_cdf_file);
+    auto sample_coeff_option = sample_file.add_flag("--coeff", sample_coeff_file);
+    auto sample_cdf_option = sample_file.add_flag("--cdf", sample_cdf_file);
     sample_file.require_option(1);
 
     // Parse the command line arguments
@@ -174,6 +177,8 @@ int main(int argc, char* argv[]){
     }
 
     if (sample.parsed()){
+        if (*sample_cdf_option){sample_input_file = sample_cdf_test_file;}
+        if (*sample_coeff_option){sample_input_file = sample_coeff_test_file;}
         run_sample();
     }
     

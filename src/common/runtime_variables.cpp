@@ -97,7 +97,13 @@ bool alpha_override_fit_function = false;
 
 // sample subcommand variables
 
-std::string sample_input_file = "test_files/HinYH2_coeffs.h5";
+std::string sample_input_file = "";
+std::string sample_cdf_test_file = "test_files/HinYH2_293K_CDFs.h5";
+std::string sample_coeff_test_file = "test_files/HinYH2_coeffs.h5";
 std::string sample_output_file = "Sampling_results.h5";
 bool sample_cdf_file = false;
 bool sample_coeff_file = false;
+
+double sample_incident_energy = 0.01;
+double sample_temperature = 400;
+int sample_num_samples = static_cast<int>(1e6);

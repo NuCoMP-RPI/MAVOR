@@ -6,6 +6,8 @@
 
 #include "H5Cpp.h"
 
+void readHDF5Bool(H5::H5File& file, const std::string& datasetName, bool& value);
+
 void writeHDF5Bool(H5::H5File file, bool const & value, std::string const & value_name);
 
 void readHDF5Int(H5::H5File& file, const std::string& datasetName, int& value);
@@ -21,6 +23,8 @@ void readHDF5DoubleVector(H5::H5File& file, const std::string& datasetName, std:
 void writeHDF5DoubleVector(H5::H5File file, std::vector<double> const & vector, std::string const & vector_name);
 
 void writeHDF5DoubleMatrix(H5::H5File file, std::vector<std::vector<double>> const & matrix, std::string const & matrix_name);
+
+void readHDF5String(H5::H5File& file, const std::string& datasetName, std::string& value);
 
 void writeHDF5String(H5::H5File file, std::string const & value, std::string const & value_name);
 

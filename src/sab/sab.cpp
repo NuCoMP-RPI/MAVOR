@@ -76,6 +76,7 @@ void run_sab(){
         default:
             throw std::runtime_error("Unknown Sampling Distribution Choice. IDK how you got here.");
         }
+        if (!silence){std::cout << "Results file | " << sab_output_file << '\n';}
         write_vectors_to_file(x,y, sab_output_file);
         auto process_end = std::chrono::high_resolution_clock::now();
         auto process_duration = std::chrono::duration_cast<std::chrono::milliseconds>(process_end-process_start);

@@ -38,6 +38,21 @@ double alpha_min = 1e-10;
 double e_min = 1e-5;
 int num_energies = 105;
 
+// DIST subcommand for SAB
+
+bool override_sab = false;
+std::map<int, std::string> distribution_choices = 
+    {
+        {1, "Cross-Section"},
+        {2, "Outgoing Energy"},
+        {3, "Scattering Angle"}
+    };
+// std::vector<int> distribution_choices_keys = {1,2,3};
+int distribution_choice = -1;
+double dist_incident_energy = 1;
+double dist_outgoing_energy = 0.5;
+bool convert_to_eemu = false;
+
 // OTF subcommand variables
 
 std::string otf_input_directory = "/home/blakec4/extra_space/My_Programs/test_Mavor/Unioned_Results/HinYH2";

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 
 // Control variables for the main program
 
@@ -39,6 +40,15 @@ extern double sct_cutoff;
 extern double alpha_min;
 extern double e_min;
 extern int num_energies;
+    
+// DIST subcommand for SAB
+
+extern bool override_sab;
+extern std::map<int, std::string> distribution_choices;
+extern int distribution_choice;
+extern double dist_incident_energy;
+extern double dist_outgoing_energy;
+extern bool convert_to_eemu;
 
 // OTF subcommand variables
 

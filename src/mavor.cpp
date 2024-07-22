@@ -60,6 +60,14 @@ int main(int argc, char* argv[]){
     auto predefined_energy_option = energy.add_flag("-p,--predefined_energy_grid", use_internal_energy_grid, "Tells the program to use the predefined energy grid");
     energy.require_option(0,1);
 
+    // DIST subcommand for SAB
+    CLI::App &dist = *sab.add_subcommand("dist", "Returns a single distribution for use in comparisons.");
+    dist.ignore_case();
+    dist.add_option("-d,--dist", distribution_choice, "Desired distribution to calculate.") -> check(CLI::IsMember(distribution_choices)) -> required();
+    dist.add_option("-i,--incident", dist_incident_energy, "Sets the incident energy to calculate the distribution.");
+    dist.add_option("-o,--outgoing", dist_outgoing_energy, "Sets the outgoing energy to calculate the distribution.");
+    dist.add_flag("-c,--convert", convert_to_eemu, "Convert the calculated distribution into the E,E',mu space.");
+
     // OTF subcommand
     CLI::App &otf = *mavor.add_subcommand("otf", "Generates the OTF sampling coefficients given unionized Sab TSL sampling distributions");
     otf.ignore_case();
@@ -137,6 +145,10 @@ int main(int argc, char* argv[]){
     if (sab.parsed()){
         if (!silence){std::cout << "Running sab subroutines" << std::endl;}
         if (*user_energy_option){use_external_energy_grid = true;}
+        if (dist.parsed()){
+            override_sab = true;
+            if (!silence){std::cout << "Overriding sab call and returning desired distribution." << std::endl;}
+        }
         run_sab();
     }
     if (otf.parsed()){

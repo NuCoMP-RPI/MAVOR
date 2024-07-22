@@ -270,6 +270,15 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_
     return std::make_pair(a_vals, alpha_pdf);
 }
 
+std::pair<std::vector<double>, std::vector<double>> DistData::return_viable_linearized_alpha_pdf(double const& inc_energy, double const& beta){
+    __beta_hold__ = beta;
+    std::vector<double> a_vals = __get_viable_alphas__(inc_energy, beta);
+    auto [alpha_pdf, truthy] = __get_alpha_line__(a_vals, __beta_hold__);
+    auto get_new_alpha_pdf_val = [&](double x) {return __wrapper_get_alpha_pdf_val__(x);};
+    linearize(a_vals, alpha_pdf, get_new_alpha_pdf_val);
+    return std::make_pair(a_vals, alpha_pdf);
+}
+
 void DistData::__get_alpha_sampling_dists__(){
     // NOTE: Beta grid for storage is determined at initialization and is set to the leapr input grid
     // NOTE: Alpha distributions are symmetric about b=0 so only do the positive half
@@ -292,4 +301,37 @@ void DistData::calculate_sampling_dists(){
     ii_xs = xs;
     __get_beta_sampling_dists__();
     __get_alpha_sampling_dists__();
+}
+
+double DistData::beta_to_outgoing_energy(double const& inc_energy, double const& beta){
+    return inc_energy + temp*boltz*beta;
+}
+
+std::vector<double> DistData::betas_to_outgoing_energies(double const& inc_energy, std::vector<double> const& betas){
+    std::vector<double> outs;
+    outs.reserve(betas.size());
+    for (double beta:betas){
+        outs.push_back(beta_to_outgoing_energy(inc_energy, beta));
+    }
+    return outs;
+}
+
+double DistData::return_beta(double const& inc_energy, double const& out_energy){
+    return (out_energy - inc_energy)/(boltz*temp);
+}
+
+double DistData::alpha_to_scattering_angle(double const& inc_energy, double const& out_energy, double const& alpha){
+    double t1 = inc_energy + out_energy;
+    double t2 = alpha*a0*boltz*temp;
+    double t3 = 2*sqrt(inc_energy*out_energy);
+    return (t1 - t2)/t3;
+}
+
+std::vector<double> DistData::alphas_to_scatting_angles(double const& inc_energy, double const& out_energy, std::vector<double> const& alphas){
+    std::vector<double> angles;
+    angles.reserve(alphas.size());
+    for (double alpha:alphas){
+        angles.push_back(alpha_to_scattering_angle(inc_energy, out_energy, alpha));
+    }
+    return angles;
 }

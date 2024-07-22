@@ -57,7 +57,13 @@ class DistData {
         std::pair<std::vector<double>, std::vector<double>> return_linearized_ii_xs();
         std::pair<std::vector<double>, std::vector<double>> return_final_ii_xs();
         std::pair<std::vector<double>, std::vector<double>> return_linearized_alpha_pdf(double const& beta);
+        std::pair<std::vector<double>, std::vector<double>> return_viable_linearized_alpha_pdf(double const& inc_energy, double const& beta);
         void calculate_sampling_dists();
+        double beta_to_outgoing_energy(double const& inc_energy, double const& beta);
+        std::vector<double> betas_to_outgoing_energies(double const& inc_energy, std::vector<double> const& betas);
+        double return_beta(double const& inc_energy, double const& out_energy);
+        double alpha_to_scattering_angle(double const& inc_energy, double const& out_energy, double const& alpha);
+        std::vector<double> alphas_to_scatting_angles(double const& inc_energy, double const& out_energy, std::vector<double> const& alphas);
 
     private:
         double __inc_ener_hold__;

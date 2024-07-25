@@ -5,6 +5,7 @@
 
 #include "integration.hpp"
 #include "interpolation.hpp"
+#include "scale_basis.hpp"
 #include "runtime_variables.hpp"
 
 std::vector<double> linspace(double const& start, double const& stop, int const& num_points){
@@ -42,9 +43,9 @@ std::vector<double> sigmoid_space(double const & low, double const & high, int c
         std::vector<double> ys;
         ys.reserve(xs.size());
         for (auto x:xs){
-            ys.push_back((1/(1 + std::exp(-x)))*(high-low) + low);
+            ys.push_back(1/(1 + std::exp(-x)));
         }
-        return ys;
+        return scale_array(ys, low, high);
     }
 }
 

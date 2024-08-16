@@ -106,5 +106,6 @@ extern bool sample_coeff_file;
 extern double sample_incident_energy;
 extern double sample_temperature;
 extern int sample_num_samples;
+extern unsigned int sample_seed;
 
 #endif

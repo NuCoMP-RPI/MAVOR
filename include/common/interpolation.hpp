@@ -1,6 +1,8 @@
 #ifndef MAVOR_INTERPOLATION_H
 #define MAVOR_INTERPOLATION_H
 
+#include <vector>
+
 double ENDF_interp_scheme_1(double const & x1, double const & x2, double const & y1, double const & y2, double const& x);
 double ENDF_interp_scheme_2(double const & x1, double const & x2, double const & y1, double const & y2, double const& x);
 double ENDF_interp_scheme_3(double const & x1, double const & x2, double const & y1, double const & y2, double const& x);
@@ -13,4 +15,6 @@ double bi_interp(double const & x1, double const & x2, double const & y1, double
                  double const & x, double const & y, 
                  int const x_scheme = 2, int const y_scheme = 2);
 
+// std::pair<size_t, size_t> findInterpolationIndexes(const std::vector<double>& array, double val);
+std::pair<size_t, size_t> findInterpolationIndexes(std::vector<double>::const_iterator begin, std::vector<double>::const_iterator end, double val);
 #endif

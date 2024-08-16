@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <math.h>
 
 double ENDF_interp_scheme_1(double const & x1, double const & x2, double const & y1, double const & y2, double const& x){
@@ -43,9 +44,29 @@ double bi_interp(double const & x1, double const & x2, double const & y1, double
                  double const & f11, double const & f12, double const & f21, double const & f22, 
                  double const & x, double const & y, 
                  int const x_scheme = 2, int const y_scheme = 2){
+    //     | y1  |  y  | y2
+    //  --------------------
+    //  x1 | f11 |  -  | f12
+    //  --------------------
+    //  x  |  -  | fxy |  -
+    //  --------------------
+    //  x2 | f21 |  -  | f22
     double fxy1 = ENDF_interp(x1, x2, f11, f21, x, x_scheme);
     double fxy2 = ENDF_interp(x1, x2, f12, f22, x, x_scheme);
     return ENDF_interp(y1, y2, fxy1, fxy2, y, y_scheme);
 }
 
-
+// std::pair<size_t, size_t> findInterpolationIndexes(const std::vector<double>& array, double val) {
+//     auto it = std::lower_bound(array.begin() + 1, array.end(), val); // +1 handles if below grid
+//     size_t hi_index = std::distance(array.begin(), it);
+//     hi_index = (hi_index == array.size()) ? hi_index - 1 : hi_index; // -1 handles if above grid
+//     size_t lo_index = hi_index - 1;
+//     return std::make_pair(lo_index, hi_index);
+// }
+std::pair<size_t, size_t> findInterpolationIndexes(std::vector<double>::const_iterator begin, std::vector<double>::const_iterator end, double val) {
+    auto it = std::lower_bound(begin + 1, end, val); // +1 handles if below grid
+    size_t hi_index = std::distance(begin, it);
+    hi_index = (hi_index == std::distance(begin, end)) ? hi_index - 1 : hi_index; // -1 handles if above grid
+    size_t lo_index = hi_index - 1;
+    return std::make_pair(lo_index, hi_index);
+}

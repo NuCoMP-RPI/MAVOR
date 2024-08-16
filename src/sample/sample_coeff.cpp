@@ -1,11 +1,19 @@
 #include <iostream>
 #include <vector>
+#include <random>
+#include <math.h>
+#include <omp.h>
+#include <chrono>
+
+#include "H5Cpp.h"
 
 #include "sample_coeff.hpp"
 
 #include "runtime_variables.hpp"
+#include "constants.hpp"
 #include "hdf5_file.hpp"
-#include "predefined_fit_settings.hpp"
+#include "interpolation.hpp"
+#include "scale_basis.hpp"
 
 CoeffFile::CoeffFile(std::string const & file_path){
     H5::H5File file(file_path, H5F_ACC_RDONLY);
@@ -46,7 +54,8 @@ CoeffFile::CoeffFile(std::string const & file_path){
     readHDF5DoubleVector(file, "Alpha Coefficients", alpha_coeffs);
 }
 
-void CoeffFile::set_basis_function__(BasisFunction & basis_func, std::string const& basis_func_string){
+void CoeffFile::set_basis_function__(BasisFunction &basis_func, std::string const &basis_func_string)
+{
     for (auto const& [key, val]: basis_functions){
         if (val.first == basis_func_string){
             if (!silence){std::cout << "I found the basis function | " << basis_func_string << std::endl;}
@@ -57,6 +66,53 @@ void CoeffFile::set_basis_function__(BasisFunction & basis_func, std::string con
     throw std::out_of_range("Basis function was not found.");
 }
 
+std::pair<double, double> CoeffFile::return_alpha_extrema__(const double &inc_ener, const double &beta){
+    double t1 = sqrt(inc_ener);
+    double t2 = a0*boltz*sample_temperature;
+    double t3 = sqrt(abs(inc_ener + beta*boltz*sample_temperature));
+    double t4 = t1 - t3;
+    double t5 = t1 + t3;
+    return std::pair<double, double>((t4*t4)/t2,(t5*t5)/t2);
+}
+
+std::pair<double, double> CoeffFile::single_sample(const double &inc_ener, const double &xi_1, const double &xi_2){
+    return std::pair<double, double>();
+}
+
+void CoeffFile::all_sample(const double &inc_ener){
+    #pragma omp parallel for
+    for (int i = 0; i < sample_num_samples; ++i){
+        std::pair<double, double> results = single_sample(inc_ener, xi_1[i], xi_2[i]);
+        sampled_secondary_energies[i] = results.first;
+        sampled_scattering_cosines[i] = results.second;
+    }
+}
+
+
 void sample_coeff(){
     CoeffFile data(sample_input_file);
+
+    // Reserve sampling space
+    data.sampled_secondary_energies.resize(sample_num_samples);
+    data.sampled_scattering_cosines.resize(sample_num_samples);
+
+    // Create Random number vectors
+    data.xi_1.resize(sample_num_samples);
+    data.xi_2.resize(sample_num_samples);
+    std::mt19937 gen(sample_seed); // Mersenne Twister engine
+    std::uniform_real_distribution<> dis(0.0, 1.0); // Uniform distribution [0, 1]
+    for (int i = 0; i < sample_num_samples; ++i) {
+        data.xi_1[i] = dis(gen);
+        data.xi_2[i] = dis(gen);
+    }
+
+    // Do the sampling
+    auto sampling_start = std::chrono::high_resolution_clock::now();
+    data.all_sample(sample_incident_energy);
+    auto sampling_end = std::chrono::high_resolution_clock::now();
+    auto sampling_duration = std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end-sampling_start);
+    data.time_to_sample_ms = sampling_duration.count();
+    if (!silence){
+        std::cout << "Time to sample | milliseconds " << data.time_to_sample_ms << std::endl;
+    }
 }

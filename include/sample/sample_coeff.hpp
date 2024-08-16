@@ -19,6 +19,8 @@ class CoeffFile{
 
         double minimum_temperature;
         double maximum_temperature;
+
+        double time_to_sample_ms;
         
         bool xs_scale_temperatures;
         double xs_scale_minimum;
@@ -46,12 +48,21 @@ class CoeffFile{
         std::vector<double> ii_xs_coeffs;
         std::vector<double> beta_coeffs;
         std::vector<double> alpha_coeffs;
+
+        std::vector<double> xi_1;
+        std::vector<double> xi_2;
+
+        std::vector<double> sampled_secondary_energies;
+        std::vector<double> sampled_scattering_cosines;
+
         // Constructor
         CoeffFile(std::string const & file_path);
 
         // Public Methods
+        std::pair<double, double> single_sample(const double & inc_ener, const double & xi_1, const double & xi_2);
+        void all_sample(const double & inc_ener);
     private:
-
+        std::pair<double, double> return_alpha_extrema__(const double & inc_ener, const double & beta);
         void set_basis_function__(BasisFunction & basis_func, std::string const& basis_func_string);
 };
 

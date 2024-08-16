@@ -18,6 +18,8 @@ class CDFFile{
         double free_xs;
         double bound_xs;
 
+        double time_to_sample_ms;
+
         std::vector<double> ii_xs;
         std::vector<double> inc_ener_grid;
         std::vector<double> beta_cdf_grid;
@@ -27,11 +29,20 @@ class CDFFile{
         std::vector<double> alpha_cdf_grid;
         std::vector<double> fit_alphas;
 
+        std::vector<double> xi_1;
+        std::vector<double> xi_2;
+
+        std::vector<double> sampled_secondary_energies;
+        std::vector<double> sampled_scattering_cosines;
+
         // Constructor
         CDFFile(std::string const & file_path);
 
         // Public Methods
+        std::pair<double, double> single_sample(const double & inc_ener, const double & xi_1, const double & xi_2);
+        void all_sample(const double & inc_ener);
     private:
+        std::pair<double, double> return_alpha_extrema__(const double & inc_ener, const double & beta);
 };
 
 void sample_cdf();

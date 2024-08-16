@@ -108,3 +108,8 @@ double sample_incident_energy = 0.01;
 double sample_temperature = 400;
 int sample_num_samples = static_cast<int>(1e6);
 unsigned int sample_seed = 856526177;
+
+bool sample_naive_eval  = false;
+bool sample_horner_eval  = false;
+bool sample_clenshaw_eval  = false;
+bool sample_optimal_eval = false;

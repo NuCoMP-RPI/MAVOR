@@ -135,6 +135,12 @@ int main(int argc, char* argv[]){
     auto sample_cdf_option = sample_file.add_flag("--cdf", sample_cdf_file);
     sample_file.require_option(1);
 
+    auto &eval_routine = *sample.add_option_group("Tells Mavor the evaluation routine to use.  If none provided, Mavor will choose the 'optimal' routine.");
+    auto sample_eval_naive_option = eval_routine.add_flag("--naive", sample_naive_eval);
+    auto sample_eval_horner_option = eval_routine.add_flag("--horner", sample_horner_eval);
+    auto sample_eval_clenshaw_option = eval_routine.add_flag("--clenshaw", sample_clenshaw_eval);
+    eval_routine.require_option(0, 1);
+
     // Parse the command line arguments
     CLI11_PARSE(mavor, argc, argv);
 
@@ -179,6 +185,10 @@ int main(int argc, char* argv[]){
     if (sample.parsed()){
         if (*sample_cdf_option){sample_input_file = sample_cdf_test_file;}
         if (*sample_coeff_option){sample_input_file = sample_coeff_test_file;}
+        if (*sample_eval_naive_option){sample_naive_eval = true;}
+        else if (*sample_eval_horner_option){sample_horner_eval = true;}
+        else if (*sample_eval_clenshaw_option){sample_clenshaw_eval = true;}
+        else {sample_optimal_eval = true;}
         run_sample();
     }
     

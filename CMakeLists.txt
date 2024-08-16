@@ -12,6 +12,9 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+# Add compile options
+add_compile_options(-fopenmp)
+
 include(FetchContent)
 
 message(STATUS "Retrieving CLI11 version 2.4.1.")

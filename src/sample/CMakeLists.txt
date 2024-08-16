@@ -10,6 +10,12 @@ target_link_libraries(sample_lib PRIVATE
                               predefined_lib
                               otf_lib)
 
+# Link OpenMP library
+find_package(OpenMP REQUIRED)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(sample_lib PRIVATE OpenMP::OpenMP_CXX)
+endif()
+
 # Link HDF5 library
 target_link_libraries(sample_lib PRIVATE ${HDF5_LIBRARIES})
 target_include_directories(sample_lib PRIVATE ${HDF5_INCLUDE_DIRS})

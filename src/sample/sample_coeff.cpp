@@ -50,20 +50,23 @@ CoeffFile::CoeffFile(std::string const & file_path){
     readHDF5DoubleVector(file, "Alpha CDF Grid", alpha_cdf_grid);
 
     readHDF5DoubleVector(file, "XS_Coefficients", ii_xs_coeffs);
+    num_xs_coeff = ii_xs_coeffs.size()/inc_ener_grid.size();
     readHDF5DoubleVector(file, "Beta Coefficients", beta_coeffs);
+    num_beta_coeffs = beta_coeffs.size()/(inc_ener_grid.size()*beta_cdf_grid.size());
     readHDF5DoubleVector(file, "Alpha Coefficients", alpha_coeffs);
+    num_alpha_coeffs = alpha_coeffs.size()/(beta_grid.size()*alpha_cdf_grid.size());
 }
 
 void CoeffFile::set_basis_function__(BasisFunction &basis_func, std::string const &basis_func_string)
 {
-    for (auto const& [key, val]: basis_functions){
-        if (val.first == basis_func_string){
-            if (!silence){std::cout << "I found the basis function | " << basis_func_string << std::endl;}
-            basis_func = val;
-            return;
-        }
-    }
-    throw std::out_of_range("Basis function was not found.");
+    // for (auto const& [key, val]: basis_functions){
+    //     if (val.first == basis_func_string){
+    //         if (!silence){std::cout << "I found the basis function | " << basis_func_string << std::endl;}
+    //         basis_func = val;
+    //         return;
+    //     }
+    // }
+    // throw std::out_of_range("Basis function was not found.");
 }
 
 std::pair<double, double> CoeffFile::return_alpha_extrema__(const double &inc_ener, const double &beta){
@@ -91,6 +94,8 @@ void CoeffFile::all_sample(const double &inc_ener){
 
 void sample_coeff(){
     CoeffFile data(sample_input_file);
+
+    std::cout << data.num_xs_coeff << "  " << data.num_beta_coeffs << "  " << data.num_alpha_coeffs << std::endl;
 
     // Reserve sampling space
     data.sampled_secondary_energies.resize(sample_num_samples);

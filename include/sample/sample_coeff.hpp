@@ -46,8 +46,11 @@ class CoeffFile{
         std::vector<double> alpha_cdf_grid;
 
         std::vector<double> ii_xs_coeffs;
+        int num_xs_coeff;
         std::vector<double> beta_coeffs;
+        int num_beta_coeffs;
         std::vector<double> alpha_coeffs;
+        int num_alpha_coeffs;
 
         std::vector<double> xi_1;
         std::vector<double> xi_2;

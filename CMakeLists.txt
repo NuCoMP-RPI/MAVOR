@@ -50,7 +50,7 @@ configure_file(test_files/HinYH2_293K_tsl.h5 test_files/HinYH2_293K_tsl.h5 COPYO
 configure_file(test_files/HinYH2_293K_CDFs.h5 test_files/HinYH2_293K_CDFs.h5 COPYONLY)
 configure_file(test_files/HinYH2_coeffs.h5 test_files/HinYH2_coeffs.h5 COPYONLY)
 
-set(COMPILE_TESTS off)
+set(COMPILE_TESTS on)
 
 option(generate_tests "Option to generate compile tests." ${COMPILE_TESTS})
 

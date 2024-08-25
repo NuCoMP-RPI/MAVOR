@@ -1,6 +1,6 @@
-add_library(fit_evaluation)
+add_library(fit_evaluation_lib)
 
-target_sources(fit_evaluation PRIVATE 
+target_sources(fit_evaluation_lib PRIVATE 
                "${CMAKE_CURRENT_LIST_DIR}/set_evaluation.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/coeff_chebyshev.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/coeff_cosine.cpp"
@@ -19,5 +19,9 @@ target_sources(fit_evaluation PRIVATE
                "${CMAKE_CURRENT_LIST_DIR}/coeff_sqrt_power.cpp"
                )
                               
-target_include_directories(fit_evaluation PRIVATE "${CMAKE_SOURCE_DIR}/include/sample/fit_evaluation" 
-                                                  "${CMAKE_SOURCE_DIR}/include/common")
+target_include_directories(fit_evaluation_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/sample/fit_evaluation" 
+                                                      "${CMAKE_SOURCE_DIR}/include/common")
+
+if(COMPILE_TESTS)
+    add_subdirectory(unit_tests)
+endif(COMPILE_TESTS)

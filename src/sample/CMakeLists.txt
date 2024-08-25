@@ -11,7 +11,7 @@ target_link_libraries(sample_lib PRIVATE
                               common_lib
                               predefined_lib
                               otf_lib
-                              fit_evaluation)
+                              fit_evaluation_lib)
 
 # Link OpenMP library
 find_package(OpenMP REQUIRED)

@@ -4,8 +4,21 @@
 
 double abs_tol = 1e-6;
 
-TEST(InversePowerCoeffTest, HandlesZeros){
-    EXPECT_EQ(1, 1);
+double x1 = 1.0;
+double x2 = -0.83;
+std::vector<double> one_coeff = {1.0};
+std::vector<double> two_coeff = {1.0, 0.5};
+std::vector<double> three_coeff = {1.0, 0.5, 0.25};
+std::vector<double> eight_coeff = {0.18661, 0.95043, 0.02022, 0.22670, 0.52323, 0.16626, 0.89749, 0.12185};
+
+TEST(InversePowerCoeffTest, Naive){
+    EXPECT_NEAR(naive_inverse_power(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(naive_inverse_power(x1, two_coeff), 1.5, abs_tol);
+    EXPECT_NEAR(naive_inverse_power(x1, three_coeff), 1.75, abs_tol);
+    EXPECT_NEAR(naive_inverse_power(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(naive_inverse_power(x2, two_coeff), 0.397590, abs_tol);
+    EXPECT_NEAR(naive_inverse_power(x2, three_coeff), 0.760488, abs_tol);
+    EXPECT_NEAR(naive_inverse_power(x2, eight_coeff), 1.650895, abs_tol);
 }
 
 int main(int argc, char **argv) {

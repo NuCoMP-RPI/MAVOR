@@ -1,7 +1,18 @@
 #include <math.h>
 #include <vector>
+#include <functional>
+
+#include "clenshaw.hpp"
 
 #include "coeff_chebyshev.hpp"
+
+double chebyshev_alpha_recurrence__(double const & x, int const & k){
+    return 2*x;
+}
+
+double chebyshev_beta_recurrence__(double const & x, int const & k){
+    return -1;
+}
 
 double eval_chebyshev_order__(double const & x, int const order){
     switch(order){
@@ -40,7 +51,7 @@ double eval_chebyshev_order__(double const & x, int const order){
     }
 }
 
-double naive_chebyshev(double const & x, std::vector<double> const& coeffs){
+double naive_chebyshev(double const & x, std::vector<double> const & coeffs){
     double val = 0;
     for (int i = 0; i < coeffs.size(); ++i){
         val += coeffs[i]*eval_chebyshev_order__(x, i);
@@ -48,3 +59,37 @@ double naive_chebyshev(double const & x, std::vector<double> const& coeffs){
     return val;
 }
 
+std::vector<double> eval_chebyshev_direct_recurrence__(double x, int n) {
+    std::vector<double> T(n + 1);
+    T[0] = 1;
+    if (n > 0) {T[1] = x;}
+    for (int i = 2; i <= n; ++i){
+        T[i] = 2 * x * T[i-1] - T[i-2];
+    }
+    return T;
+}
+
+double direct_recurrence_chebyshev(double const & x, std::vector<double> const & coeffs){
+    std::vector<double> cheb_points = eval_chebyshev_direct_recurrence__(x, coeffs.size());
+    double val = 0;
+    for (int i = 0; i < coeffs.size(); ++i){
+        val += coeffs[i]*cheb_points[i];
+    }
+    return val;
+}
+
+double clenshaw_chebyshev_custom(double const & x, std::vector<double> const & coeffs) {
+    double bk2 = 0;
+    double bk1 = 0;
+    double bk = 0;
+    for (double k = coeffs.size(); k > 0; --k){
+        bk = coeffs[k] + 2*x*bk1 - bk2;
+        bk2 = bk1;
+        bk1 = bk;
+    }
+    return coeffs[0] + x*bk1 - bk2;
+}
+
+double clenshaw_chebyshev_general(double const & x, std::vector<double> const & coeffs){
+    return clenshaw(x, coeffs, chebyshev_alpha_recurrence__, chebyshev_beta_recurrence__, eval_chebyshev_order__);
+}

@@ -18,7 +18,9 @@ target_sources(fit_evaluation_lib PRIVATE
                "${CMAKE_CURRENT_LIST_DIR}/coeff_sqrt_log_power.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/coeff_sqrt_power.cpp"
                )
-                              
+
+target_link_libraries(fit_evaluation_lib PRIVATE common_lib)
+
 target_include_directories(fit_evaluation_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/sample/fit_evaluation" 
                                                       "${CMAKE_SOURCE_DIR}/include/common")
 

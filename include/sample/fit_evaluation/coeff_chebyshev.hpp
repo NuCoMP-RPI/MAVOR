@@ -3,6 +3,9 @@
 
 #include<vector>
 
-double naive_chebyshev(double const & x, std::vector<double> const& coeffs);
+double naive_chebyshev(double const & x, std::vector<double> const & coeffs);
+double direct_recurrence_chebyshev(double const & x, std::vector<double> const & coeffs);
+double clenshaw_chebyshev_custom(double const & x, std::vector<double> const & coeffs);
+double clenshaw_chebyshev_general(double const & x, std::vector<double> const & coeffs);
 
 #endif

@@ -1,7 +1,21 @@
 #include <math.h>
 #include <vector>
 
+#include "clenshaw.hpp"
+
 #include "coeff_legendre.hpp"
+
+// GENERAL NOTE: I do not know why this is giving me so much trouble but I just cannot get the recurrence relations to
+//               work in a general manner.  It may have to do with the stability of the equations but I am not sure.
+
+// NOTE: In theory, these should work for the direct recurrence and clenshaw but they do not
+double legendre_alpha_recurrence__(double const & x, int const & k){
+    return  ((2*k - 1)/k)*x;
+}
+
+double legendre_beta_recurrence__(double const & x, int const & k){
+    return -(k - 1)/k;
+}
 
 double eval_legendre_order__(double const & x, int const order){
     switch (order){
@@ -46,4 +60,45 @@ double naive_legendre(double const & x, std::vector<double> const& coeffs){
         val += coeffs[i]*eval_legendre_order__(x, i);
     }
     return val;
+}
+
+// NOTE: Was unable to get the general version of this working like in the chebyshev polynomials
+double direct_recurrence_legendre(double const & x, std::vector<double> const & coeffs){
+    size_t n = coeffs.size();
+    if (n == 0) {
+        return 0.0;
+    }
+    double P_prev = 1.0;
+    double result = coeffs[0] * P_prev;
+    if (n == 1) {
+        return result;
+    }
+    double P_curr = x;
+    result += coeffs[1] * P_curr;
+    for (size_t i = 2; i < n; ++i) {
+        double P_next = ((2 * i - 1) * x * P_curr - (i - 1) * P_prev) / i;
+        // NOTE: I have no idea why distributing the division by i does not work, but it doesn't
+        // double P_next = (((2 * i - 1) * x)/i) * P_curr - ((i - 1)/i) * P_prev;
+        result += coeffs[i] * P_next;
+        P_prev = P_curr;
+        P_curr = P_next;
+    }
+    return result;
+}
+
+// NOTE: I was unable to get clenshaw to function 
+double clenshaw_legendre_custom(double const & x, std::vector<double> const & coeffs) {
+    double bk2 = 0;
+    double bk1 = 0;
+    double bk = 0;
+    for (double k = coeffs.size(); k > 0; --k){
+        bk = coeffs[k] + legendre_alpha_recurrence__(x, k)*bk1 + legendre_beta_recurrence__(x,k)*bk2;
+        bk2 = bk1;
+        bk1 = bk;
+    }
+    return coeffs[0] + x*bk1 + 0.5*bk2;
+}
+
+double clenshaw_legendre_general(double const & x, std::vector<double> const & coeffs){
+    return clenshaw(x, coeffs, legendre_alpha_recurrence__, legendre_beta_recurrence__, eval_legendre_order__);
 }

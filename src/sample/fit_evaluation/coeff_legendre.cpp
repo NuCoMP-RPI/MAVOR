@@ -5,16 +5,14 @@
 
 #include "coeff_legendre.hpp"
 
-// GENERAL NOTE: I do not know why this is giving me so much trouble but I just cannot get the recurrence relations to
-//               work in a general manner.  It may have to do with the stability of the equations but I am not sure.
+// GENERAL NOTE: Recurrence relations are working for the direct method but clenshaw is still giving trouble
 
-// NOTE: In theory, these should work for the direct recurrence and clenshaw but they do not
 double legendre_alpha_recurrence__(double const & x, int const & k){
-    return  ((2*k - 1)/k)*x;
+    return  ((2.0*k - 1.0)/k)*x;
 }
 
 double legendre_beta_recurrence__(double const & x, int const & k){
-    return -(k - 1)/k;
+    return -(k - 1.0)/k;
 }
 
 double eval_legendre_order__(double const & x, int const order){
@@ -62,28 +60,44 @@ double naive_legendre(double const & x, std::vector<double> const& coeffs){
     return val;
 }
 
-// NOTE: Was unable to get the general version of this working like in the chebyshev polynomials
+// double direct_recurrence_legendre(double const & x, std::vector<double> const & coeffs){
+//     size_t n = coeffs.size();
+//     if (n == 0) {
+//         return 0.0;
+//     }
+//     double P_prev = 1.0;
+//     double result = coeffs[0] * P_prev;
+//     if (n == 1) {
+//         return result;
+//     }
+//     double P_curr = x;
+//     result += coeffs[1] * P_curr;
+//     for (size_t i = 2; i < n; ++i) {
+//         double P_next = legendre_alpha_recurrence__(x,i) * P_curr + legendre_beta_recurrence__(x,i) * P_prev;
+//         result += coeffs[i] * P_next;
+//         P_prev = P_curr;
+//         P_curr = P_next;
+//     }
+//     return result;
+// }
+
+std::vector<double> eval_legendre_direct_recurrence__(double x, int n) {
+    std::vector<double> T(n + 1);
+    T[0] = 1;
+    if (n > 0) {T[1] = x;}
+    for (int i = 2; i <= n; ++i){
+        T[i] = legendre_alpha_recurrence__(x,i)*T[i-1] + legendre_beta_recurrence__(x,i)*T[i-2];
+    }
+    return T;
+}
+
 double direct_recurrence_legendre(double const & x, std::vector<double> const & coeffs){
-    size_t n = coeffs.size();
-    if (n == 0) {
-        return 0.0;
+    std::vector<double> leg_points = eval_legendre_direct_recurrence__(x, coeffs.size());
+    double val = 0;
+    for (int i = 0; i < coeffs.size(); ++i){
+        val += coeffs[i]*leg_points[i];
     }
-    double P_prev = 1.0;
-    double result = coeffs[0] * P_prev;
-    if (n == 1) {
-        return result;
-    }
-    double P_curr = x;
-    result += coeffs[1] * P_curr;
-    for (size_t i = 2; i < n; ++i) {
-        double P_next = ((2 * i - 1) * x * P_curr - (i - 1) * P_prev) / i;
-        // NOTE: I have no idea why distributing the division by i does not work, but it doesn't
-        // double P_next = (((2 * i - 1) * x)/i) * P_curr - ((i - 1)/i) * P_prev;
-        result += coeffs[i] * P_next;
-        P_prev = P_curr;
-        P_curr = P_next;
-    }
-    return result;
+    return val;
 }
 
 // NOTE: I was unable to get clenshaw to function 

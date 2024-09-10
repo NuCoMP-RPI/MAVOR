@@ -21,6 +21,46 @@ TEST(SqrtPowerCoeffTest, Naive){
     EXPECT_NEAR(naive_sqrt_power(x2, eight_coeff), 1162138.734698, abs_tol);
 }
 
+TEST(SqrtPowerCoeffTest, Horner){
+    EXPECT_NEAR(horner_sqrt_power_custom(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_sqrt_power_custom(x1, two_coeff), 2.581139, abs_tol);
+    EXPECT_NEAR(horner_sqrt_power_custom(x1, three_coeff), 5.081139, abs_tol);
+    EXPECT_NEAR(horner_sqrt_power_custom(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_sqrt_power_custom(x2, two_coeff), 5.555217, abs_tol);
+    EXPECT_NEAR(horner_sqrt_power_custom(x2, three_coeff), 26.305217, abs_tol);
+    EXPECT_NEAR(horner_sqrt_power_custom(x2, eight_coeff), 1162138.734698, abs_tol);
+}
+
+TEST(SqrtPowerCoeffTest, HornerGen){
+    EXPECT_NEAR(horner_sqrt_power_general(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_sqrt_power_general(x1, two_coeff), 2.581139, abs_tol);
+    EXPECT_NEAR(horner_sqrt_power_general(x1, three_coeff), 5.081139, abs_tol);
+    EXPECT_NEAR(horner_sqrt_power_general(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_sqrt_power_general(x2, two_coeff), 5.555217, abs_tol);
+    EXPECT_NEAR(horner_sqrt_power_general(x2, three_coeff), 26.305217, abs_tol);
+    EXPECT_NEAR(horner_sqrt_power_general(x2, eight_coeff), 1162138.734698, abs_tol);
+}
+
+TEST(SqrtPowerCoeffTest, Clenshaw){
+    EXPECT_NEAR(clenshaw_sqrt_power_custom(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_sqrt_power_custom(x1, two_coeff), 2.581139, abs_tol);
+    EXPECT_NEAR(clenshaw_sqrt_power_custom(x1, three_coeff), 5.081139, abs_tol);
+    EXPECT_NEAR(clenshaw_sqrt_power_custom(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_sqrt_power_custom(x2, two_coeff), 5.555217, abs_tol);
+    EXPECT_NEAR(clenshaw_sqrt_power_custom(x2, three_coeff), 26.305217, abs_tol);
+    EXPECT_NEAR(clenshaw_sqrt_power_custom(x2, eight_coeff), 1162138.734698, abs_tol);
+}
+
+TEST(SqrtPowerCoeffTest, ClenshawGen){
+    EXPECT_NEAR(clenshaw_sqrt_power_general(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_sqrt_power_general(x1, two_coeff), 2.581139, abs_tol);
+    EXPECT_NEAR(clenshaw_sqrt_power_general(x1, three_coeff), 5.081139, abs_tol);
+    EXPECT_NEAR(clenshaw_sqrt_power_general(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_sqrt_power_general(x2, two_coeff), 5.555217, abs_tol);
+    EXPECT_NEAR(clenshaw_sqrt_power_general(x2, three_coeff), 26.305217, abs_tol);
+    EXPECT_NEAR(clenshaw_sqrt_power_general(x2, eight_coeff), 1162138.734698, abs_tol);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

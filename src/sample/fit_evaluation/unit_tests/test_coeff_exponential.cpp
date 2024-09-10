@@ -21,6 +21,46 @@ TEST(ExponentialCoeffTest, Naive){
     EXPECT_NEAR(naive_exponential(x2, eight_coeff), 0.651757, abs_tol);
 }
 
+TEST(ExponentialCoeffTest, Horner){
+    EXPECT_NEAR(horner_exponential_custom(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_exponential_custom(x1, two_coeff), 2.359141, abs_tol);
+    EXPECT_NEAR(horner_exponential_custom(x1, three_coeff), 4.206405, abs_tol);
+    EXPECT_NEAR(horner_exponential_custom(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_exponential_custom(x2, two_coeff), 1.218025, abs_tol);
+    EXPECT_NEAR(horner_exponential_custom(x2, three_coeff), 1.265559, abs_tol);
+    EXPECT_NEAR(horner_exponential_custom(x2, eight_coeff), 0.651757, abs_tol);
+}
+
+TEST(ExponentialCoeffTest, HornerGen){
+    EXPECT_NEAR(horner_exponential_general(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_exponential_general(x1, two_coeff), 2.359141, abs_tol);
+    EXPECT_NEAR(horner_exponential_general(x1, three_coeff), 4.206405, abs_tol);
+    EXPECT_NEAR(horner_exponential_general(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_exponential_general(x2, two_coeff), 1.218025, abs_tol);
+    EXPECT_NEAR(horner_exponential_general(x2, three_coeff), 1.265559, abs_tol);
+    EXPECT_NEAR(horner_exponential_general(x2, eight_coeff), 0.651757, abs_tol);
+}
+
+TEST(ExponentialCoeffTest, Clenshaw){
+    EXPECT_NEAR(clenshaw_exponential_custom(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_exponential_custom(x1, two_coeff), 2.359141, abs_tol);
+    EXPECT_NEAR(clenshaw_exponential_custom(x1, three_coeff), 4.206405, abs_tol);
+    EXPECT_NEAR(clenshaw_exponential_custom(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_exponential_custom(x2, two_coeff), 1.218025, abs_tol);
+    EXPECT_NEAR(clenshaw_exponential_custom(x2, three_coeff), 1.265559, abs_tol);
+    EXPECT_NEAR(clenshaw_exponential_custom(x2, eight_coeff), 0.651757, abs_tol);
+}
+
+TEST(ExponentialCoeffTest, ClenshawGen){
+    EXPECT_NEAR(clenshaw_exponential_general(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_exponential_general(x1, two_coeff), 2.359141, abs_tol);
+    EXPECT_NEAR(clenshaw_exponential_general(x1, three_coeff), 4.206405, abs_tol);
+    EXPECT_NEAR(clenshaw_exponential_general(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_exponential_general(x2, two_coeff), 1.218025, abs_tol);
+    EXPECT_NEAR(clenshaw_exponential_general(x2, three_coeff), 1.265559, abs_tol);
+    EXPECT_NEAR(clenshaw_exponential_general(x2, eight_coeff), 0.651757, abs_tol);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

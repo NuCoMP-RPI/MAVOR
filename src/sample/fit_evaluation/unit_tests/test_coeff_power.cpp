@@ -21,6 +21,46 @@ TEST(PowerCoeffTest, Naive){
     EXPECT_NEAR(naive_power(x2, eight_coeff), -0.274755, abs_tol);
 }
 
+TEST(PowerCoeffTest, Horner){
+    EXPECT_NEAR(horner_power_custom(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_power_custom(x1, two_coeff), 1.5, abs_tol);
+    EXPECT_NEAR(horner_power_custom(x1, three_coeff), 1.75, abs_tol);
+    EXPECT_NEAR(horner_power_custom(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_power_custom(x2, two_coeff), 0.585, abs_tol);
+    EXPECT_NEAR(horner_power_custom(x2, three_coeff), 0.757225, abs_tol);
+    EXPECT_NEAR(horner_power_custom(x2, eight_coeff), -0.274755, abs_tol);
+}
+
+TEST(PowerCoeffTest, HornerGen){
+    EXPECT_NEAR(horner_power_general(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_power_general(x1, two_coeff), 1.5, abs_tol);
+    EXPECT_NEAR(horner_power_general(x1, three_coeff), 1.75, abs_tol);
+    EXPECT_NEAR(horner_power_general(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_power_general(x2, two_coeff), 0.585, abs_tol);
+    EXPECT_NEAR(horner_power_general(x2, three_coeff), 0.757225, abs_tol);
+    EXPECT_NEAR(horner_power_general(x2, eight_coeff), -0.274755, abs_tol);
+}
+
+TEST(PowerCoeffTest, Clenshaw){
+    EXPECT_NEAR(clenshaw_power_custom(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_power_custom(x1, two_coeff), 1.5, abs_tol);
+    EXPECT_NEAR(clenshaw_power_custom(x1, three_coeff), 1.75, abs_tol);
+    EXPECT_NEAR(clenshaw_power_custom(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_power_custom(x2, two_coeff), 0.585, abs_tol);
+    EXPECT_NEAR(clenshaw_power_custom(x2, three_coeff), 0.757225, abs_tol);
+    EXPECT_NEAR(clenshaw_power_custom(x2, eight_coeff), -0.274755, abs_tol);
+}
+
+TEST(PowerCoeffTest, ClenshawGen){
+    EXPECT_NEAR(clenshaw_power_general(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_power_general(x1, two_coeff), 1.5, abs_tol);
+    EXPECT_NEAR(clenshaw_power_general(x1, three_coeff), 1.75, abs_tol);
+    EXPECT_NEAR(clenshaw_power_general(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_power_general(x2, two_coeff), 0.585, abs_tol);
+    EXPECT_NEAR(clenshaw_power_general(x2, three_coeff), 0.757225, abs_tol);
+    EXPECT_NEAR(clenshaw_power_general(x2, eight_coeff), -0.274755, abs_tol);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

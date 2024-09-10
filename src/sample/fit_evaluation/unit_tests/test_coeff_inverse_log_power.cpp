@@ -21,6 +21,46 @@ TEST(InverseLogPowerCoeffTest, Naive){
     EXPECT_NEAR(naive_inverse_log_power(x2, eight_coeff), 0.406954, abs_tol);
 }
 
+TEST(InverseLogPowerCoeffTest, Horner){
+    EXPECT_NEAR(horner_inverse_log_power_custom(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_inverse_log_power_custom(x1, two_coeff), 1.217147, abs_tol);
+    EXPECT_NEAR(horner_inverse_log_power_custom(x1, three_coeff), 1.264300, abs_tol);
+    EXPECT_NEAR(horner_inverse_log_power_custom(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_inverse_log_power_custom(x2, two_coeff), 1.113152, abs_tol);
+    EXPECT_NEAR(horner_inverse_log_power_custom(x2, three_coeff), 1.125955, abs_tol);
+    EXPECT_NEAR(horner_inverse_log_power_custom(x2, eight_coeff), 0.406954, abs_tol);
+}
+
+TEST(InverseLogPowerCoeffTest, HornerGen){
+    EXPECT_NEAR(horner_inverse_log_power_general(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_inverse_log_power_general(x1, two_coeff), 1.217147, abs_tol);
+    EXPECT_NEAR(horner_inverse_log_power_general(x1, three_coeff), 1.264300, abs_tol);
+    EXPECT_NEAR(horner_inverse_log_power_general(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_inverse_log_power_general(x2, two_coeff), 1.113152, abs_tol);
+    EXPECT_NEAR(horner_inverse_log_power_general(x2, three_coeff), 1.125955, abs_tol);
+    EXPECT_NEAR(horner_inverse_log_power_general(x2, eight_coeff), 0.406954, abs_tol);
+}
+
+TEST(InverseLogPowerCoeffTest, Clenshaw){
+    EXPECT_NEAR(clenshaw_inverse_log_power_custom(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_log_power_custom(x1, two_coeff), 1.217147, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_log_power_custom(x1, three_coeff), 1.264300, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_log_power_custom(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_log_power_custom(x2, two_coeff), 1.113152, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_log_power_custom(x2, three_coeff), 1.125955, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_log_power_custom(x2, eight_coeff), 0.406954, abs_tol);
+}
+
+TEST(InverseLogPowerCoeffTest, ClenshawGen){
+    EXPECT_NEAR(clenshaw_inverse_log_power_general(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_log_power_general(x1, two_coeff), 1.217147, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_log_power_general(x1, three_coeff), 1.264300, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_log_power_general(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_log_power_general(x2, two_coeff), 1.113152, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_log_power_general(x2, three_coeff), 1.125955, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_log_power_general(x2, eight_coeff), 0.406954, abs_tol);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

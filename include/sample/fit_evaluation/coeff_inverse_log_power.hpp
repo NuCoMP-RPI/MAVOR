@@ -4,5 +4,9 @@
 #include<vector>
 
 double naive_inverse_log_power(double const & x, std::vector<double> const& coeffs);
+double horner_inverse_log_power_custom(double const & x, std::vector<double> const & coeffs);
+double horner_inverse_log_power_general(double const & x, std::vector<double> const & coeffs);
+double clenshaw_inverse_log_power_custom(double const & x, std::vector<double> const & coeffs);
+double clenshaw_inverse_log_power_general(double const & x, std::vector<double> const & coeffs);
 
 #endif

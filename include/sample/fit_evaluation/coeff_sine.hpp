@@ -4,5 +4,6 @@
 #include<vector>
 
 double naive_sine(double const & x, std::vector<double> const& coeffs);
+double improved_sine(double const & x, std::vector<double> const & coeffs);
 
 #endif

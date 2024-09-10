@@ -4,5 +4,9 @@
 #include<vector>
 
 double naive_exponential(double const & x, std::vector<double> const& coeffs);
+double horner_exponential_custom(double const & x, std::vector<double> const & coeffs);
+double horner_exponential_general(double const & x, std::vector<double> const & coeffs);
+double clenshaw_exponential_custom(double const & x, std::vector<double> const & coeffs);
+double clenshaw_exponential_general(double const & x, std::vector<double> const & coeffs);
 
 #endif

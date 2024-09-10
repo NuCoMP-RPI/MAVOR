@@ -82,8 +82,9 @@ double clenshaw_chebyshev_custom(double const & x, std::vector<double> const & c
     double bk2 = 0;
     double bk1 = 0;
     double bk = 0;
+    double two_x = 2*x;
     for (double k = coeffs.size(); k > 0; --k){
-        bk = coeffs[k] + 2*x*bk1 - bk2;
+        bk = coeffs[k] + two_x*bk1 - bk2;
         bk2 = bk1;
         bk1 = bk;
     }

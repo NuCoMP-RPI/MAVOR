@@ -21,6 +21,16 @@ TEST(CosineCoeffTest, Naive){
     EXPECT_NEAR(naive_cosine(x2, eight_coeff), 1.21761, abs_tol);
 }
 
+TEST(CosineCoeffTest, Improved){
+    EXPECT_NEAR(improved_cosine(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(improved_cosine(x1, two_coeff), 1.5, abs_tol);
+    EXPECT_NEAR(improved_cosine(x1, three_coeff), 1.75, abs_tol);
+    EXPECT_NEAR(improved_cosine(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(improved_cosine(x2, two_coeff), 1.240877, abs_tol);
+    EXPECT_NEAR(improved_cosine(x2, three_coeff), 1.10692, abs_tol);
+    EXPECT_NEAR(improved_cosine(x2, eight_coeff), 1.21761, abs_tol);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

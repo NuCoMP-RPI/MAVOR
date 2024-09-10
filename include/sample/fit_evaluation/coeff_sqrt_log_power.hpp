@@ -4,5 +4,9 @@
 #include<vector>
 
 double naive_sqrt_log_power(double const & x, std::vector<double> const& coeffs);
+double horner_sqrt_log_power_custom(double const & x, std::vector<double> const & coeffs);
+double horner_sqrt_log_power_general(double const & x, std::vector<double> const & coeffs);
+double clenshaw_sqrt_log_power_custom(double const & x, std::vector<double> const & coeffs);
+double clenshaw_sqrt_log_power_general(double const & x, std::vector<double> const & coeffs);
 
 #endif

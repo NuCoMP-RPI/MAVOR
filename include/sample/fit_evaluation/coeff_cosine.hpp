@@ -4,5 +4,6 @@
 #include<vector>
 
 double naive_cosine(double const & x, std::vector<double> const& coeffs);
+double improved_cosine(double const & x, std::vector<double> const & coeffs);
 
 #endif

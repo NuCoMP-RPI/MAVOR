@@ -59,6 +59,27 @@ double naive_chebyshev(double const & x, std::vector<double> const & coeffs){
     return val;
 }
 
+double direct_recurrence_chebyshev_custom(double const & x, std::vector<double> const & coeffs){
+    size_t n = coeffs.size();
+    if (n == 0) {
+        return 0.0;
+    }
+    double T_prev = 1.0;
+    double result = coeffs[0] * T_prev;
+    if (n == 1) {
+        return result;
+    }
+    double T_curr = x;
+    result += coeffs[1] * T_curr;
+    for (size_t i = 2; i < n; ++i) {
+        double T_next = chebyshev_alpha_recurrence__(x,i) * T_curr + chebyshev_beta_recurrence__(x,i) * T_prev;
+        result += coeffs[i] * T_next;
+        T_prev = T_curr;
+        T_curr = T_next;
+    }
+    return result;
+}
+
 std::vector<double> eval_chebyshev_direct_recurrence__(double x, int n) {
     std::vector<double> T(n + 1);
     T[0] = 1;
@@ -69,7 +90,7 @@ std::vector<double> eval_chebyshev_direct_recurrence__(double x, int n) {
     return T;
 }
 
-double direct_recurrence_chebyshev(double const & x, std::vector<double> const & coeffs){
+double direct_recurrence_chebyshev_general(double const & x, std::vector<double> const & coeffs){
     std::vector<double> cheb_points = eval_chebyshev_direct_recurrence__(x, coeffs.size());
     double val = 0;
     for (int i = 0; i < coeffs.size(); ++i){

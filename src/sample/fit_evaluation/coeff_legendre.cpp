@@ -60,26 +60,26 @@ double naive_legendre(double const & x, std::vector<double> const& coeffs){
     return val;
 }
 
-// double direct_recurrence_legendre(double const & x, std::vector<double> const & coeffs){
-//     size_t n = coeffs.size();
-//     if (n == 0) {
-//         return 0.0;
-//     }
-//     double P_prev = 1.0;
-//     double result = coeffs[0] * P_prev;
-//     if (n == 1) {
-//         return result;
-//     }
-//     double P_curr = x;
-//     result += coeffs[1] * P_curr;
-//     for (size_t i = 2; i < n; ++i) {
-//         double P_next = legendre_alpha_recurrence__(x,i) * P_curr + legendre_beta_recurrence__(x,i) * P_prev;
-//         result += coeffs[i] * P_next;
-//         P_prev = P_curr;
-//         P_curr = P_next;
-//     }
-//     return result;
-// }
+double direct_recurrence_legendre_custom(double const & x, std::vector<double> const & coeffs){
+    size_t n = coeffs.size();
+    if (n == 0) {
+        return 0.0;
+    }
+    double P_prev = 1.0;
+    double result = coeffs[0] * P_prev;
+    if (n == 1) {
+        return result;
+    }
+    double P_curr = x;
+    result += coeffs[1] * P_curr;
+    for (size_t i = 2; i < n; ++i) {
+        double P_next = legendre_alpha_recurrence__(x,i) * P_curr + legendre_beta_recurrence__(x,i) * P_prev;
+        result += coeffs[i] * P_next;
+        P_prev = P_curr;
+        P_curr = P_next;
+    }
+    return result;
+}
 
 std::vector<double> eval_legendre_direct_recurrence__(double x, int n) {
     std::vector<double> T(n + 1);
@@ -91,7 +91,7 @@ std::vector<double> eval_legendre_direct_recurrence__(double x, int n) {
     return T;
 }
 
-double direct_recurrence_legendre(double const & x, std::vector<double> const & coeffs){
+double direct_recurrence_legendre_general(double const & x, std::vector<double> const & coeffs){
     std::vector<double> leg_points = eval_legendre_direct_recurrence__(x, coeffs.size());
     double val = 0;
     for (int i = 0; i < coeffs.size(); ++i){

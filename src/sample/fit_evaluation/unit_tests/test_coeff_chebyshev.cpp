@@ -23,13 +23,23 @@ TEST(ChebyshevCoeffTest, Naive){
 }
 
 TEST(ChebyshevCoeffTest, DirectRecurrence){
-    EXPECT_NEAR(direct_recurrence_chebyshev(x1, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(direct_recurrence_chebyshev(x1, two_coeff), 1.5, abs_tol);
-    EXPECT_NEAR(direct_recurrence_chebyshev(x1, three_coeff), 1.75, abs_tol);
-    EXPECT_NEAR(direct_recurrence_chebyshev(x2, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(direct_recurrence_chebyshev(x2, two_coeff), 0.585, abs_tol);
-    EXPECT_NEAR(direct_recurrence_chebyshev(x2, three_coeff), 0.67945, abs_tol);
-    EXPECT_NEAR(direct_recurrence_chebyshev(x2, eight_coeff), -1.51682373, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_custom(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_custom(x1, two_coeff), 1.5, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_custom(x1, three_coeff), 1.75, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_custom(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_custom(x2, two_coeff), 0.585, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_custom(x2, three_coeff), 0.67945, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_custom(x2, eight_coeff), -1.51682373, abs_tol);
+}
+
+TEST(ChebyshevCoeffTest, DirectRecurrenceGen){
+    EXPECT_NEAR(direct_recurrence_chebyshev_general(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_general(x1, two_coeff), 1.5, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_general(x1, three_coeff), 1.75, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_general(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_general(x2, two_coeff), 0.585, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_general(x2, three_coeff), 0.67945, abs_tol);
+    EXPECT_NEAR(direct_recurrence_chebyshev_general(x2, eight_coeff), -1.51682373, abs_tol);
 }
 
 TEST(ChebyshevCoeffTest, Clenshaw){

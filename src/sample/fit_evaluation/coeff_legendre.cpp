@@ -1,8 +1,6 @@
 #include <math.h>
 #include <vector>
 
-#include <iostream>
-
 #include "clenshaw.hpp"
 
 #include "coeff_legendre.hpp"

@@ -9,8 +9,8 @@ double clenshaw(double const & x,
     double bk2 = 0;
     double bk1 = 0;
     double bk = 0;
-    for (double k = coeffs.size(); k > 0; --k){
-        bk = coeffs[k] + alpha_rec(x, k)*bk1 + beta_rec(x,k)*bk2;
+    for (double k = coeffs.size() - 1; k > 0; --k){
+        bk = coeffs[k] + alpha_rec(x, k)*bk1 + beta_rec(x,k + 1)*bk2;
         bk2 = bk1;
         bk1 = bk;
     }

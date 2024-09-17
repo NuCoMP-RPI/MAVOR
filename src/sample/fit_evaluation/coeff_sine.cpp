@@ -20,7 +20,7 @@ double eval_sine_order__(double const & x, int const order){
     return sin(order*2*PI*x);
 }
 
-double naive_sine(double const & x, std::vector<double> const& coeffs){
+double naive_sine_vec(double const & x, std::vector<double> const& coeffs){
     double val = 0;
     for (int i = 0; i < coeffs.size(); ++i){
         val += coeffs[i]*eval_sine_order__(x, i);
@@ -28,11 +28,30 @@ double naive_sine(double const & x, std::vector<double> const& coeffs){
     return val;
 }
 
-double improved_sine(double const & x, std::vector<double> const & coeffs){
+double naive_sine_iter(double const & x, Iter begin, Iter end) {
+    double val = 0;
+    int index = 0;
+    for (auto it = begin; it != end; ++it, ++index) {
+        val += *it * eval_sine_order__(x, index);
+    }
+    return val;
+}
+
+double improved_sine_vec(double const & x, std::vector<double> const & coeffs){
     std::vector<double> sine_points = eval_sine_all_orders__(x, coeffs.size());
     double val = 0;
     for (int i = 0; i < coeffs.size(); ++i){
         val += coeffs[i]*sine_points[i];
+    }
+    return val;
+}
+
+double improved_sine_iter(double const & x, Iter begin, Iter end) {
+    std::vector<double> sine_points = eval_sine_all_orders__(x, std::distance(begin, end));
+    double val = 0;
+    int index = 0;
+    for (auto it = begin; it != end; ++it, ++index) {
+        val += *it * sine_points[index];
     }
     return val;
 }

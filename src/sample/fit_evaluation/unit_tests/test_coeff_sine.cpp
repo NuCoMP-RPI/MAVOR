@@ -11,25 +11,52 @@ std::vector<double> two_coeff = {1.0, 0.5};
 std::vector<double> three_coeff = {1.0, 0.5, 0.25};
 std::vector<double> eight_coeff = {0.18661, 0.95043, 0.02022, 0.22670, 0.52323, 0.16626, 0.89749, 0.12185};
 
-TEST(SineCoeffTest, Naive){
-    EXPECT_NEAR(naive_sine(x1, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(naive_sine(x1, two_coeff), 1, abs_tol);
-    EXPECT_NEAR(naive_sine(x1, three_coeff), 1, abs_tol);
-    EXPECT_NEAR(naive_sine(x2, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(naive_sine(x2, two_coeff), 1.438153, abs_tol);
-    EXPECT_NEAR(naive_sine(x2, three_coeff), 1.649235, abs_tol);
-    EXPECT_NEAR(naive_sine(x2, eight_coeff), 0.640155, abs_tol);
+// ==========================================
+// Vector Tests
+
+TEST(SineCoeffTest, NaiveVec){
+    EXPECT_NEAR(naive_sine_vec(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(naive_sine_vec(x1, two_coeff), 1, abs_tol);
+    EXPECT_NEAR(naive_sine_vec(x1, three_coeff), 1, abs_tol);
+    EXPECT_NEAR(naive_sine_vec(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(naive_sine_vec(x2, two_coeff), 1.438153, abs_tol);
+    EXPECT_NEAR(naive_sine_vec(x2, three_coeff), 1.649235, abs_tol);
+    EXPECT_NEAR(naive_sine_vec(x2, eight_coeff), 0.640155, abs_tol);
 }
 
-TEST(SineCoeffTest, Improved){
-    EXPECT_NEAR(improved_sine(x1, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(improved_sine(x1, two_coeff), 1, abs_tol);
-    EXPECT_NEAR(improved_sine(x1, three_coeff), 1, abs_tol);
-    EXPECT_NEAR(improved_sine(x2, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(improved_sine(x2, two_coeff), 1.438153, abs_tol);
-    EXPECT_NEAR(improved_sine(x2, three_coeff), 1.649235, abs_tol);
-    EXPECT_NEAR(improved_sine(x2, eight_coeff), 0.640155, abs_tol);
+TEST(SineCoeffTest, ImprovedVec){
+    EXPECT_NEAR(improved_sine_vec(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(improved_sine_vec(x1, two_coeff), 1, abs_tol);
+    EXPECT_NEAR(improved_sine_vec(x1, three_coeff), 1, abs_tol);
+    EXPECT_NEAR(improved_sine_vec(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(improved_sine_vec(x2, two_coeff), 1.438153, abs_tol);
+    EXPECT_NEAR(improved_sine_vec(x2, three_coeff), 1.649235, abs_tol);
+    EXPECT_NEAR(improved_sine_vec(x2, eight_coeff), 0.640155, abs_tol);
 }
+
+// ==========================================
+// Iterator Tests
+
+TEST(SineCoeffTest, NaiveIter){
+    EXPECT_NEAR(naive_sine_iter(x1, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(naive_sine_iter(x1, two_coeff.begin(), two_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(naive_sine_iter(x1, three_coeff.begin(), three_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(naive_sine_iter(x2, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(naive_sine_iter(x2, two_coeff.begin(), two_coeff.end()), 1.438153, abs_tol);
+    EXPECT_NEAR(naive_sine_iter(x2, three_coeff.begin(), three_coeff.end()), 1.649235, abs_tol);
+    EXPECT_NEAR(naive_sine_iter(x2, eight_coeff.begin(), eight_coeff.end()), 0.640155, abs_tol);
+}
+
+TEST(SineCoeffTest, ImprovedIter){
+    EXPECT_NEAR(improved_sine_iter(x1, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(improved_sine_iter(x1, two_coeff.begin(), two_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(improved_sine_iter(x1, three_coeff.begin(), three_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(improved_sine_iter(x2, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(improved_sine_iter(x2, two_coeff.begin(), two_coeff.end()), 1.438153, abs_tol);
+    EXPECT_NEAR(improved_sine_iter(x2, three_coeff.begin(), three_coeff.end()), 1.649235, abs_tol);
+    EXPECT_NEAR(improved_sine_iter(x2, eight_coeff.begin(), eight_coeff.end()), 0.640155, abs_tol);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

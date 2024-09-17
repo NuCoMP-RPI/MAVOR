@@ -50,7 +50,7 @@ double eval_legendre_order__(double const & x, int const order){
     }
 }
 
-double naive_legendre(double const & x, std::vector<double> const& coeffs){
+double naive_legendre_vec(double const & x, std::vector<double> const& coeffs){
     double val = 0;
     for (int i = 0; i < coeffs.size(); ++i){
         val += coeffs[i]*eval_legendre_order__(x, i);
@@ -58,7 +58,16 @@ double naive_legendre(double const & x, std::vector<double> const& coeffs){
     return val;
 }
 
-double direct_recurrence_legendre_custom(double const & x, std::vector<double> const & coeffs){
+double naive_legendre_iter(double const & x, Iter begin, Iter end) {
+    double val = 0;
+    int index = 0;
+    for (auto it = begin; it != end; ++it, ++index) {
+        val += *it * eval_legendre_order__(x, index);
+    }
+    return val;
+}
+
+double direct_recurrence_legendre_custom_vec(double const & x, std::vector<double> const & coeffs){
     size_t n = coeffs.size();
     if (n == 0) {
         return 0.0;
@@ -79,6 +88,27 @@ double direct_recurrence_legendre_custom(double const & x, std::vector<double> c
     return result;
 }
 
+double direct_recurrence_legendre_custom_iter(double const & x, Iter begin, Iter end) {
+    size_t n = std::distance(begin, end);
+    if (n == 0) {
+        return 0.0;
+    }
+    double P_prev = 1.0;
+    double result = *begin * P_prev;
+    if (n == 1) {
+        return result;
+    }
+    double P_curr = x;
+    result += *(begin + 1) * P_curr;
+    for (size_t i = 2; i < n; ++i) {
+        double P_next = legendre_alpha_recurrence__(x, i - 1) * P_curr + legendre_beta_recurrence__(x, i - 1) * P_prev;
+        result += *(begin + i) * P_next;
+        P_prev = P_curr;
+        P_curr = P_next;
+    }
+    return result;
+}
+
 std::vector<double> eval_legendre_direct_recurrence__(double x, int n) {
     std::vector<double> T(n + 1);
     T[0] = 1;
@@ -89,7 +119,7 @@ std::vector<double> eval_legendre_direct_recurrence__(double x, int n) {
     return T;
 }
 
-double direct_recurrence_legendre_general(double const & x, std::vector<double> const & coeffs){
+double direct_recurrence_legendre_general_vec(double const & x, std::vector<double> const & coeffs){
     std::vector<double> leg_points = eval_legendre_direct_recurrence__(x, coeffs.size());
     double val = 0;
     for (int i = 0; i < coeffs.size(); ++i){
@@ -98,7 +128,17 @@ double direct_recurrence_legendre_general(double const & x, std::vector<double> 
     return val;
 }
 
-double clenshaw_legendre_custom(double const & x, std::vector<double> const & coeffs) {
+double direct_recurrence_legendre_general_iter(double const & x, Iter begin, Iter end) {
+    std::vector<double> leg_points = eval_legendre_direct_recurrence__(x, std::distance(begin, end));
+    double val = 0;
+    int index = 0;
+    for (auto it = begin; it != end; ++it, ++index) {
+        val += *it * leg_points[index];
+    }
+    return val;
+}
+
+double clenshaw_legendre_custom_vec(double const & x, std::vector<double> const & coeffs) {
     double bk2 = 0;
     double bk1 = 0;
     double bk = 0;
@@ -110,6 +150,23 @@ double clenshaw_legendre_custom(double const & x, std::vector<double> const & co
     return coeffs[0] + x*bk1 - 0.5*bk2;
 }
 
-double clenshaw_legendre_general(double const & x, std::vector<double> const & coeffs){
+double clenshaw_legendre_custom_iter(double const & x, Iter begin, Iter end) {
+    double bk2 = 0;
+    double bk1 = 0;
+    double bk = 0;
+    int size = std::distance(begin, end);
+    for (int k = size - 1; k > 0; --k) {
+        bk = *(begin + k) + legendre_alpha_recurrence__(x, k) * bk1 + legendre_beta_recurrence__(x, k + 1) * bk2;
+        bk2 = bk1;
+        bk1 = bk;
+    }
+    return *begin + x * bk1 - 0.5 * bk2;
+}
+
+double clenshaw_legendre_general_vec(double const & x, std::vector<double> const & coeffs){
     return clenshaw(x, coeffs, legendre_alpha_recurrence__, legendre_beta_recurrence__, eval_legendre_order__);
+}
+
+double clenshaw_legendre_general_iter(double const & x, Iter begin, Iter end) {
+    return clenshaw(x, begin, end, legendre_alpha_recurrence__, legendre_beta_recurrence__, eval_legendre_order__);
 }

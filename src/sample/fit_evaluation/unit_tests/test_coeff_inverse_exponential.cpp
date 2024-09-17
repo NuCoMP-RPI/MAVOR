@@ -11,54 +11,110 @@ std::vector<double> two_coeff = {1.0, 0.5};
 std::vector<double> three_coeff = {1.0, 0.5, 0.25};
 std::vector<double> eight_coeff = {0.18661, 0.95043, 0.02022, 0.22670, 0.52323, 0.16626, 0.89749, 0.12185};
 
-TEST(InverseExponentialCoeffTest, Naive){
-    EXPECT_NEAR(naive_inverse_exponential(x1, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(naive_inverse_exponential(x1, two_coeff), 1.18394, abs_tol);
-    EXPECT_NEAR(naive_inverse_exponential(x1, three_coeff), 1.217774, abs_tol);
-    EXPECT_NEAR(naive_inverse_exponential(x2, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(naive_inverse_exponential(x2, two_coeff), 2.146659, abs_tol);
-    EXPECT_NEAR(naive_inverse_exponential(x2, three_coeff), 3.461487, abs_tol);
-    EXPECT_NEAR(naive_inverse_exponential(x2, eight_coeff), 201.439439, abs_tol);
+// ==========================================
+// Vector Tests
+
+TEST(InverseExponentialCoeffTest, NaiveVec){
+    EXPECT_NEAR(naive_inverse_exponential_vec(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(naive_inverse_exponential_vec(x1, two_coeff), 1.18394, abs_tol);
+    EXPECT_NEAR(naive_inverse_exponential_vec(x1, three_coeff), 1.217774, abs_tol);
+    EXPECT_NEAR(naive_inverse_exponential_vec(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(naive_inverse_exponential_vec(x2, two_coeff), 2.146659, abs_tol);
+    EXPECT_NEAR(naive_inverse_exponential_vec(x2, three_coeff), 3.461487, abs_tol);
+    EXPECT_NEAR(naive_inverse_exponential_vec(x2, eight_coeff), 201.439439, abs_tol);
 }
 
-TEST(InverseExponentialCoeffTest, Horner){
-    EXPECT_NEAR(horner_inverse_exponential_custom(x1, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(horner_inverse_exponential_custom(x1, two_coeff), 1.18394, abs_tol);
-    EXPECT_NEAR(horner_inverse_exponential_custom(x1, three_coeff), 1.217774, abs_tol);
-    EXPECT_NEAR(horner_inverse_exponential_custom(x2, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(horner_inverse_exponential_custom(x2, two_coeff), 2.146659, abs_tol);
-    EXPECT_NEAR(horner_inverse_exponential_custom(x2, three_coeff), 3.461487, abs_tol);
-    EXPECT_NEAR(horner_inverse_exponential_custom(x2, eight_coeff), 201.439439, abs_tol);
+TEST(InverseExponentialCoeffTest, HornerVec){
+    EXPECT_NEAR(horner_inverse_exponential_custom_vec(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_custom_vec(x1, two_coeff), 1.18394, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_custom_vec(x1, three_coeff), 1.217774, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_custom_vec(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_custom_vec(x2, two_coeff), 2.146659, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_custom_vec(x2, three_coeff), 3.461487, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_custom_vec(x2, eight_coeff), 201.439439, abs_tol);
 }
 
-TEST(InverseExponentialCoeffTest, HornerGen){
-    EXPECT_NEAR(horner_inverse_exponential_general(x1, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(horner_inverse_exponential_general(x1, two_coeff), 1.18394, abs_tol);
-    EXPECT_NEAR(horner_inverse_exponential_general(x1, three_coeff), 1.217774, abs_tol);
-    EXPECT_NEAR(horner_inverse_exponential_general(x2, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(horner_inverse_exponential_general(x2, two_coeff), 2.146659, abs_tol);
-    EXPECT_NEAR(horner_inverse_exponential_general(x2, three_coeff), 3.461487, abs_tol);
-    EXPECT_NEAR(horner_inverse_exponential_general(x2, eight_coeff), 201.439439, abs_tol);
+TEST(InverseExponentialCoeffTest, HornerGenVec){
+    EXPECT_NEAR(horner_inverse_exponential_general_vec(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_general_vec(x1, two_coeff), 1.18394, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_general_vec(x1, three_coeff), 1.217774, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_general_vec(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_general_vec(x2, two_coeff), 2.146659, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_general_vec(x2, three_coeff), 3.461487, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_general_vec(x2, eight_coeff), 201.439439, abs_tol);
 }
 
-TEST(InverseExponentialCoeffTest, Clenshaw){
-    EXPECT_NEAR(clenshaw_inverse_exponential_custom(x1, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(clenshaw_inverse_exponential_custom(x1, two_coeff), 1.18394, abs_tol);
-    EXPECT_NEAR(clenshaw_inverse_exponential_custom(x1, three_coeff), 1.217774, abs_tol);
-    EXPECT_NEAR(clenshaw_inverse_exponential_custom(x2, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(clenshaw_inverse_exponential_custom(x2, two_coeff), 2.146659, abs_tol);
-    EXPECT_NEAR(clenshaw_inverse_exponential_custom(x2, three_coeff), 3.461487, abs_tol);
-    EXPECT_NEAR(clenshaw_inverse_exponential_custom(x2, eight_coeff), 201.439439, abs_tol);
+TEST(InverseExponentialCoeffTest, ClenshawVec){
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_vec(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_vec(x1, two_coeff), 1.18394, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_vec(x1, three_coeff), 1.217774, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_vec(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_vec(x2, two_coeff), 2.146659, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_vec(x2, three_coeff), 3.461487, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_vec(x2, eight_coeff), 201.439439, abs_tol);
 }
 
-TEST(InverseExponentialCoeffTest, ClenshawGen){
-    EXPECT_NEAR(clenshaw_inverse_exponential_general(x1, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(clenshaw_inverse_exponential_general(x1, two_coeff), 1.18394, abs_tol);
-    EXPECT_NEAR(clenshaw_inverse_exponential_general(x1, three_coeff), 1.217774, abs_tol);
-    EXPECT_NEAR(clenshaw_inverse_exponential_general(x2, one_coeff), 1, abs_tol);
-    EXPECT_NEAR(clenshaw_inverse_exponential_general(x2, two_coeff), 2.146659, abs_tol);
-    EXPECT_NEAR(clenshaw_inverse_exponential_general(x2, three_coeff), 3.461487, abs_tol);
-    EXPECT_NEAR(clenshaw_inverse_exponential_general(x2, eight_coeff), 201.439439, abs_tol);
+TEST(InverseExponentialCoeffTest, ClenshawGenVec){
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_vec(x1, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_vec(x1, two_coeff), 1.18394, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_vec(x1, three_coeff), 1.217774, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_vec(x2, one_coeff), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_vec(x2, two_coeff), 2.146659, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_vec(x2, three_coeff), 3.461487, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_vec(x2, eight_coeff), 201.439439, abs_tol);
+}
+
+// ==========================================
+// Iterator Tests
+
+TEST(InverseExponentialCoeffTest, NaiveIter){
+    EXPECT_NEAR(naive_inverse_exponential_iter(x1, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(naive_inverse_exponential_iter(x1, two_coeff.begin(), two_coeff.end()), 1.18394, abs_tol);
+    EXPECT_NEAR(naive_inverse_exponential_iter(x1, three_coeff.begin(), three_coeff.end()), 1.217774, abs_tol);
+    EXPECT_NEAR(naive_inverse_exponential_iter(x2, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(naive_inverse_exponential_iter(x2, two_coeff.begin(), two_coeff.end()), 2.146659, abs_tol);
+    EXPECT_NEAR(naive_inverse_exponential_iter(x2, three_coeff.begin(), three_coeff.end()), 3.461487, abs_tol);
+    EXPECT_NEAR(naive_inverse_exponential_iter(x2, eight_coeff.begin(), eight_coeff.end()), 201.439439, abs_tol);
+}
+
+TEST(InverseExponentialCoeffTest, HornerIter){
+    EXPECT_NEAR(horner_inverse_exponential_custom_iter(x1, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_custom_iter(x1, two_coeff.begin(), two_coeff.end()), 1.18394, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_custom_iter(x1, three_coeff.begin(), three_coeff.end()), 1.217774, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_custom_iter(x2, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_custom_iter(x2, two_coeff.begin(), two_coeff.end()), 2.146659, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_custom_iter(x2, three_coeff.begin(), three_coeff.end()), 3.461487, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_custom_iter(x2, eight_coeff.begin(), eight_coeff.end()), 201.439439, abs_tol);
+}
+
+TEST(InverseExponentialCoeffTest, HornerGenIter){
+    EXPECT_NEAR(horner_inverse_exponential_general_iter(x1, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_general_iter(x1, two_coeff.begin(), two_coeff.end()), 1.18394, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_general_iter(x1, three_coeff.begin(), three_coeff.end()), 1.217774, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_general_iter(x2, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_general_iter(x2, two_coeff.begin(), two_coeff.end()), 2.146659, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_general_iter(x2, three_coeff.begin(), three_coeff.end()), 3.461487, abs_tol);
+    EXPECT_NEAR(horner_inverse_exponential_general_iter(x2, eight_coeff.begin(), eight_coeff.end()), 201.439439, abs_tol);
+}
+
+TEST(InverseExponentialCoeffTest, ClenshawIter){
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_iter(x1, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_iter(x1, two_coeff.begin(), two_coeff.end()), 1.18394, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_iter(x1, three_coeff.begin(), three_coeff.end()), 1.217774, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_iter(x2, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_iter(x2, two_coeff.begin(), two_coeff.end()), 2.146659, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_iter(x2, three_coeff.begin(), three_coeff.end()), 3.461487, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_custom_iter(x2, eight_coeff.begin(), eight_coeff.end()), 201.439439, abs_tol);
+}
+
+TEST(InverseExponentialCoeffTest, ClenshawGenIter){
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_iter(x1, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_iter(x1, two_coeff.begin(), two_coeff.end()), 1.18394, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_iter(x1, three_coeff.begin(), three_coeff.end()), 1.217774, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_iter(x2, one_coeff.begin(), one_coeff.end()), 1, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_iter(x2, two_coeff.begin(), two_coeff.end()), 2.146659, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_iter(x2, three_coeff.begin(), three_coeff.end()), 3.461487, abs_tol);
+    EXPECT_NEAR(clenshaw_inverse_exponential_general_iter(x2, eight_coeff.begin(), eight_coeff.end()), 201.439439, abs_tol);
 }
 
 int main(int argc, char **argv) {

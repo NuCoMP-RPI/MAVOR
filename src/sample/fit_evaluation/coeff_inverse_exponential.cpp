@@ -18,7 +18,7 @@ double eval_inverse_exponential_order__(double const & x, int const order){
     return exp(-order*x);
 }
 
-double naive_inverse_exponential(double const & x, std::vector<double> const& coeffs){
+double naive_inverse_exponential_vec(double const & x, std::vector<double> const& coeffs){
     double val = 0;
     for (int i = 0; i < coeffs.size(); ++i){
         val += coeffs[i]*eval_inverse_exponential_order__(x, i);
@@ -26,7 +26,16 @@ double naive_inverse_exponential(double const & x, std::vector<double> const& co
     return val;
 }
 
-double horner_inverse_exponential_custom(double const & x, std::vector<double> const & coeffs){
+double naive_inverse_exponential_iter(double const & x, Iter begin, Iter end) {
+    double val = 0;
+    int index = 0;
+    for (auto it = begin; it != end; ++it, ++index) {
+        val += *it * eval_inverse_exponential_order__(x, index);
+    }
+    return val;
+}
+
+double horner_inverse_exponential_custom_vec(double const & x, std::vector<double> const & coeffs){
     double exp_x = exp(-x);
     double val = 0;
     for (int i = coeffs.size() - 1; i >= 0; --i){
@@ -35,11 +44,25 @@ double horner_inverse_exponential_custom(double const & x, std::vector<double> c
     return val;
 }
 
-double horner_inverse_exponential_general(double const & x, std::vector<double> const & coeffs){
+double horner_inverse_exponential_custom_iter(double const & x, Iter begin, Iter end) {
+    double exp_x = std::exp(-x);
+    double val = 0;
+    for (auto it = end; it != begin; ) {
+        --it;
+        val = val * exp_x + *it;
+    }
+    return val;
+}
+
+double horner_inverse_exponential_general_vec(double const & x, std::vector<double> const & coeffs){
     return horner(exp(-x), coeffs);
 }
 
-double clenshaw_inverse_exponential_custom(double const & x, std::vector<double> const & coeffs) {
+double horner_inverse_exponential_general_iter(double const & x, Iter begin, Iter end) {
+    return horner(std::exp(-x), begin, end);
+}
+
+double clenshaw_inverse_exponential_custom_vec(double const & x, std::vector<double> const & coeffs) {
     double bk1 = 0;
     double bk = 0;
     double exp_x = exp(-x);
@@ -50,6 +73,22 @@ double clenshaw_inverse_exponential_custom(double const & x, std::vector<double>
     return coeffs[0] + exp_x*bk1;
 }
 
-double clenshaw_inverse_exponential_general(double const & x, std::vector<double> const & coeffs){
+double clenshaw_inverse_exponential_custom_iter(double const & x, Iter begin, Iter end) {
+    double bk1 = 0;
+    double bk = 0;
+    double exp_x = std::exp(-x);
+    int size = std::distance(begin, end);
+    for (int k = size - 1; k > 0; --k) {
+        bk = *(begin + k) + exp_x * bk1;
+        bk1 = bk;
+    }
+    return *begin + exp_x * bk1;
+}
+
+double clenshaw_inverse_exponential_general_vec(double const & x, std::vector<double> const & coeffs){
     return clenshaw(x, coeffs, inverse_exponential_alpha_recurrence__, inverse_exponential_beta_recurrence__, eval_inverse_exponential_order__);
+}
+
+double clenshaw_inverse_exponential_general_iter(double const & x, Iter begin, Iter end) {
+    return clenshaw(x, begin, end, inverse_exponential_alpha_recurrence__, inverse_exponential_beta_recurrence__, eval_inverse_exponential_order__);
 }

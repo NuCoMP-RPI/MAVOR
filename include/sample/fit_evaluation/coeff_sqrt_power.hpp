@@ -3,10 +3,17 @@
 
 #include<vector>
 
-double naive_sqrt_power(double const & x, std::vector<double> const& coeffs);
-double horner_sqrt_power_custom(double const & x, std::vector<double> const & coeffs);
-double horner_sqrt_power_general(double const & x, std::vector<double> const & coeffs);
-double clenshaw_sqrt_power_custom(double const & x, std::vector<double> const & coeffs);
-double clenshaw_sqrt_power_general(double const & x, std::vector<double> const & coeffs);
+double naive_sqrt_power_vec(double const & x, std::vector<double> const & coeffs);
+double horner_sqrt_power_custom_vec(double const & x, std::vector<double> const & coeffs);
+double horner_sqrt_power_general_vec(double const & x, std::vector<double> const & coeffs);
+double clenshaw_sqrt_power_custom_vec(double const & x, std::vector<double> const & coeffs);
+double clenshaw_sqrt_power_general_vec(double const & x, std::vector<double> const & coeffs);
 
+typedef std::vector<double>::const_iterator Iter;
+
+double naive_sqrt_power_iter(double const & x, Iter begin, Iter end);
+double horner_sqrt_power_custom_iter(double const & x, Iter begin, Iter ends);
+double horner_sqrt_power_general_iter(double const & x, Iter begin, Iter ends);
+double clenshaw_sqrt_power_custom_iter(double const & x, Iter begin, Iter ends);
+double clenshaw_sqrt_power_general_iter(double const & x, Iter begin, Iter ends);
 #endif

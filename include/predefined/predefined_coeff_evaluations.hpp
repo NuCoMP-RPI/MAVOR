@@ -6,7 +6,9 @@
 #include <string>
 #include <iostream>
 
-typedef double(*EvaluationFunctionPointer)(double const &, std::vector<double> const &);
+typedef std::vector<double>::const_iterator Iter;
+// typedef double(*EvaluationFunctionPointer)(double const &, std::vector<double> const &);
+typedef double(*EvaluationFunctionPointer)(double const &, Iter, Iter);
 
 enum class FittingType{
     Chebyshev,

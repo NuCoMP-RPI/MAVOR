@@ -26,31 +26,31 @@
 const EvaluationFunction chebyshevNaiveFunction = {
     FittingType::Chebyshev, 
     EvaluationMethod::Naive, 
-    &naive_chebyshev_vec, 
+    &naive_chebyshev_iter, 
 };
 
 const EvaluationFunction chebyshevDirectRecurrenceCustomFunction = {
     FittingType::Chebyshev, 
     EvaluationMethod::DirectRecurrenceCustom, 
-    &direct_recurrence_chebyshev_custom_vec, 
+    &direct_recurrence_chebyshev_custom_iter, 
 };
 
 const EvaluationFunction chebyshevDirectRecurrenceGeneralFunction = {
     FittingType::Chebyshev, 
     EvaluationMethod::DirectRecurrenceGeneral, 
-    &direct_recurrence_chebyshev_general_vec, 
+    &direct_recurrence_chebyshev_general_iter, 
 };
 
 const EvaluationFunction chebyshevClenshawCustomFunction = {
     FittingType::Chebyshev, 
     EvaluationMethod::ClenshawCustom, 
-    &clenshaw_chebyshev_custom_vec, 
+    &clenshaw_chebyshev_custom_iter, 
 };
 
 const EvaluationFunction chebyshevClenshawGeneralFunction = {
     FittingType::Chebyshev, 
     EvaluationMethod::ClenshawGeneral, 
-    &clenshaw_chebyshev_general_vec, 
+    &clenshaw_chebyshev_general_iter, 
 };
 
 // ==========================================
@@ -59,13 +59,13 @@ const EvaluationFunction chebyshevClenshawGeneralFunction = {
 const EvaluationFunction cosineNaiveFunction = {
     FittingType::Cosine, 
     EvaluationMethod::Naive, 
-    &naive_cosine_vec, 
+    &naive_cosine_iter, 
 };
 
 const EvaluationFunction cosineImprovedFunction = {
     FittingType::Cosine, 
     EvaluationMethod::Improved, 
-    &improved_cosine_vec, 
+    &improved_cosine_iter, 
 };
 
 // ==========================================
@@ -74,31 +74,31 @@ const EvaluationFunction cosineImprovedFunction = {
 const EvaluationFunction exponentialNaiveFunction = {
     FittingType::Exponential, 
     EvaluationMethod::Naive, 
-    &naive_exponential_vec, 
+    &naive_exponential_iter, 
 };
 
 const EvaluationFunction exponentialHornerCustomFunction = {
     FittingType::Exponential, 
     EvaluationMethod::HornerCustom, 
-    &horner_exponential_custom_vec, 
+    &horner_exponential_custom_iter, 
 };
 
 const EvaluationFunction exponentialHornerGeneralFunction = {
     FittingType::Exponential, 
     EvaluationMethod::HornerGeneral, 
-    &horner_exponential_general_vec, 
+    &horner_exponential_general_iter, 
 };
 
 const EvaluationFunction exponentialClenshawCustomFunction = {
     FittingType::Exponential, 
     EvaluationMethod::ClenshawCustom, 
-    &clenshaw_exponential_custom_vec, 
+    &clenshaw_exponential_custom_iter, 
 };
 
 const EvaluationFunction exponentialClenshawGeneralFunction = {
     FittingType::Exponential, 
     EvaluationMethod::ClenshawGeneral, 
-    &clenshaw_exponential_general_vec, 
+    &clenshaw_exponential_general_iter, 
 };
 
 // ==========================================
@@ -107,31 +107,31 @@ const EvaluationFunction exponentialClenshawGeneralFunction = {
 const EvaluationFunction inverseExponentialNaiveFunction = {
     FittingType::InverseExponential, 
     EvaluationMethod::Naive, 
-    &naive_inverse_exponential_vec, 
+    &naive_inverse_exponential_iter, 
 };
 
 const EvaluationFunction inverseExponentialHornerCustomFunction = {
     FittingType::InverseExponential, 
     EvaluationMethod::HornerCustom, 
-    &horner_inverse_exponential_custom_vec, 
+    &horner_inverse_exponential_custom_iter, 
 };
 
 const EvaluationFunction inverseExponentialHornerGeneralFunction = {
     FittingType::InverseExponential, 
     EvaluationMethod::HornerGeneral, 
-    &horner_inverse_exponential_general_vec, 
+    &horner_inverse_exponential_general_iter, 
 };
 
 const EvaluationFunction inverseExponentialClenshawCustomFunction = {
     FittingType::InverseExponential, 
     EvaluationMethod::ClenshawCustom, 
-    &clenshaw_inverse_exponential_custom_vec, 
+    &clenshaw_inverse_exponential_custom_iter, 
 };
 
 const EvaluationFunction inverseExponentialClenshawGeneralFunction = {
     FittingType::InverseExponential, 
     EvaluationMethod::ClenshawGeneral, 
-    &clenshaw_inverse_exponential_general_vec, 
+    &clenshaw_inverse_exponential_general_iter, 
 };
 
 // ==========================================
@@ -140,31 +140,31 @@ const EvaluationFunction inverseExponentialClenshawGeneralFunction = {
 const EvaluationFunction inverseLogPowerNaiveFunction = {
     FittingType::InverseExponential, 
     EvaluationMethod::Naive, 
-    &naive_inverse_log_power_vec, 
+    &naive_inverse_log_power_iter, 
 };
 
 const EvaluationFunction inverseLogPowerHornerCustomFunction = {
     FittingType::InverseExponential, 
     EvaluationMethod::HornerCustom, 
-    &horner_inverse_exponential_custom_vec, 
+    &horner_inverse_exponential_custom_iter, 
 };
 
 const EvaluationFunction inverseLogPowerHornerGeneralFunction = {
     FittingType::InverseExponential, 
     EvaluationMethod::HornerGeneral, 
-    &horner_inverse_exponential_general_vec, 
+    &horner_inverse_exponential_general_iter, 
 };
 
 const EvaluationFunction inverseLogPowerClenshawCustomFunction = {
     FittingType::InverseExponential, 
     EvaluationMethod::ClenshawCustom, 
-    &clenshaw_inverse_exponential_custom_vec, 
+    &clenshaw_inverse_exponential_custom_iter, 
 };
 
 const EvaluationFunction inverseLogPowerClenshawGeneralFunction = {
     FittingType::InverseExponential, 
     EvaluationMethod::ClenshawGeneral, 
-    &clenshaw_inverse_exponential_general_vec, 
+    &clenshaw_inverse_exponential_general_iter, 
 };
 
 // ==========================================
@@ -173,31 +173,31 @@ const EvaluationFunction inverseLogPowerClenshawGeneralFunction = {
 const EvaluationFunction inversePowerNaiveFunction = {
     FittingType::InversePower, 
     EvaluationMethod::Naive, 
-    &naive_inverse_power_vec, 
+    &naive_inverse_power_iter, 
 };
 
 const EvaluationFunction inversePowerHornerCustomFunction = {
     FittingType::InversePower, 
     EvaluationMethod::HornerCustom, 
-    &horner_inverse_power_custom_vec, 
+    &horner_inverse_power_custom_iter, 
 };
 
 const EvaluationFunction inversePowerHornerGeneralFunction = {
     FittingType::InversePower, 
     EvaluationMethod::HornerGeneral, 
-    &horner_inverse_power_general_vec, 
+    &horner_inverse_power_general_iter, 
 };
 
 const EvaluationFunction inversePowerClenshawCustomFunction = {
     FittingType::InversePower, 
     EvaluationMethod::ClenshawCustom, 
-    &clenshaw_inverse_power_custom_vec, 
+    &clenshaw_inverse_power_custom_iter, 
 };
 
 const EvaluationFunction inversePowerClenshawGeneralFunction = {
     FittingType::InversePower, 
     EvaluationMethod::ClenshawGeneral, 
-    &clenshaw_inverse_power_general_vec, 
+    &clenshaw_inverse_power_general_iter, 
 };
 
 // ==========================================
@@ -206,31 +206,31 @@ const EvaluationFunction inversePowerClenshawGeneralFunction = {
 const EvaluationFunction inverseSqrtLogPowerNaiveFunction = {
     FittingType::InverseSqrtLogPower, 
     EvaluationMethod::Naive, 
-    &naive_inverse_sqrt_log_power_vec, 
+    &naive_inverse_sqrt_log_power_iter, 
 };
 
 const EvaluationFunction inverseSqrtLogPowerHornerCustomFunction = {
     FittingType::InverseSqrtLogPower, 
     EvaluationMethod::HornerCustom, 
-    &horner_inverse_sqrt_log_power_custom_vec, 
+    &horner_inverse_sqrt_log_power_custom_iter, 
 };
 
 const EvaluationFunction inverseSqrtLogPowerHornerGeneralFunction = {
     FittingType::InverseSqrtLogPower, 
     EvaluationMethod::HornerGeneral, 
-    &horner_inverse_sqrt_log_power_general_vec, 
+    &horner_inverse_sqrt_log_power_general_iter, 
 };
 
 const EvaluationFunction inverseSqrtLogPowerClenshawCustomFunction = {
     FittingType::InverseSqrtLogPower, 
     EvaluationMethod::ClenshawCustom, 
-    &clenshaw_inverse_sqrt_log_power_custom_vec, 
+    &clenshaw_inverse_sqrt_log_power_custom_iter, 
 };
 
 const EvaluationFunction inverseSqrtLogPowerClenshawGeneralFunction = {
     FittingType::InverseSqrtLogPower, 
     EvaluationMethod::ClenshawGeneral, 
-    &clenshaw_inverse_sqrt_log_power_general_vec, 
+    &clenshaw_inverse_sqrt_log_power_general_iter, 
 };
 
 // ==========================================
@@ -239,31 +239,31 @@ const EvaluationFunction inverseSqrtLogPowerClenshawGeneralFunction = {
 const EvaluationFunction inverseSqrtPowerNaiveFunction = {
     FittingType::InverseSqrtPower, 
     EvaluationMethod::Naive, 
-    &naive_inverse_sqrt_power_vec, 
+    &naive_inverse_sqrt_power_iter, 
 };
 
 const EvaluationFunction inverseSqrtPowerHornerCustomFunction = {
     FittingType::InverseSqrtPower, 
     EvaluationMethod::HornerCustom, 
-    &horner_inverse_sqrt_power_custom_vec, 
+    &horner_inverse_sqrt_power_custom_iter, 
 };
 
 const EvaluationFunction inverseSqrtPowerHornerGeneralFunction = {
     FittingType::InverseSqrtPower, 
     EvaluationMethod::HornerGeneral, 
-    &horner_inverse_sqrt_power_general_vec, 
+    &horner_inverse_sqrt_power_general_iter, 
 };
 
 const EvaluationFunction inverseSqrtPowerClenshawCustomFunction = {
     FittingType::InverseSqrtPower, 
     EvaluationMethod::ClenshawCustom, 
-    &clenshaw_inverse_sqrt_power_custom_vec, 
+    &clenshaw_inverse_sqrt_power_custom_iter, 
 };
 
 const EvaluationFunction inverseSqrtPowerClenshawGeneralFunction = {
     FittingType::InverseSqrtPower, 
     EvaluationMethod::ClenshawGeneral, 
-    &clenshaw_inverse_sqrt_power_general_vec, 
+    &clenshaw_inverse_sqrt_power_general_iter, 
 };
 
 // ==========================================
@@ -272,31 +272,31 @@ const EvaluationFunction inverseSqrtPowerClenshawGeneralFunction = {
 const EvaluationFunction legendreNaiveFunction = {
     FittingType::Legendre, 
     EvaluationMethod::Naive, 
-    &naive_legendre_vec, 
+    &naive_legendre_iter, 
 };
 
 const EvaluationFunction legendreDirectRecurrenceCustomFunction = {
     FittingType::Legendre, 
     EvaluationMethod::DirectRecurrenceCustom, 
-    &direct_recurrence_legendre_custom_vec, 
+    &direct_recurrence_legendre_custom_iter, 
 };
 
 const EvaluationFunction legendreDirectRecurrenceGeneralFunction = {
     FittingType::Legendre, 
     EvaluationMethod::DirectRecurrenceGeneral, 
-    &direct_recurrence_legendre_general_vec, 
+    &direct_recurrence_legendre_general_iter, 
 };
 
 const EvaluationFunction legendreClenshawCustomFunction = {
     FittingType::Legendre, 
     EvaluationMethod::ClenshawCustom, 
-    &clenshaw_legendre_custom_vec, 
+    &clenshaw_legendre_custom_iter, 
 };
 
 const EvaluationFunction legendreClenshawGeneralFunction = {
     FittingType::Legendre, 
     EvaluationMethod::ClenshawGeneral, 
-    &clenshaw_legendre_general_vec, 
+    &clenshaw_legendre_general_iter, 
 };
 
 // ==========================================
@@ -305,31 +305,31 @@ const EvaluationFunction legendreClenshawGeneralFunction = {
 const EvaluationFunction logPowerNaiveFunction = {
     FittingType::LogPower, 
     EvaluationMethod::Naive, 
-    &naive_log_power_vec, 
+    &naive_log_power_iter, 
 };
 
 const EvaluationFunction logPowerHornerCustomFunction = {
     FittingType::LogPower, 
     EvaluationMethod::HornerCustom, 
-    &horner_log_power_custom_vec, 
+    &horner_log_power_custom_iter, 
 };
 
 const EvaluationFunction logPowerHornerGeneralFunction = {
     FittingType::LogPower, 
     EvaluationMethod::HornerGeneral, 
-    &horner_log_power_general_vec, 
+    &horner_log_power_general_iter, 
 };
 
 const EvaluationFunction logPowerClenshawCustomFunction = {
     FittingType::LogPower, 
     EvaluationMethod::ClenshawCustom, 
-    &clenshaw_log_power_custom_vec, 
+    &clenshaw_log_power_custom_iter, 
 };
 
 const EvaluationFunction logPowerClenshawGeneralFunction = {
     FittingType::LogPower, 
     EvaluationMethod::ClenshawGeneral, 
-    &clenshaw_log_power_general_vec, 
+    &clenshaw_log_power_general_iter, 
 };
 
 // ==========================================
@@ -338,31 +338,31 @@ const EvaluationFunction logPowerClenshawGeneralFunction = {
 const EvaluationFunction powerNaiveFunction = {
     FittingType::Power, 
     EvaluationMethod::Naive, 
-    &naive_power_vec, 
+    &naive_power_iter, 
 };
 
 const EvaluationFunction powerHornerCustomFunction = {
     FittingType::Power, 
     EvaluationMethod::HornerCustom, 
-    &horner_power_custom_vec, 
+    &horner_power_custom_iter, 
 };
 
 const EvaluationFunction powerHornerGeneralFunction = {
     FittingType::Power, 
     EvaluationMethod::HornerGeneral, 
-    &horner_power_general_vec, 
+    &horner_power_general_iter, 
 };
 
 const EvaluationFunction powerClenshawCustomFunction = {
     FittingType::Power, 
     EvaluationMethod::ClenshawCustom, 
-    &clenshaw_power_custom_vec, 
+    &clenshaw_power_custom_iter, 
 };
 
 const EvaluationFunction powerClenshawGeneralFunction = {
     FittingType::Power, 
     EvaluationMethod::ClenshawGeneral, 
-    &clenshaw_power_general_vec, 
+    &clenshaw_power_general_iter, 
 };
 
 // ==========================================
@@ -371,13 +371,13 @@ const EvaluationFunction powerClenshawGeneralFunction = {
 const EvaluationFunction sineCosineNaiveFunction = {
     FittingType::SineCosine, 
     EvaluationMethod::Naive, 
-    &naive_sine_cosine_vec, 
+    &naive_sine_cosine_iter, 
 };
 
 const EvaluationFunction sineCosineImprovedFunction = {
     FittingType::SineCosine, 
     EvaluationMethod::Improved, 
-    &improved_sine_cosine_vec, 
+    &improved_sine_cosine_iter, 
 };
 
 // ==========================================
@@ -386,13 +386,13 @@ const EvaluationFunction sineCosineImprovedFunction = {
 const EvaluationFunction sineNaiveFunction = {
     FittingType::Sine, 
     EvaluationMethod::Naive, 
-    &naive_sine_vec, 
+    &naive_sine_iter, 
 };
 
 const EvaluationFunction sineImprovedFunction = {
     FittingType::Sine, 
     EvaluationMethod::Improved, 
-    &improved_sine_vec, 
+    &improved_sine_iter, 
 };
 
 // ==========================================
@@ -401,31 +401,31 @@ const EvaluationFunction sineImprovedFunction = {
 const EvaluationFunction sqrtLogPowerNaiveFunction = {
     FittingType::SqrtLogPower, 
     EvaluationMethod::Naive, 
-    &naive_sqrt_log_power_vec, 
+    &naive_sqrt_log_power_iter, 
 };
 
 const EvaluationFunction sqrtLogPowerHornerCustomFunction = {
     FittingType::SqrtLogPower, 
     EvaluationMethod::HornerCustom, 
-    &horner_sqrt_log_power_custom_vec, 
+    &horner_sqrt_log_power_custom_iter, 
 };
 
 const EvaluationFunction sqrtLogPowerHornerGeneralFunction = {
     FittingType::SqrtLogPower, 
     EvaluationMethod::HornerGeneral, 
-    &horner_sqrt_log_power_general_vec, 
+    &horner_sqrt_log_power_general_iter, 
 };
 
 const EvaluationFunction sqrtLogPowerClenshawCustomFunction = {
     FittingType::SqrtLogPower, 
     EvaluationMethod::ClenshawCustom, 
-    &clenshaw_sqrt_log_power_custom_vec, 
+    &clenshaw_sqrt_log_power_custom_iter, 
 };
 
 const EvaluationFunction sqrtLogPowerClenshawGeneralFunction = {
     FittingType::SqrtLogPower, 
     EvaluationMethod::ClenshawGeneral, 
-    &clenshaw_sqrt_log_power_general_vec, 
+    &clenshaw_sqrt_log_power_general_iter, 
 };
 
 // ==========================================
@@ -434,31 +434,31 @@ const EvaluationFunction sqrtLogPowerClenshawGeneralFunction = {
 const EvaluationFunction sqrtPowerNaiveFunction = {
     FittingType::SqrtPower, 
     EvaluationMethod::Naive, 
-    &naive_sqrt_power_vec, 
+    &naive_sqrt_power_iter, 
 };
 
 const EvaluationFunction sqrtPowerHornerCustomFunction = {
     FittingType::SqrtPower, 
     EvaluationMethod::HornerCustom, 
-    &horner_sqrt_power_custom_vec, 
+    &horner_sqrt_power_custom_iter, 
 };
 
 const EvaluationFunction sqrtPowerHornerGeneralFunction = {
     FittingType::SqrtPower, 
     EvaluationMethod::HornerGeneral, 
-    &horner_sqrt_power_general_vec, 
+    &horner_sqrt_power_general_iter, 
 };
 
 const EvaluationFunction sqrtPowerClenshawCustomFunction = {
     FittingType::SqrtPower, 
     EvaluationMethod::ClenshawCustom, 
-    &clenshaw_sqrt_power_custom_vec, 
+    &clenshaw_sqrt_power_custom_iter, 
 };
 
 const EvaluationFunction sqrtPowerClenshawGeneralFunction = {
     FittingType::SqrtPower, 
     EvaluationMethod::ClenshawGeneral, 
-    &clenshaw_sqrt_power_general_vec, 
+    &clenshaw_sqrt_power_general_iter, 
 };
 
 // ==========================================

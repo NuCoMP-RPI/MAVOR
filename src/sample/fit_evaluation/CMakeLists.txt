@@ -1,7 +1,6 @@
 add_library(fit_evaluation_lib)
 
 target_sources(fit_evaluation_lib PRIVATE 
-               "${CMAKE_CURRENT_LIST_DIR}/set_evaluation.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/coeff_chebyshev.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/coeff_cosine.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/coeff_exponential.cpp"

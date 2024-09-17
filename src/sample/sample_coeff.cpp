@@ -30,19 +30,19 @@ CoeffFile::CoeffFile(std::string const & file_path){
     readHDF5Double(file, "XS Minimum Scaled Value", xs_scale_minimum);
     readHDF5Double(file, "XS Maximum Scaled Value", xs_scale_maximum);
     readHDF5String(file, "XS Fitting Function", xs_basis_function_string);
-    set_basis_function__(xs_basis_function, xs_basis_function_string);
+    set_eval_function__(xs_eval_func, xs_basis_function_string);
 
     readHDF5Bool(file, "Scale BETA temperatures", beta_scale_temperatures);
     readHDF5Double(file, "BETA Minimum Scaled Value", beta_scale_minimum);
     readHDF5Double(file, "BETA Maximum Scaled Value", beta_scale_maximum);
     readHDF5String(file, "BETA Fitting Function", beta_basis_function_string);
-    set_basis_function__(beta_basis_function, beta_basis_function_string);
+    set_eval_function__(beta_eval_func, beta_basis_function_string);
 
     readHDF5Bool(file, "Scale ALPHA temperatures", alpha_scale_temperatures);
     readHDF5Double(file, "ALPHA Minimum Scaled Value", alpha_scale_minimum);
     readHDF5Double(file, "ALPHA Maximum Scaled Value", alpha_scale_maximum);
     readHDF5String(file, "ALPHA Fitting Function", alpha_basis_function_string);
-    set_basis_function__(alpha_basis_function, alpha_basis_function_string);
+    set_eval_function__(alpha_eval_func, alpha_basis_function_string);
 
     readHDF5DoubleVector(file, "Incident Energy Grid", inc_ener_grid);
     readHDF5DoubleVector(file, "Beta CDF Grid", beta_cdf_grid);
@@ -57,16 +57,11 @@ CoeffFile::CoeffFile(std::string const & file_path){
     num_alpha_coeffs = alpha_coeffs.size()/(beta_grid.size()*alpha_cdf_grid.size());
 }
 
-void CoeffFile::set_basis_function__(BasisFunction &basis_func, std::string const &basis_func_string)
+void CoeffFile::set_eval_function__(EvaluationFunction & eval_func, std::string const &basis_func_string)
 {
-    // for (auto const& [key, val]: basis_functions){
-    //     if (val.first == basis_func_string){
-    //         if (!silence){std::cout << "I found the basis function | " << basis_func_string << std::endl;}
-    //         basis_func = val;
-    //         return;
-    //     }
-    // }
-    // throw std::out_of_range("Basis function was not found.");
+    auto it = OptimalEvaluationsMap.find(basis_func_string);
+    if (it != OptimalEvaluationsMap.end()) {eval_func = it->second;} 
+    else {throw std::out_of_range("Unknown basis function used for coefficient fitting.");}
 }
 
 std::pair<double, double> CoeffFile::return_alpha_extrema__(const double &inc_ener, const double &beta){

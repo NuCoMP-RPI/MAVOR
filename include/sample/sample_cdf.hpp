@@ -41,6 +41,7 @@ class CDFFile{
         // Public Methods
         std::pair<double, double> single_sample(const double & inc_ener, const double & xi_1, const double & xi_2);
         void all_sample(const double & inc_ener);
+        void write_results();
     private:
         std::pair<double, double> return_alpha_extrema__(const double & inc_ener, const double & beta);
 };

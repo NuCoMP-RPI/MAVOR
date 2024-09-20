@@ -262,6 +262,28 @@ void CoeffFile::all_sample(const double &inc_ener){
     }
 }
 
+void CoeffFile::write_results(){
+    H5::FileCreatPropList fcpl;
+    H5::FileAccPropList fapl;
+    H5::H5File file("CoeffSamplingResults.h5", H5F_ACC_TRUNC, fcpl, fapl);
+
+    writeHDF5Int(file, za, "ZA");
+    writeHDF5Int(file, mat, "MAT");
+    writeHDF5Double(file, a0, "A0");
+    writeHDF5Double(file, e_max, "E_MAX");
+    writeHDF5Double(file, m0, "M0");
+    writeHDF5Double(file, free_xs, "FREE_XS");
+    writeHDF5Double(file, bound_xs, "BOUND_XS");
+
+    writeHDF5Int(file, xi_1.size(), "Number of Samples");
+    writeHDF5Double(file, temp, "Sampling Temperature");
+    writeHDF5Double(file, time_to_sample_ms, "Sampling Time [ms]");
+
+    writeHDF5DoubleVector(file, sampled_secondary_energies, "Sampled Energies");
+    writeHDF5DoubleVector(file, sampled_scattering_cosines, "Sampled Cosines");
+
+    file.close();
+}
 
 void sample_coeff(){
     CoeffFile data(sample_input_file);
@@ -291,4 +313,7 @@ void sample_coeff(){
     if (!silence){
         std::cout << "Time to sample | milliseconds " << data.time_to_sample_ms << std::endl;
     }
+
+    // Write the sampling results
+    data.write_results();
 }

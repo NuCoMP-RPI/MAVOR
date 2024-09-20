@@ -5,7 +5,8 @@ add_library(sample_lib)
 target_sources(sample_lib PRIVATE 
                "${CMAKE_CURRENT_LIST_DIR}/sample.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/sample_cdf.cpp"
-               "${CMAKE_CURRENT_LIST_DIR}/sample_coeff.cpp")
+               "${CMAKE_CURRENT_LIST_DIR}/sample_coeff.cpp"
+               "${CMAKE_CURRENT_LIST_DIR}/sample_search.cpp")
 
 target_link_libraries(sample_lib PRIVATE 
                               common_lib
@@ -28,3 +29,7 @@ target_include_directories(sample_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/sampl
 target_include_directories(sample_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/common")
 target_include_directories(sample_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/predefined")
 target_include_directories(sample_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/otf")
+
+if(COMPILE_TESTS)
+    add_subdirectory(unit_tests)
+endif(COMPILE_TESTS)

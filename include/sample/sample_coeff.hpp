@@ -16,6 +16,7 @@ class CoeffFile{
         double m0;
         double free_xs;
         double bound_xs;
+        double temp;
 
         double minimum_temperature;
         double maximum_temperature;

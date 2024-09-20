@@ -9,6 +9,7 @@
 
 #include "sample_cdf.hpp"
 
+#include "sample_search.hpp"
 #include "runtime_variables.hpp"
 #include "constants.hpp"
 #include "hdf5_file.hpp"
@@ -47,8 +48,8 @@ std::pair<double, double> CDFFile::return_alpha_extrema__(const double &inc_ener
 }
 
 std::pair<double, double> CDFFile::single_sample(const double &inc_ener, const double &xi_1, const double &xi_2){
-    auto [lo_inc_ener_ind, hi_inc_ener_ind] = findInterpolationIndexes(inc_ener_grid.begin(), inc_ener_grid.end(), inc_ener);
-    auto [lo_beta_cdf_ind, hi_beta_cdf_ind] = findInterpolationIndexes(beta_cdf_grid.begin(), beta_cdf_grid.end(), xi_1);
+    auto [lo_inc_ener_ind, hi_inc_ener_ind] = findSampleInterpolationIndices(inc_ener_grid.begin(), inc_ener_grid.end(), inc_ener);
+    auto [lo_beta_cdf_ind, hi_beta_cdf_ind] = findSampleInterpolationIndices(beta_cdf_grid.begin(), beta_cdf_grid.end(), xi_1);
     double beta = bi_interp(inc_ener_grid[lo_inc_ener_ind], // x1
                             inc_ener_grid[hi_inc_ener_ind], // x2
                             beta_cdf_grid[lo_beta_cdf_ind], // y1
@@ -67,26 +68,26 @@ std::pair<double, double> CDFFile::single_sample(const double &inc_ener, const d
     // Unscale and abs the beta to search the alpha storage beta grid
     double grid_beta = abs(beta * temp/ref_temp_k);
 
-    auto [lo_beta_ind, hi_beta_ind] = findInterpolationIndexes(beta_grid.begin(), beta_grid.end(), grid_beta);
+    auto [lo_beta_ind, hi_beta_ind] = findSampleInterpolationIndices(beta_grid.begin(), beta_grid.end(), grid_beta);
 
     // lo beta
     std::vector<double>::iterator l_alpha_start = fit_alphas.begin() + lo_beta_ind*alpha_cdf_grid.size();
     int l_alpha_start_ind = std::distance(fit_alphas.begin(), l_alpha_start);
     std::vector<double>::iterator l_alpha_end = l_alpha_start + alpha_cdf_grid.size();
-    auto [ll_amin_ind, lu_amin_ind] = findInterpolationIndexes(l_alpha_start, l_alpha_end, amin);
+    auto [ll_amin_ind, lu_amin_ind] = findSampleInterpolationIndices(l_alpha_start, l_alpha_end, amin);
     double l_amin_cdf = ENDF_interp(fit_alphas[l_alpha_start_ind+ll_amin_ind],
                                     fit_alphas[l_alpha_start_ind+lu_amin_ind],
                                     alpha_cdf_grid[ll_amin_ind],
                                     alpha_cdf_grid[lu_amin_ind],
                                     amin);
-    auto [ll_amax_ind, lu_amax_ind] = findInterpolationIndexes(l_alpha_start, l_alpha_end, amax);
+    auto [ll_amax_ind, lu_amax_ind] = findSampleInterpolationIndices(l_alpha_start, l_alpha_end, amax);
     double l_amax_cdf = ENDF_interp(fit_alphas[l_alpha_start_ind+ll_amax_ind],
                                     fit_alphas[l_alpha_start_ind+lu_amax_ind],
                                     alpha_cdf_grid[ll_amax_ind],
                                     alpha_cdf_grid[lu_amax_ind],
                                     amax);
     double l_xi_2_prime = scale_value(xi_2, 0, 1, l_amin_cdf, l_amax_cdf);
-    auto [ll_alpha_cdf_ind, lu_alpha_cdf_ind] = findInterpolationIndexes(alpha_cdf_grid.begin(), alpha_cdf_grid.end(), l_xi_2_prime);
+    auto [ll_alpha_cdf_ind, lu_alpha_cdf_ind] = findSampleInterpolationIndices(alpha_cdf_grid.begin(), alpha_cdf_grid.end(), l_xi_2_prime);
     double l_alpha = ENDF_interp(alpha_cdf_grid[ll_alpha_cdf_ind],
                                  alpha_cdf_grid[lu_alpha_cdf_ind],
                                  fit_alphas[l_alpha_start_ind+ll_alpha_cdf_ind],
@@ -97,20 +98,20 @@ std::pair<double, double> CDFFile::single_sample(const double &inc_ener, const d
     std::vector<double>::iterator u_alpha_start = fit_alphas.begin() + hi_beta_ind*alpha_cdf_grid.size();
     int u_alpha_start_ind = std::distance(fit_alphas.begin(), u_alpha_start);
     std::vector<double>::iterator u_alpha_end = u_alpha_start + alpha_cdf_grid.size();
-    auto [ul_amin_ind, uu_amin_ind] = findInterpolationIndexes(u_alpha_start, u_alpha_end, amin);
+    auto [ul_amin_ind, uu_amin_ind] = findSampleInterpolationIndices(u_alpha_start, u_alpha_end, amin);
     double u_amin_cdf = ENDF_interp(fit_alphas[u_alpha_start_ind+ul_amin_ind],
                                     fit_alphas[u_alpha_start_ind+uu_amin_ind],
                                     alpha_cdf_grid[ul_amin_ind],
                                     alpha_cdf_grid[uu_amin_ind],
                                     amin);
-    auto [ul_amax_ind, uu_amax_ind] = findInterpolationIndexes(u_alpha_start, u_alpha_end, amax);
+    auto [ul_amax_ind, uu_amax_ind] = findSampleInterpolationIndices(u_alpha_start, u_alpha_end, amax);
     double u_amax_cdf = ENDF_interp(fit_alphas[u_alpha_start_ind+ul_amax_ind],
                                     fit_alphas[u_alpha_start_ind+uu_amax_ind],
                                     alpha_cdf_grid[ul_amax_ind],
                                     alpha_cdf_grid[uu_amax_ind],
                                     amax);
     double u_xi_2_prime = scale_value(xi_2, 0, 1, u_amin_cdf, u_amax_cdf);
-    auto [ul_alpha_cdf_ind, uu_alpha_cdf_ind] = findInterpolationIndexes(alpha_cdf_grid.begin(), alpha_cdf_grid.end(), u_xi_2_prime);
+    auto [ul_alpha_cdf_ind, uu_alpha_cdf_ind] = findSampleInterpolationIndices(alpha_cdf_grid.begin(), alpha_cdf_grid.end(), u_xi_2_prime);
     double u_alpha = ENDF_interp(alpha_cdf_grid[ul_alpha_cdf_ind],
                                  alpha_cdf_grid[uu_alpha_cdf_ind],
                                  fit_alphas[u_alpha_start_ind+ul_alpha_cdf_ind],

@@ -118,6 +118,7 @@ std::string sample_coeff_test_file = "test_files/HinYH2_coeffs.h5";
 std::string sample_output_file = "Sampling_results.h5";
 bool sample_cdf_file = false;
 bool sample_coeff_file = false;
+bool sample_only_timing_results = false;
 
 double sample_incident_energy = 0.01;
 double sample_temperature = 400;

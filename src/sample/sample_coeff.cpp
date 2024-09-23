@@ -333,8 +333,10 @@ void CoeffFile::write_results(){
     writeHDF5Double(file, temp, "Sampling Temperature");
     writeHDF5Double(file, time_to_sample_ms, "Sampling Time [ms]");
 
-    writeHDF5DoubleVector(file, sampled_secondary_energies, "Sampled Energies");
-    writeHDF5DoubleVector(file, sampled_scattering_cosines, "Sampled Cosines");
+    if (!sample_only_timing_results){
+        writeHDF5DoubleVector(file, sampled_secondary_energies, "Sampled Energies");
+        writeHDF5DoubleVector(file, sampled_scattering_cosines, "Sampled Cosines");
+    }
 
     file.close();
 }
@@ -342,30 +344,30 @@ void CoeffFile::write_results(){
 void sample_coeff(){
     CoeffFile data(sample_input_file);
 
-    // // Reserve sampling space
-    // data.sampled_secondary_energies.resize(sample_num_samples);
-    // data.sampled_scattering_cosines.resize(sample_num_samples);
+    // Reserve sampling space
+    data.sampled_secondary_energies.resize(sample_num_samples);
+    data.sampled_scattering_cosines.resize(sample_num_samples);
 
-    // // Create Random number vectors
-    // data.xi_1.resize(sample_num_samples);
-    // data.xi_2.resize(sample_num_samples);
-    // std::mt19937 gen(sample_seed); // Mersenne Twister engine
-    // std::uniform_real_distribution<> dis(0.0, 1.0); // Uniform distribution [0, 1]
-    // for (int i = 0; i < sample_num_samples; ++i) {
-    //     data.xi_1[i] = dis(gen);
-    //     data.xi_2[i] = dis(gen);
-    // }
+    // Create Random number vectors
+    data.xi_1.resize(sample_num_samples);
+    data.xi_2.resize(sample_num_samples);
+    std::mt19937 gen(sample_seed); // Mersenne Twister engine
+    std::uniform_real_distribution<> dis(0.0, 1.0); // Uniform distribution [0, 1]
+    for (int i = 0; i < sample_num_samples; ++i) {
+        data.xi_1[i] = dis(gen);
+        data.xi_2[i] = dis(gen);
+    }
 
-    // // Do the sampling
-    // auto sampling_start = std::chrono::high_resolution_clock::now();
-    // data.all_sample(sample_incident_energy);
-    // auto sampling_end = std::chrono::high_resolution_clock::now();
-    // auto sampling_duration = std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end-sampling_start);
-    // data.time_to_sample_ms = sampling_duration.count();
-    // if (!silence){
-    //     std::cout << "Time to sample | milliseconds " << data.time_to_sample_ms << std::endl;
-    // }
+    // Do the sampling
+    auto sampling_start = std::chrono::high_resolution_clock::now();
+    data.all_sample(sample_incident_energy);
+    auto sampling_end = std::chrono::high_resolution_clock::now();
+    auto sampling_duration = std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end-sampling_start);
+    data.time_to_sample_ms = sampling_duration.count();
+    if (!silence){
+        std::cout << "Time to sample | milliseconds " << data.time_to_sample_ms << std::endl;
+    }
 
-    // // Write the sampling results
-    // data.write_results();
+    // Write the sampling results
+    data.write_results();
 }

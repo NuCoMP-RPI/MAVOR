@@ -138,6 +138,7 @@ int main(int argc, char* argv[]){
     sample.add_option("-e,--inc_energy", sample_incident_energy, "Sets the incident energy to sample.");
     sample.add_option("-n,--number", sample_num_samples, "Sets the number of samples.");
     sample.add_option("-t,--temperature", sample_temperature, "Sets the temperature to sample for OTF data.");
+    sample.add_flag("--timing_only", sample_only_timing_results, "Mavor will not provided the sampled energy or scattering cosine.");
 
     auto &sample_file = *sample.add_option_group("Tells Mavor what type of data is in the input file.");
     auto sample_coeff_option = sample_file.add_flag("--coeff", sample_coeff_file);

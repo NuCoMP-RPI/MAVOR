@@ -112,6 +112,7 @@ extern std::string sample_coeff_test_file;
 extern std::string sample_output_file;
 extern bool sample_cdf_file;
 extern bool sample_coeff_file;
+extern bool sample_only_timing_results;
 
 extern double sample_incident_energy;
 extern double sample_temperature;

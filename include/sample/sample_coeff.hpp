@@ -68,7 +68,14 @@ class CoeffFile{
         void write_results();
     private:
         std::pair<double, double> return_alpha_extrema__(const double & inc_ener, const double & beta);
-        void set_eval_function__(EvaluationFunction & eval_func, std::string const& basis_func_string);
+        void set_eval_function_arb__(EvaluationFunction & eval_func, std::string const& basis_func_string, std::string const var_type);
+        void set_eval_function__(EvaluationFunction & eval_func, 
+                                 std::string const &basis_func_string,
+                                 bool const sample_default_eval,
+                                 bool const sample_naive_eval,
+                                 bool const sample_optimal_eval,
+                                 bool const sample_override_eval,
+                                 std::string const sample_override_evaluation_type);
 };
 
 void sample_coeff();

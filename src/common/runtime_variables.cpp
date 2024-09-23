@@ -109,7 +109,20 @@ double sample_temperature = 400;
 int sample_num_samples = static_cast<int>(1e6);
 unsigned int sample_seed = 856526177;
 
-bool sample_naive_eval  = false;
-bool sample_horner_eval  = false;
-bool sample_clenshaw_eval  = false;
-bool sample_optimal_eval = false;
+bool sample_xs_default_eval = true; // see sample_coeff.cpp for the default behavior, this is just a flag
+bool sample_xs_naive_eval = false;
+bool sample_xs_optimal_eval = false;
+bool sample_xs_override_eval = false;
+std::string sample_xs_override_evaluation_type = "";
+
+bool sample_beta_default_eval = true; // see sample_coeff.cpp for the default behavior, this is just a flag
+bool sample_beta_naive_eval = false;
+bool sample_beta_optimal_eval = false;
+bool sample_beta_override_eval = false;
+std::string sample_beta_override_evaluation_type = "";
+
+bool sample_alpha_default_eval = true; // see sample_coeff.cpp for the default behavior, this is just a flag
+bool sample_alpha_naive_eval = false;
+bool sample_alpha_optimal_eval = false;
+bool sample_alpha_override_eval = false;
+std::string sample_alpha_override_evaluation_type = "";

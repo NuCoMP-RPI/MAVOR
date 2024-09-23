@@ -122,6 +122,7 @@ int main(int argc, char* argv[]){
     auto alpha_temp_scale_max_option = full_alpha.add_option("--alpha_scale_max", alpha_temp_scale_max, "Sets the maximum value to scale the temperature");
     auto alpha_fit_function_option = full_alpha.add_option("--alpha_fit_func", alpha_basis_function, "Sets the fitting function to be used.");
 
+    // sample subcommand
     CLI::App &sample = *mavor.add_subcommand("sample", "Samples the base CDF or the OTF distributions for comparisons.");
     sample.ignore_case();
     sample.add_option("-i,--input_file", sample_input_file, "Sets the file name (and path) to be sampled.");
@@ -135,11 +136,23 @@ int main(int argc, char* argv[]){
     auto sample_cdf_option = sample_file.add_flag("--cdf", sample_cdf_file);
     sample_file.require_option(1);
 
-    auto &eval_routine = *sample.add_option_group("Tells Mavor the evaluation routine to use.  If none provided, Mavor will choose the 'optimal' routine.");
-    auto sample_eval_naive_option = eval_routine.add_flag("--naive", sample_naive_eval);
-    auto sample_eval_horner_option = eval_routine.add_flag("--horner", sample_horner_eval);
-    auto sample_eval_clenshaw_option = eval_routine.add_flag("--clenshaw", sample_clenshaw_eval);
-    eval_routine.require_option(0, 1);
+    auto &xs_eval_routine = *sample.add_option_group("Tells Mavor the evaluation routine to use when evaluating the XS basis function.  If none provided, Mavor will choose the default behavior.");
+    auto sample_xs_naive_option = xs_eval_routine.add_flag("--xs_naive", sample_xs_naive_eval);
+    auto sample_xs_optimal_option = xs_eval_routine.add_flag("--xs_optimal", sample_xs_optimal_eval);
+    auto sample_xs_override_option = xs_eval_routine.add_option("--xs_override", sample_xs_override_evaluation_type);
+    xs_eval_routine.require_option(0, 1);
+
+    auto &beta_eval_routine = *sample.add_option_group("Tells Mavor the evaluation routine to use when evaluating the XS basis function.  If none provided, Mavor will choose the default behavior.");
+    auto sample_beta_naive_option = beta_eval_routine.add_flag("--xs_naive", sample_beta_naive_eval);
+    auto sample_beta_optimal_option = beta_eval_routine.add_flag("--xs_optimal", sample_beta_optimal_eval);
+    auto sample_beta_override_option = beta_eval_routine.add_option("--xs_override", sample_beta_override_evaluation_type);
+    beta_eval_routine.require_option(0, 1);
+
+    auto &alpha_eval_routine = *sample.add_option_group("Tells Mavor the evaluation routine to use when evaluating the XS basis function.  If none provided, Mavor will choose the default behavior.");
+    auto sample_alpha_naive_option = alpha_eval_routine.add_flag("--xs_naive", sample_alpha_naive_eval);
+    auto sample_alpha_optimal_option = alpha_eval_routine.add_flag("--xs_optimal", sample_alpha_optimal_eval);
+    auto sample_alpha_override_option = alpha_eval_routine.add_option("--xs_override", sample_alpha_override_evaluation_type);
+    alpha_eval_routine.require_option(0, 1);
 
     // Parse the command line arguments
     CLI11_PARSE(mavor, argc, argv);
@@ -183,12 +196,22 @@ int main(int argc, char* argv[]){
     }
 
     if (sample.parsed()){
+        if (!silence){std::cout << "Running sample subroutines" << std::endl;}
         if (*sample_cdf_option){sample_input_file = sample_cdf_test_file;}
         if (*sample_coeff_option){sample_input_file = sample_coeff_test_file;}
-        if (*sample_eval_naive_option){sample_naive_eval = true;}
-        else if (*sample_eval_horner_option){sample_horner_eval = true;}
-        else if (*sample_eval_clenshaw_option){sample_clenshaw_eval = true;}
-        else {sample_optimal_eval = true;}
+
+        if (*sample_xs_naive_option){sample_xs_naive_eval = true; sample_xs_default_eval = false;}
+        if (*sample_xs_optimal_option){sample_xs_optimal_eval = true; sample_xs_default_eval = false;}        
+        if (*sample_xs_override_option){sample_xs_override_eval = true; sample_xs_default_eval = false;}
+        
+        if (*sample_beta_naive_option){sample_beta_naive_eval = true; sample_beta_default_eval = false;}
+        if (*sample_beta_optimal_option){sample_beta_optimal_eval = true; sample_beta_default_eval = false;}        
+        if (*sample_beta_override_option){sample_beta_override_eval = true; sample_beta_default_eval = false;}
+        
+        if (*sample_alpha_naive_option){sample_alpha_naive_eval = true; sample_alpha_default_eval = false;}
+        if (*sample_alpha_optimal_option){sample_alpha_optimal_eval = true; sample_alpha_default_eval = false;}        
+        if (*sample_alpha_override_option){sample_alpha_override_eval = true; sample_alpha_default_eval = false;}
+
         run_sample();
     }
     

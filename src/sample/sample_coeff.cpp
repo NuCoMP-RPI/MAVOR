@@ -32,19 +32,19 @@ CoeffFile::CoeffFile(std::string const & file_path){
     readHDF5Double(file, "XS Minimum Scaled Value", xs_scale_minimum);
     readHDF5Double(file, "XS Maximum Scaled Value", xs_scale_maximum);
     readHDF5String(file, "XS Fitting Function", xs_basis_function_string);
-    set_eval_function__(xs_eval_func, xs_basis_function_string);
+    set_eval_function_arb__(xs_eval_func, xs_basis_function_string, "xs");
 
     readHDF5Bool(file, "Scale BETA temperatures", beta_scale_temperatures);
     readHDF5Double(file, "BETA Minimum Scaled Value", beta_scale_minimum);
     readHDF5Double(file, "BETA Maximum Scaled Value", beta_scale_maximum);
     readHDF5String(file, "BETA Fitting Function", beta_basis_function_string);
-    set_eval_function__(beta_eval_func, beta_basis_function_string);
+    set_eval_function_arb__(beta_eval_func, beta_basis_function_string, "beta");
 
     readHDF5Bool(file, "Scale ALPHA temperatures", alpha_scale_temperatures);
     readHDF5Double(file, "ALPHA Minimum Scaled Value", alpha_scale_minimum);
     readHDF5Double(file, "ALPHA Maximum Scaled Value", alpha_scale_maximum);
     readHDF5String(file, "ALPHA Fitting Function", alpha_basis_function_string);
-    set_eval_function__(alpha_eval_func, alpha_basis_function_string);
+    set_eval_function_arb__(alpha_eval_func, alpha_basis_function_string, "alpha");
 
     readHDF5DoubleVector(file, "Incident Energy Grid", inc_ener_grid);
     readHDF5DoubleVector(file, "Beta CDF Grid", beta_cdf_grid);
@@ -59,11 +59,65 @@ CoeffFile::CoeffFile(std::string const & file_path){
     num_alpha_coeffs = alpha_coeffs.size()/(beta_grid.size()*alpha_cdf_grid.size());
 }
 
-void CoeffFile::set_eval_function__(EvaluationFunction & eval_func, std::string const &basis_func_string)
+void CoeffFile::set_eval_function_arb__(EvaluationFunction & eval_func, std::string const& basis_func_string, std::string const var_type){
+    if (var_type == "xs"){
+        set_eval_function__(eval_func, 
+                            basis_func_string, 
+                            sample_xs_default_eval, 
+                            sample_xs_naive_eval, 
+                            sample_xs_optimal_eval, 
+                            sample_xs_override_eval, 
+                            sample_xs_override_evaluation_type);
+    }
+    else if (var_type == "beta"){
+        set_eval_function__(eval_func, 
+                            basis_func_string, 
+                            sample_beta_default_eval, 
+                            sample_beta_naive_eval, 
+                            sample_beta_optimal_eval, 
+                            sample_beta_override_eval, 
+                            sample_beta_override_evaluation_type);
+    }
+    else if (var_type == "alpha"){
+        set_eval_function__(eval_func, 
+                            basis_func_string, 
+                            sample_alpha_default_eval, 
+                            sample_alpha_naive_eval, 
+                            sample_alpha_optimal_eval, 
+                            sample_alpha_override_eval, 
+                            sample_alpha_override_evaluation_type);
+    }   
+    else {throw std::logic_error("Unknown var_type.");} 
+}
+
+void CoeffFile::set_eval_function__(EvaluationFunction & eval_func, 
+                                    std::string const &basis_func_string,
+                                    bool const sample_default_eval,
+                                    bool const sample_naive_eval,
+                                    bool const sample_optimal_eval,
+                                    bool const sample_override_eval,
+                                    std::string const sample_override_evaluation_type)
 {
-    auto it = OptimalEvaluationsMap.find(basis_func_string);
-    if (it != OptimalEvaluationsMap.end()) {eval_func = it->second;} 
-    else {throw std::out_of_range("Unknown basis function used for coefficient fitting.");}
+    if(sample_optimal_eval || sample_default_eval){
+        auto it = OptimalEvaluationsMap.find(basis_func_string);
+        if (it != OptimalEvaluationsMap.end()) {eval_func = it->second;} 
+        else {throw std::out_of_range("Unknown basis function used for optimal coefficient fitting.");}
+    }
+    if (sample_naive_eval){
+        auto it = NaiveEvaluationsMap.find(basis_func_string);
+        if (it != NaiveEvaluationsMap.end()) {eval_func = it->second;} 
+        else {throw std::out_of_range("Unknown basis function used for naive coefficient fitting.");}
+    }
+    if (sample_override_eval){
+        EvaluationTypeMap::const_iterator it = FitEvaluationMap.find(basis_func_string);
+        if (it != FitEvaluationMap.end()){
+            EvaluationFunctionMap basis_eval_map = it->second;
+            EvaluationFunctionMap::iterator it_it = basis_eval_map.find(sample_override_evaluation_type);
+            if (it_it != basis_eval_map.end()) {eval_func = it_it->second;}
+            else {throw std::out_of_range("Unknown evaluation method for basis function.");}
+        }
+        else {throw std::out_of_range("Unknown basis function used for override coefficient fitting.");}
+    }
 }
 
 std::pair<double, double> CoeffFile::return_alpha_extrema__(const double &inc_ener, const double &beta){
@@ -288,32 +342,30 @@ void CoeffFile::write_results(){
 void sample_coeff(){
     CoeffFile data(sample_input_file);
 
-    std::cout << data.num_xs_coeff << "  " << data.num_beta_coeffs << "  " << data.num_alpha_coeffs << std::endl;
+    // // Reserve sampling space
+    // data.sampled_secondary_energies.resize(sample_num_samples);
+    // data.sampled_scattering_cosines.resize(sample_num_samples);
 
-    // Reserve sampling space
-    data.sampled_secondary_energies.resize(sample_num_samples);
-    data.sampled_scattering_cosines.resize(sample_num_samples);
+    // // Create Random number vectors
+    // data.xi_1.resize(sample_num_samples);
+    // data.xi_2.resize(sample_num_samples);
+    // std::mt19937 gen(sample_seed); // Mersenne Twister engine
+    // std::uniform_real_distribution<> dis(0.0, 1.0); // Uniform distribution [0, 1]
+    // for (int i = 0; i < sample_num_samples; ++i) {
+    //     data.xi_1[i] = dis(gen);
+    //     data.xi_2[i] = dis(gen);
+    // }
 
-    // Create Random number vectors
-    data.xi_1.resize(sample_num_samples);
-    data.xi_2.resize(sample_num_samples);
-    std::mt19937 gen(sample_seed); // Mersenne Twister engine
-    std::uniform_real_distribution<> dis(0.0, 1.0); // Uniform distribution [0, 1]
-    for (int i = 0; i < sample_num_samples; ++i) {
-        data.xi_1[i] = dis(gen);
-        data.xi_2[i] = dis(gen);
-    }
+    // // Do the sampling
+    // auto sampling_start = std::chrono::high_resolution_clock::now();
+    // data.all_sample(sample_incident_energy);
+    // auto sampling_end = std::chrono::high_resolution_clock::now();
+    // auto sampling_duration = std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end-sampling_start);
+    // data.time_to_sample_ms = sampling_duration.count();
+    // if (!silence){
+    //     std::cout << "Time to sample | milliseconds " << data.time_to_sample_ms << std::endl;
+    // }
 
-    // Do the sampling
-    auto sampling_start = std::chrono::high_resolution_clock::now();
-    data.all_sample(sample_incident_energy);
-    auto sampling_end = std::chrono::high_resolution_clock::now();
-    auto sampling_duration = std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end-sampling_start);
-    data.time_to_sample_ms = sampling_duration.count();
-    if (!silence){
-        std::cout << "Time to sample | milliseconds " << data.time_to_sample_ms << std::endl;
-    }
-
-    // Write the sampling results
-    data.write_results();
+    // // Write the sampling results
+    // data.write_results();
 }

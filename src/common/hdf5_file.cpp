@@ -3,6 +3,14 @@
 
 #include "H5Cpp.h"
 
+void readHDF5Bool(H5::H5File& file, const std::string& datasetName, bool& value) {
+    H5::DataSet dataset = file.openDataSet(datasetName);
+    H5::DataSpace dataspace = dataset.getSpace();
+    dataset.read(&value, H5::PredType::NATIVE_HBOOL);
+    dataset.close();
+    dataspace.close();
+}
+
 void writeHDF5Bool(H5::H5File file, bool const & value, std::string const & value_name){
     hsize_t dims[1] = {1};
     H5::DataSpace dataspace(1, dims);
@@ -81,6 +89,15 @@ void writeHDF5DoubleMatrix(H5::H5File file, std::vector<std::vector<double>> con
         flattenedMatrix.insert(flattenedMatrix.end(), row.begin(), row.end());
     }
     dataset.write(flattenedMatrix.data(), H5::PredType::NATIVE_DOUBLE);
+}
+
+void readHDF5String(H5::H5File& file, const std::string& datasetName, std::string& value) {
+    H5::DataSet dataset = file.openDataSet(datasetName);
+    H5::DataSpace dataspace = dataset.getSpace();
+    H5::StrType strdatatype(H5::PredType::C_S1, H5T_VARIABLE);
+    dataset.read(value, strdatatype);
+    dataset.close();
+    dataspace.close();
 }
 
 void writeHDF5String(H5::H5File file, std::string const & value, std::string const & value_name){

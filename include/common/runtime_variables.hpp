@@ -104,4 +104,36 @@ extern bool alpha_override_temp_scale_min;
 extern bool alpha_override_temp_scale_max;
 extern bool alpha_override_fit_function;
 
+// sample subcommand variables
+
+extern std::string sample_input_file;
+extern std::string sample_cdf_test_file;
+extern std::string sample_coeff_test_file;
+extern std::string sample_output_file;
+extern bool sample_cdf_file;
+extern bool sample_coeff_file;
+
+extern double sample_incident_energy;
+extern double sample_temperature;
+extern int sample_num_samples;
+extern unsigned int sample_seed;
+
+extern bool sample_xs_default_eval;
+extern bool sample_xs_naive_eval;
+extern bool sample_xs_optimal_eval;
+extern bool sample_xs_override_eval;
+extern std::string sample_xs_override_evaluation_type;
+
+extern bool sample_beta_default_eval;
+extern bool sample_beta_naive_eval;
+extern bool sample_beta_optimal_eval;
+extern bool sample_beta_override_eval;
+extern std::string sample_beta_override_evaluation_type;
+
+extern bool sample_alpha_default_eval;
+extern bool sample_alpha_naive_eval;
+extern bool sample_alpha_optimal_eval;
+extern bool sample_alpha_override_eval;
+extern std::string sample_alpha_override_evaluation_type;
+
 #endif

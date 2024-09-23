@@ -24,8 +24,8 @@ int beta_cdf_extent = 10;
 int num_alpha_cdf_points = 100;
 int alpha_cdf_extent = 10;
 
-std::string sab_input_file = "test_files/HinYH2_293K.h5";
-std::string sab_output_file = "Results.h5";
+std::string sab_input_file = "test_files/HinYH2_293K_tsl.h5";
+std::string sab_output_file = "CDF_distributions.h5";
 
 bool use_external_energy_grid = false;
 std::string energy_grid_loc;
@@ -109,3 +109,35 @@ bool alpha_override_scale_temp = false;
 bool alpha_override_temp_scale_min = false;
 bool alpha_override_temp_scale_max = false;
 bool alpha_override_fit_function = false;
+
+// sample subcommand variables
+
+std::string sample_input_file = "";
+std::string sample_cdf_test_file = "test_files/HinYH2_293K_CDFs.h5";
+std::string sample_coeff_test_file = "test_files/HinYH2_coeffs.h5";
+std::string sample_output_file = "Sampling_results.h5";
+bool sample_cdf_file = false;
+bool sample_coeff_file = false;
+
+double sample_incident_energy = 0.01;
+double sample_temperature = 400;
+int sample_num_samples = static_cast<int>(1e6);
+unsigned int sample_seed = 856526177;
+
+bool sample_xs_default_eval = true; // see sample_coeff.cpp for the default behavior, this is just a flag
+bool sample_xs_naive_eval = false;
+bool sample_xs_optimal_eval = false;
+bool sample_xs_override_eval = false;
+std::string sample_xs_override_evaluation_type = "";
+
+bool sample_beta_default_eval = true; // see sample_coeff.cpp for the default behavior, this is just a flag
+bool sample_beta_naive_eval = false;
+bool sample_beta_optimal_eval = false;
+bool sample_beta_override_eval = false;
+std::string sample_beta_override_evaluation_type = "";
+
+bool sample_alpha_default_eval = true; // see sample_coeff.cpp for the default behavior, this is just a flag
+bool sample_alpha_naive_eval = false;
+bool sample_alpha_optimal_eval = false;
+bool sample_alpha_override_eval = false;
+std::string sample_alpha_override_evaluation_type = "";

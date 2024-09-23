@@ -12,6 +12,9 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+# Add compile options
+add_compile_options(-fopenmp)
+
 include(FetchContent)
 
 message(STATUS "Retrieving CLI11 version 2.4.1.")
@@ -42,10 +45,12 @@ FetchContent_MakeAvailable(EIGEN)
 find_package(HDF5 COMPONENTS CXX REQUIRED)
 add_compile_options(-lhdf5_cpp -lhdf5)
 
-configure_file(test_files/HinYH2_293K.h5 test_files/HinYH2_293K.h5 COPYONLY)
 configure_file(test_files/HinYH2_energies.txt test_files/HinYH2_energies.txt COPYONLY)
+configure_file(test_files/HinYH2_293K_tsl.h5 test_files/HinYH2_293K_tsl.h5 COPYONLY)
+configure_file(test_files/HinYH2_293K_CDFs.h5 test_files/HinYH2_293K_CDFs.h5 COPYONLY)
+configure_file(test_files/HinYH2_coeffs.h5 test_files/HinYH2_coeffs.h5 COPYONLY)
 
-set(COMPILE_TESTS off)
+set(COMPILE_TESTS on)
 
 option(generate_tests "Option to generate compile tests." ${COMPILE_TESTS})
 

@@ -1,36 +1,36 @@
 #include "predefined_fit_settings.hpp"
 
-#include "chebyshev.hpp"
-#include "cosine.hpp"
-#include "exponential.hpp"
-#include "inverse_exponential.hpp"
-#include "inverse_log_power.hpp"
-#include "inverse_power.hpp"
-#include "inverse_sqrt_log_power.hpp"
-#include "inverse_sqrt_power.hpp"
-#include "legendre.hpp"
-#include "log_power.hpp"
-#include "power.hpp"
-#include "sine_cosine.hpp"
-#include "sine.hpp"
-#include "sqrt_log_power.hpp"
-#include "sqrt_power.hpp"
+#include "basis_chebyshev.hpp"
+#include "basis_cosine.hpp"
+#include "basis_exponential.hpp"
+#include "basis_inverse_exponential.hpp"
+#include "basis_inverse_log_power.hpp"
+#include "basis_inverse_power.hpp"
+#include "basis_inverse_sqrt_log_power.hpp"
+#include "basis_inverse_sqrt_power.hpp"
+#include "basis_legendre.hpp"
+#include "basis_log_power.hpp"
+#include "basis_power.hpp"
+#include "basis_sine_cosine.hpp"
+#include "basis_sine.hpp"
+#include "basis_sqrt_log_power.hpp"
+#include "basis_sqrt_power.hpp"
 
 BasisFunction chebyshev = {"Chebyshev", eval_chebyshev_order};
-BasisFunction cosine = {"cosine", eval_cosine_order};
-BasisFunction exponential = {"exponential", eval_exponential_order};
-BasisFunction inverse_exponential = {"inverse_exponential", eval_inverse_exponential_order};
-BasisFunction inverse_log_power = {"inverse_log_power", eval_inverse_log_power_order};
-BasisFunction inverse_power = {"inverse_power", eval_inverse_power_order};
-BasisFunction inverse_sqrt_log_power = {"inverse_sqrt_log_power", eval_inverse_sqrt_log_power_order};
-BasisFunction inverse_sqrt_power = {"inverse_sqrt_power", eval_inverse_sqrt_power_order};
-BasisFunction legendre = {"legendre", eval_legendre_order};
-BasisFunction log_power = {"log_power", eval_log_power_order};
-BasisFunction power = {"power", eval_power_order};
-BasisFunction sine_cosine = {"sine_cosine", eval_sine_cosine_order};
-BasisFunction sine = {"sine", eval_sine_order};
-BasisFunction sqrt_log_power = {"sqrt_log_power", eval_sqrt_log_power_order};
-BasisFunction sqrt_power = {"sqrt_power", eval_sqrt_power_order};
+BasisFunction cosine = {"Cosine", eval_cosine_order};
+BasisFunction exponential = {"Exponential", eval_exponential_order};
+BasisFunction inverse_exponential = {"InverseExponential", eval_inverse_exponential_order};
+BasisFunction inverse_log_power = {"InverseLogPower", eval_inverse_log_power_order};
+BasisFunction inverse_power = {"InversePower", eval_inverse_power_order};
+BasisFunction inverse_sqrt_log_power = {"InverseSqrtLogPower", eval_inverse_sqrt_log_power_order};
+BasisFunction inverse_sqrt_power = {"InverseSqrtPower", eval_inverse_sqrt_power_order};
+BasisFunction legendre = {"Legendre", eval_legendre_order};
+BasisFunction log_power = {"LogPower", eval_log_power_order};
+BasisFunction power = {"Power", eval_power_order};
+BasisFunction sine_cosine = {"SineCosine", eval_sine_cosine_order};
+BasisFunction sine = {"Sine", eval_sine_order};
+BasisFunction sqrt_log_power = {"SqrtLogPower", eval_sqrt_log_power_order};
+BasisFunction sqrt_power = {"SqrtPower", eval_sqrt_power_order};
 
 BasisFunctionSettings chebyshev_settings = {true, -1, 1, chebyshev};
 BasisFunctionSettings cosine_settings = {true, 0, 1, cosine};

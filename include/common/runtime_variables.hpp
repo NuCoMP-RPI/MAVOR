@@ -109,6 +109,8 @@ extern bool alpha_override_fit_function;
 extern std::string sample_input_file;
 extern std::string sample_cdf_test_file;
 extern std::string sample_coeff_test_file;
+extern std::string sample_cdf_output_file;
+extern std::string sample_coeff_output_file;
 extern std::string sample_output_file;
 extern bool sample_cdf_file;
 extern bool sample_coeff_file;

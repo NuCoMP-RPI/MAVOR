@@ -133,8 +133,8 @@ int main(int argc, char* argv[]){
     // sample subcommand
     CLI::App &sample = *mavor.add_subcommand("sample", "Samples the base CDF or the OTF distributions for comparisons.");
     sample.ignore_case();
-    sample.add_option("-i,--input_file", sample_input_file, "Sets the file name (and path) to be sampled.");
-    sample.add_option("-o,--output_file", sample_output_file, "Sets the file name (and path) to store the sampling results.");
+    auto sample_input_file_option = sample.add_option("-i,--input_file", sample_input_file, "Sets the file name (and path) to be sampled.");
+    auto sample_output_file_option = sample.add_option("-o,--output_file", sample_output_file, "Sets the file name (and path) to store the sampling results.");
     sample.add_option("-e,--inc_energy", sample_incident_energy, "Sets the incident energy to sample.");
     sample.add_option("-n,--number", sample_num_samples, "Sets the number of samples.");
     sample.add_option("-t,--temperature", sample_temperature, "Sets the temperature to sample for OTF data.");
@@ -210,8 +210,22 @@ int main(int argc, char* argv[]){
 
     if (sample.parsed()){
         if (!silence){std::cout << "Running sample subroutines" << std::endl;}
-        if (*sample_cdf_option){sample_input_file = sample_cdf_test_file;}
-        if (*sample_coeff_option){sample_input_file = sample_coeff_test_file;}
+        if (*sample_cdf_option){
+            if (!*sample_input_file_option){
+                sample_input_file = sample_cdf_test_file;
+            }
+            if (!*sample_output_file_option){
+                sample_output_file = sample_cdf_output_file;
+            }
+        }
+        if (*sample_coeff_option){
+            if (!*sample_input_file_option){
+                sample_input_file = sample_coeff_test_file;
+            }
+            if (!*sample_output_file_option){
+                sample_output_file = sample_coeff_output_file;
+            }
+        }
 
         if (*sample_xs_naive_option){sample_xs_naive_eval = true; sample_xs_default_eval = false;}
         if (*sample_xs_optimal_option){sample_xs_optimal_eval = true; sample_xs_default_eval = false;}        

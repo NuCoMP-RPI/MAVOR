@@ -141,7 +141,7 @@ void CDFFile::all_sample(const double &inc_ener){
 void CDFFile::write_results(){
     H5::FileCreatPropList fcpl;
     H5::FileAccPropList fapl;
-    H5::H5File file("CDFSamplingResults.h5", H5F_ACC_TRUNC, fcpl, fapl);
+    H5::H5File file(sample_output_file, H5F_ACC_TRUNC, fcpl, fapl);
 
     writeHDF5Int(file, za, "ZA");
     writeHDF5Int(file, mat, "MAT");
@@ -155,9 +155,10 @@ void CDFFile::write_results(){
     writeHDF5Double(file, temp, "Sampling Temperature");
     writeHDF5Double(file, time_to_sample_ms, "Sampling Time [ms]");
 
-    writeHDF5DoubleVector(file, sampled_secondary_energies, "Sampled Energies");
-    writeHDF5DoubleVector(file, sampled_scattering_cosines, "Sampled Cosines");
-
+    if (!sample_only_timing_results){
+        writeHDF5DoubleVector(file, sampled_secondary_energies, "Sampled Energies");
+        writeHDF5DoubleVector(file, sampled_scattering_cosines, "Sampled Cosines");
+    }
     file.close();
 }
 

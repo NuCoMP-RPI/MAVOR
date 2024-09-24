@@ -255,7 +255,7 @@ void CoeffFile::all_sample(const double &inc_ener){
 void CoeffFile::write_results(){
     H5::FileCreatPropList fcpl;
     H5::FileAccPropList fapl;
-    H5::H5File file("CoeffSamplingResults.h5", H5F_ACC_TRUNC, fcpl, fapl);
+    H5::H5File file(sample_output_file, H5F_ACC_TRUNC, fcpl, fapl);
 
     writeHDF5Int(file, za, "ZA");
     writeHDF5Int(file, mat, "MAT");

@@ -126,64 +126,6 @@ std::pair<double, double> CDFFile::single_sample(const double &inc_ener, const d
 
     double scattering_cosine = ((inc_ener + secondary_energy) - alpha*a0*boltz*temp)/(2*sqrt(inc_ener*secondary_energy));
 
-
-    // Debugging print statements
-    // std::cout << "inc_ener_grid size: " << inc_ener_grid.size() << std::endl;
-    // std::cout << "beta_cdf_grid size: " << beta_cdf_grid.size() << std::endl;
-    // std::cout << "fit_betas size: " << fit_betas.size() << std::endl;
-    // std::cout << "beta_grid size: " << beta_grid.size() << std::endl;
-    // std::cout << "alpha_cdf_grid size: " << alpha_cdf_grid.size() << std::endl;
-    // std::cout << "fit_alphas size: " << fit_alphas.size() << std::endl;
-
-    // // Interpolation indices and their values
-    // std::cout << "lo_inc_ener_ind: " << lo_inc_ener_ind << " | hi_inc_ener_ind: " << hi_inc_ener_ind << std::endl;
-    // std::cout << "lo_inc_ener value: " << inc_ener_grid[lo_inc_ener_ind] << " | hi_inc_ener value: " << inc_ener_grid[hi_inc_ener_ind] << std::endl;
-
-    // std::cout << "lo_beta_cdf_ind: " << lo_beta_cdf_ind << " | hi_beta_cdf_ind: " << hi_beta_cdf_ind << std::endl;
-    // std::cout << "lo_beta_cdf value: " << beta_cdf_grid[lo_beta_cdf_ind] << " | hi_beta_cdf value: " << beta_cdf_grid[hi_beta_cdf_ind] << std::endl;
-
-    // std::cout << "Calculated beta: " << beta << std::endl;
-
-    // std::cout << "amin: " << amin << " | amax: " << amax << std::endl;
-    // std::cout << "grid_beta: " << grid_beta << std::endl;
-
-    // std::cout << "lo_beta_ind: " << lo_beta_ind << " | hi_beta_ind: " << hi_beta_ind << std::endl;
-    // std::cout << "lo_beta value: " << beta_grid[lo_beta_ind] << " | hi_beta value: " << beta_grid[hi_beta_ind] << std::endl;
-
-    // // Lo beta
-    // std::cout << "l_alpha_start index: " << l_alpha_start_ind << std::endl;
-    // std::cout << "ll_amin_ind: " << ll_amin_ind << " | lu_amin_ind: " << lu_amin_ind << std::endl;
-    // std::cout << "ll_amin value: " << fit_alphas[l_alpha_start_ind+ll_amin_ind] << " | lu_amin value: " << fit_alphas[l_alpha_start_ind+lu_amin_ind] << std::endl;
-    // std::cout << "l_amin_cdf: " << l_amin_cdf << std::endl;
-
-    // std::cout << "ll_amax_ind: " << ll_amax_ind << " | lu_amax_ind: " << lu_amax_ind << std::endl;
-    // std::cout << "ll_amax value: " << fit_alphas[l_alpha_start_ind+ll_amax_ind] << " | lu_amax value: " << fit_alphas[l_alpha_start_ind+lu_amax_ind] << std::endl;
-    // std::cout << "l_amax_cdf: " << l_amax_cdf << std::endl;
-
-    // std::cout << "l_xi_2_prime: " << l_xi_2_prime << std::endl;
-    // std::cout << "ll_alpha_cdf_ind: " << ll_alpha_cdf_ind << " | lu_alpha_cdf_ind: " << lu_alpha_cdf_ind << std::endl;
-    // std::cout << "ll_alpha_cdf value: " << fit_alphas[l_alpha_start_ind+ll_alpha_cdf_ind] << " | lu_alpha_cdf value: " << fit_alphas[l_alpha_start_ind+lu_alpha_cdf_ind] << std::endl;
-    // std::cout << "l_alpha: " << l_alpha << std::endl;
-
-    // // Hi beta
-    // std::cout << "u_alpha_start index: " << u_alpha_start_ind << std::endl;
-    // std::cout << "ul_amin_ind: " << ul_amin_ind << " | uu_amin_ind: " << uu_amin_ind << std::endl;
-    // std::cout << "ul_amin value: " << fit_alphas[u_alpha_start_ind+ul_amin_ind] << " | uu_amin value: " << fit_alphas[u_alpha_start_ind+uu_amin_ind] << std::endl;
-    // std::cout << "u_amin_cdf: " << u_amin_cdf << std::endl;
-
-    // std::cout << "ul_amax_ind: " << ul_amax_ind << " | uu_amax_ind: " << uu_amax_ind << std::endl;
-    // std::cout << "ul_amax value: " << fit_alphas[u_alpha_start_ind+ul_amax_ind] << " | uu_amax value: " << fit_alphas[u_alpha_start_ind+uu_amax_ind] << std::endl;
-    // std::cout << "u_amax_cdf: " << u_amax_cdf << std::endl;
-
-    // std::cout << "u_xi_2_prime: " << u_xi_2_prime << std::endl;
-    // std::cout << "ul_alpha_cdf_ind: " << ul_alpha_cdf_ind << " | uu_alpha_cdf_ind: " << uu_alpha_cdf_ind << std::endl;
-    // std::cout << "ul_alpha_cdf value: " << fit_alphas[u_alpha_start_ind+ul_alpha_cdf_ind] << " | uu_alpha_cdf value: " << fit_alphas[u_alpha_start_ind+uu_alpha_cdf_ind] << std::endl;
-    // std::cout << "u_alpha: " << u_alpha << std::endl;
-
-    // // Final alpha
-    // std::cout << "Final alpha: " << alpha << std::endl;
-
-
     return std::pair<double, double>(secondary_energy, scattering_cosine);
 }
 

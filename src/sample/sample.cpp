@@ -8,8 +8,7 @@
 #include "sample_coeff.hpp"
 
 void run_sample(){
-    std::cout << sample_input_file << std::endl;
-    std::cout << sample_output_file << std::endl;
+    if (!silence){std::cout << "Input File | " << sample_input_file << std::endl;}
     if (sample_cdf_file){
         if (!silence){std::cout << "CDF sampling was selected." << std::endl;}
         sample_cdf();
@@ -19,4 +18,5 @@ void run_sample(){
         if (!silence){std::cout << "Coeff sampling was selected." << std::endl;}
         sample_coeff();
     }
+    if (!silence){std::cout << "Sampling Results File | " << sample_output_file << std::endl;}
 }

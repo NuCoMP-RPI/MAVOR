@@ -247,5 +247,11 @@ void sample_cdf(){
     }
 
     // Write the sampling results
+    auto file_write_start = std::chrono::high_resolution_clock::now();
     data.write_results();
+    auto file_write_end = std::chrono::high_resolution_clock::now();
+    auto file_write_duration = std::chrono::duration_cast<std::chrono::milliseconds>(file_write_end-file_write_start);
+    if (!silence){
+        std::cout << "Time to write the CDF sampling results coefficients | milliseconds " << file_write_duration.count() << std::endl;
+    }
 }

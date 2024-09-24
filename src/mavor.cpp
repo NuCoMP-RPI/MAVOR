@@ -151,16 +151,16 @@ int main(int argc, char* argv[]){
     auto sample_xs_override_option = xs_eval_routine.add_option("--xs_override", sample_xs_override_evaluation_type);
     xs_eval_routine.require_option(0, 1);
 
-    auto &beta_eval_routine = *sample.add_option_group("Tells Mavor the evaluation routine to use when evaluating the XS basis function.  If none provided, Mavor will choose the default behavior.");
-    auto sample_beta_naive_option = beta_eval_routine.add_flag("--xs_naive", sample_beta_naive_eval);
-    auto sample_beta_optimal_option = beta_eval_routine.add_flag("--xs_optimal", sample_beta_optimal_eval);
-    auto sample_beta_override_option = beta_eval_routine.add_option("--xs_override", sample_beta_override_evaluation_type);
+    auto &beta_eval_routine = *sample.add_option_group("Tells Mavor the evaluation routine to use when evaluating the BETA basis function.  If none provided, Mavor will choose the default behavior.");
+    auto sample_beta_naive_option = beta_eval_routine.add_flag("--beta_naive", sample_beta_naive_eval);
+    auto sample_beta_optimal_option = beta_eval_routine.add_flag("--beta_optimal", sample_beta_optimal_eval);
+    auto sample_beta_override_option = beta_eval_routine.add_option("--beta_override", sample_beta_override_evaluation_type);
     beta_eval_routine.require_option(0, 1);
 
-    auto &alpha_eval_routine = *sample.add_option_group("Tells Mavor the evaluation routine to use when evaluating the XS basis function.  If none provided, Mavor will choose the default behavior.");
-    auto sample_alpha_naive_option = alpha_eval_routine.add_flag("--xs_naive", sample_alpha_naive_eval);
-    auto sample_alpha_optimal_option = alpha_eval_routine.add_flag("--xs_optimal", sample_alpha_optimal_eval);
-    auto sample_alpha_override_option = alpha_eval_routine.add_option("--xs_override", sample_alpha_override_evaluation_type);
+    auto &alpha_eval_routine = *sample.add_option_group("Tells Mavor the evaluation routine to use when evaluating the ALPHA basis function.  If none provided, Mavor will choose the default behavior.");
+    auto sample_alpha_naive_option = alpha_eval_routine.add_flag("--alpha_naive", sample_alpha_naive_eval);
+    auto sample_alpha_optimal_option = alpha_eval_routine.add_flag("--alpha_optimal", sample_alpha_optimal_eval);
+    auto sample_alpha_override_option = alpha_eval_routine.add_option("--alpha_override", sample_alpha_override_evaluation_type);
     alpha_eval_routine.require_option(0, 1);
 
     // Parse the command line arguments

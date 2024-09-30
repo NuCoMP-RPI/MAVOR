@@ -296,9 +296,9 @@ void OTFData::__generate_A_matrices__(){
 
 void OTFData::__fill_A_matrices__(){
     if (!silence){
-        std::cout << "Energy fitting function selected | " << class_xs_fit.first.first << std::endl;
-        std::cout << "Beta fitting function selected | " << class_beta_fit.first.first << std::endl;
-        std::cout << "Alpha fitting function selected | " << class_alpha_fit.first.first << std::endl;
+        std::cout << "Energy fitting function selected | " << class_xs_fit.first.first << " | Number Coefficients | " << class_xs_fit.second << std::endl;
+        std::cout << "Beta fitting function selected | " << class_beta_fit.first.first << " | Number Coefficients | " << class_beta_fit.second << std::endl;
+        std::cout << "Alpha fitting function selected | " << class_alpha_fit.first.first << " | Number Coefficients | " << class_alpha_fit.second << std::endl;
     }
     for (int i = 0; i<temps.size(); i++){
         Eigen::VectorXd evaled_xs_points = __eval_fit_func__(xs_temps[i], class_xs_fit.second, std::get<3>(class_xs_fit.first.second).second);
@@ -319,35 +319,32 @@ Eigen::VectorXd OTFData::__eval_fit_func__(double const & x, int const & number,
 }
 
 void OTFData::__solve__(){
+    // Currently just implements the normal equations.  From eye, this doesn't seem to cause numerical errors.
+    Eigen::MatrixXd xs_A_T = xs_A.transpose();
+    Eigen::MatrixXd beta_A_T = beta_A.transpose();
+    Eigen::MatrixXd alpha_A_T = alpha_A.transpose();
+
+    Eigen::LDLT<Eigen::MatrixXd> xs_ldlt = (xs_A_T * xs_A).ldlt();
+    Eigen::LDLT<Eigen::MatrixXd> beta_ldlt = (beta_A_T * beta_A).ldlt();
+    Eigen::LDLT<Eigen::MatrixXd> alpha_ldlt = (alpha_A_T * alpha_A).ldlt();
+
     // XS
+    #pragma omp parallel for
     for (int i = 0; i<inc_energy_grid.size(); i++){
-        // // SVD
-        // xs_coeffs[i] = xs_A.template bdcSvd<Eigen::ComputeThinU | Eigen::ComputeThinV>().solve(ii_xs[i]);
-        // // Full pivot QR
-        // xs_coeffs[i] = xs_A.fullPivHouseholderQr().solve(ii_xs[i]);
-        // // Normal Equations
-        xs_coeffs[i] = (xs_A.transpose() * xs_A).ldlt().solve(xs_A.transpose() * ii_xs[i]);
+        xs_coeffs[i] = xs_ldlt.solve(xs_A_T * ii_xs[i]);
     }
     // BETA
+    #pragma omp parallel for collapse(2)
     for (int i = 0; i<inc_energy_grid.size(); i++){
         for (int j = 0; j<beta_cdf_grid.size(); j++){
-            // // SVD
-            // beta_coeffs[i][j] = beta_A.template bdcSvd<Eigen::ComputeThinU | Eigen::ComputeThinV>().solve(fit_beta_vals[i][j]);
-            // // Full pivot QR
-            // beta_coeffs[i][j] = beta_A.fullPivHouseholderQr().solve(fit_beta_vals[i][j]);
-            // // Normal Equations
-            beta_coeffs[i][j] = (beta_A.transpose() * beta_A).ldlt().solve(beta_A.transpose() * fit_beta_vals[i][j]);
+            beta_coeffs[i][j] = beta_ldlt.solve(beta_A_T * fit_beta_vals[i][j]);
         }
     }
     //ALPHA
+    #pragma omp parallel for collapse(2)
     for (int i = 0; i<beta_grid.size(); i++){
         for (int j = 0; j<alpha_cdf_grid.size(); j++){
-            // // SVD
-            // alpha_coeffs[i][j] = alpha_A.template bdcSvd<Eigen::ComputeThinU | Eigen::ComputeThinV>().solve(fit_alpha_vals[i][j]);
-            // // Full pivot QR
-            // alpha_coeffs[i][j] = alpha_A.fullPivHouseholderQr().solve(fit_alpha_vals[i][j]);
-            // // Normal Equations
-            alpha_coeffs[i][j] = (alpha_A.transpose() * alpha_A).ldlt().solve(alpha_A.transpose() * fit_alpha_vals[i][j]);
+            alpha_coeffs[i][j] = alpha_ldlt.solve(alpha_A_T * fit_alpha_vals[i][j]);
         }
     }
 }

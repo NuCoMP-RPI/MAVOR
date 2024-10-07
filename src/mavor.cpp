@@ -37,6 +37,7 @@ int main(int argc, char* argv[]){
     // NJOY subcommand
     CLI::App &njoy = *mavor.add_subcommand("njoy", "Runs NJOY and LEAPR to generate TSL data.");
     njoy.ignore_case();
+    njoy.add_option("-i,--input_file", njoy_leapr_file, "Sets the path to the Leapr file to read.");
 
     // SAB subcommand
     CLI::App &sab = *mavor.add_subcommand("sab", "Generates TSL sampling data given the output from LEAPR or similar tools.");

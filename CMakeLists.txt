@@ -49,6 +49,7 @@ configure_file(test_files/HinYH2_energies.txt test_files/HinYH2_energies.txt COP
 configure_file(test_files/HinYH2_293K_tsl.h5 test_files/HinYH2_293K_tsl.h5 COPYONLY)
 configure_file(test_files/HinYH2_293K_CDFs.h5 test_files/HinYH2_293K_CDFs.h5 COPYONLY)
 configure_file(test_files/HinYH2_coeffs.h5 test_files/HinYH2_coeffs.h5 COPYONLY)
+configure_file(test_files/tsl-HinYH2.leapr test_files/tsl-HinYH2.leapr COPYONLY)
 
 set(COMPILE_TESTS on)
 

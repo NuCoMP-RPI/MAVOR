@@ -10,6 +10,7 @@ bool log_run = false;
 
 // NJOY subcommand variables
 
+std::string njoy_leapr_file = "test_files/tsl-HinYH2.leapr";
 
 
 // SAB subcommand variables 

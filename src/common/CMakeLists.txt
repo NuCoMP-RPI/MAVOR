@@ -8,6 +8,7 @@ target_sources(common_lib PRIVATE
                "${CMAKE_CURRENT_LIST_DIR}/clenshaw.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/horner.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/hdf5_file.cpp"
+               "${CMAKE_CURRENT_LIST_DIR}/file_reading.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/scale_basis.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/utilities.cpp")
 

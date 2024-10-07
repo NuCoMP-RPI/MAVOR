@@ -13,6 +13,7 @@ extern bool log_run;
 
 // NJOY subcommand variables
 
+extern std::string njoy_leapr_file;
 
 
 // Sab subcommand variables

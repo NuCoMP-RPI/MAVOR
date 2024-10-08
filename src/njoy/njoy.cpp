@@ -18,6 +18,14 @@ void run_njoy(){
         std::cout << "Time to read in Leapr file | milliseconds " << file_read_duration.count() << std::endl;
     }
 
+    auto write_start = std::chrono::high_resolution_clock::now();
+    leapr_file.write_leapr_files();
+    auto write_end = std::chrono::high_resolution_clock::now();
+    auto write_duration = std::chrono::duration_cast<std::chrono::milliseconds>(write_end-write_start);
+    if (!silence){
+        std::cout << "Time to write LEAPR input files | milliseconds " << write_duration.count() << std::endl;
+    }
+
     auto process_start = std::chrono::high_resolution_clock::now();
     // data.generate_coefficients();
     auto process_end = std::chrono::high_resolution_clock::now();

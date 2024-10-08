@@ -1,12 +1,16 @@
 #include <fstream>
 #include <algorithm>
+#include <numeric>
+#include <filesystem>
+#include <iomanip>
 
 #include "file_reading.hpp"
 #include "runtime_variables.hpp"
+#include "interpolation.hpp"
+#include "linspace.hpp"
+#include "arange.hpp"
 
 #include "leapr_file.hpp"
-
-
 
 LeaprFile::LeaprFile(const std::string &file_path) :
     // Set Default values here
@@ -24,8 +28,6 @@ LeaprFile::LeaprFile(const std::string &file_path) :
     file(file_path)
     {
         if (!file.is_open()) {throw std::runtime_error("Failed to open file: " + file_path);}
-        try
-        {
         find_file_start__();
         get_card_1__();
         get_card_2__();
@@ -37,13 +39,10 @@ LeaprFile::LeaprFile(const std::string &file_path) :
         get_card_8__();
         get_card_9__();
         get_all_cards_10_19__();
-        }
-        catch(const std::exception& e)
-        {
-            std::cout << line << std::endl;
-            std::cerr << e.what() << '\n';
-        }
         file.close();
+        int unique_temps = std::accumulate(pos_temp.begin(), pos_temp.end(), 0);
+        unique_temperatures = (unique_temps > 1) ? true : false;
+        if (!silence) {std::cout << "Number of Unique Temperatures | " << unique_temps << std::endl;}
 }
 
 bool LeaprFile::get_line_single_item__(){
@@ -307,3 +306,139 @@ void LeaprFile::get_card_19__(){
     }
 }
 
+void LeaprFile::write_leapr_file(const double temperature, const int file_number){
+    // std::cout << "Writing input for MAT number " << material_number << " at " << temperature << "K\n";
+    std::filesystem::create_directory(njoy_leapr_write_dir);
+    std::filesystem::path location_path(njoy_leapr_write_dir);
+    std::filesystem::path file_path = location_path / (std::to_string(material_number) + "_" + std::to_string(file_number) + ".leapr");
+    std::ofstream file(file_path);
+    if (!file.is_open()) {throw std::runtime_error("Error opening file for writing");}
+
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+
+    file << "leapr / \n";
+    file << nout << " / \n";
+    file << "MAT Number " << material_number << " at " << temperature << "K - Created " << std::put_time(&tm, "%d-%m-%Y") << " by MAVOR / \n";
+    file << "1 1 " << nphon << " / \n";
+    file << material_number << " " << za << " " << isabt << " " << ilog << " " << smin << " / \n";
+    file << awr << " " << spr << " " << npr << " " << iel << " " << ncold << " " << nsk << " / \n";
+
+    if (nss == 0){
+        file << nss << " / \n";
+    }
+    else {
+        file << nss << " " << b7 << " " << aws << " " << sps << " " << mss << " / \n";
+    }
+
+    file << nalpha << " " << nbeta << " " << lat << " / \n";
+    write_formatted_vector__(file, alphas, 4);
+    write_formatted_vector__(file, betas, 4);
+
+    file << temperature << " / \n";
+
+    double temp_delta = deltas[0]; 
+    int temp_ni = nis[0]; 
+    std::vector<double> temp_rhos = rhos[0]; 
+    double temp_twt = twts[0]; 
+    double temp_c = cs[0]; 
+    double temp_tbeta = tbetas[0]; 
+    int temp_nd = nds[0]; 
+    std::vector<double> temp_osc_eners;
+    std::vector<double> temp_osc_weights;
+    if (temp_nd != 0){
+        temp_osc_eners = osc_eners[0]; 
+        temp_osc_weights = osc_weights[0]; 
+    }
+    int temp_nka;
+    double temp_dka;
+    std::vector<double> temp_skappas;
+    if (nsk != 0){
+        temp_nka = nkas[0]; 
+        temp_dka = dkas[0]; 
+        temp_skappas = skappas[0]; 
+    }
+    double temp_cfrac;
+    if (nsk == 2){
+        temp_cfrac = cfracs[0]; 
+    }
+
+    if (unique_temperatures){
+        auto tb = findInterpolationIndexes(temps.begin(), temps.end(), temperature);
+        double t_low = temps[tb.first];
+        double t_high = temps[tb.second];
+        temp_ni = ENDF_interp(t_low, t_high, nis[tb.first], nis[tb.second], temperature);
+        temp_rhos = ENDF_interp_vector(t_low, t_high, rhos[tb.first], rhos[tb.second], temperature);
+        temp_twt = ENDF_interp(t_low, t_high, twts[tb.first], twts[tb.second], temperature);
+        temp_c = ENDF_interp(t_low, t_high, cs[tb.first], cs[tb.second], temperature);
+        temp_tbeta = ENDF_interp(t_low, t_high, tbetas[tb.first], tbetas[tb.second], temperature);
+        temp_nd = ENDF_interp(t_low, t_high, nds[tb.first], nds[tb.second], temperature);
+        if (temp_nd != 0){
+            temp_osc_eners = ENDF_interp_vector(t_low, t_high, osc_eners[tb.first], osc_eners[tb.second], temperature);
+            temp_osc_weights = ENDF_interp_vector(t_low, t_high, osc_weights[tb.first], osc_weights[tb.second], temperature);
+        }
+        if (nsk != 0){
+            temp_nka = ENDF_interp(t_low, t_high, nkas[tb.first], nkas[tb.second], temperature);
+            temp_dka = ENDF_interp(t_low, t_high, dkas[tb.first], dkas[tb.second], temperature);
+            temp_skappas = ENDF_interp_vector(t_low, t_high, skappas[tb.first], skappas[tb.second], temperature);
+        }
+        if (nsk == 2){
+            temp_cfrac = ENDF_interp(t_low, t_high, cfracs[tb.first], cfracs[tb.second], temperature);
+        }
+    }
+
+    file << temp_delta << " " << temp_ni << " / \n";
+    write_formatted_vector__(file, temp_rhos, 4);
+    file << temp_twt << " " << temp_c << " " << temp_tbeta << " / \n";
+    file << temp_nd << " / \n";
+    if (temp_nd != 0){
+        write_formatted_vector__(file, temp_osc_eners, temp_osc_eners.size());
+        write_formatted_vector__(file, temp_osc_weights, temp_osc_weights.size());
+    }
+    if (nsk != 0){
+        file << temp_nka << " " << temp_dka << " / \n";
+        write_formatted_vector__(file, temp_skappas, temp_skappas.size());
+    }
+    if (nsk == 2){
+        file << temp_cfrac << " / \n";
+    }
+
+    file << "/ \nstop\n";
+
+    file.close();
+}
+
+void LeaprFile::write_leapr_files(){
+    set_leapr_file_write_temps__();
+    for (int i = 0; i<njoy_leapr_temps.size(); ++i){
+        write_leapr_file(njoy_leapr_temps[i], i);
+    }
+}
+
+void LeaprFile::write_formatted_vector__(std::ofstream &file, const std::vector<double> &vec, const int width){
+    // ostringstream is used to avoid formatting effecting file
+    std::ostringstream oss;
+    for (size_t i = 0; i < vec.size(); ++i) {
+        if (i % width == 0 && i != 0) {
+            oss << '\n';
+        }
+        oss << std::scientific << std::setprecision(6) << vec[i] << " ";
+    }
+    oss << "/ \n";
+    file << oss.str();
+}
+
+void LeaprFile::set_leapr_file_write_temps__(){
+    if (njoy_leapr_use_temp_delta){
+        njoy_leapr_temps = arange(temps.front(), temps.back(), njoy_leapr_delta_temp);
+        if (njoy_leapr_temps.back() != temps.back()){
+            njoy_leapr_temps.push_back(temps.back());
+        }
+    }
+    if (njoy_leapr_use_num_temps){
+        njoy_leapr_temps = linspace(temps.front(), temps.back(), njoy_leapr_num_temps);
+    }
+    if (njoy_leapr_temps.empty()){
+        njoy_leapr_temps.push_back(temps[0]);
+    }
+}

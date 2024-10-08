@@ -7,7 +7,6 @@
 
 class LeaprFile{
     public:
-        std::string material_name;
         int nout;
         std::string title;
         int ntemp;
@@ -35,6 +34,7 @@ class LeaprFile{
         std::vector<double> alphas;
         std::vector<double> betas;
         std::vector<bool> pos_temp;
+        bool unique_temperatures;
         std::vector<double> temps;
         std::vector<double> deltas;
         std::vector<int> nis;
@@ -52,6 +52,9 @@ class LeaprFile{
 
         // Constructor 
         LeaprFile(const std::string & file_path);
+
+        void write_leapr_file(const double temperature, const int file_number = 0);
+        void write_leapr_files();
 
     private:
         std::ifstream file;
@@ -83,6 +86,9 @@ class LeaprFile{
         void get_card_17__();
         void get_card_18__();
         void get_card_19__();
+        
+        void write_formatted_vector__(std::ofstream &file, const std::vector<double> &vec, const int width);
+        void set_leapr_file_write_temps__();
 };
 
 #endif

@@ -38,6 +38,12 @@ int main(int argc, char* argv[]){
     CLI::App &njoy = *mavor.add_subcommand("njoy", "Runs NJOY and LEAPR to generate TSL data.");
     njoy.ignore_case();
     njoy.add_option("-i,--input_file", njoy_leapr_file, "Sets the path to the Leapr file to read.");
+    njoy.add_option("-o,--output_dir", njoy_leapr_write_dir, "Sets the write location of the created leapr inputs.");
+    auto &njoy_temps_options = *njoy.add_option_group("Temperature settings", "Determines at what temperatures leapr files will created.");
+    njoy_temps_options.add_option("-t,--temps", njoy_leapr_temps, "Sets a vector of doubles for temperatures at which to create leapr inputs.");
+    auto njoy_temp_delta = njoy_temps_options.add_option("-d,--delta_t", njoy_leapr_delta_temp, "Sets the delta t of temperature to create leapr inputs.");
+    auto njoy_num_temps = njoy_temps_options.add_option("-n,--num_t", njoy_leapr_num_temps, "Sets the number of evenly spaced temperatures.");
+    njoy_temps_options.require_option(0, 1);
 
     // SAB subcommand
     CLI::App &sab = *mavor.add_subcommand("sab", "Generates TSL sampling data given the output from LEAPR or similar tools.");
@@ -175,6 +181,8 @@ int main(int argc, char* argv[]){
 
     if (njoy.parsed()){
         if (!silence){std::cout << "Running njoy subroutines" << std::endl;}
+        if (*njoy_temp_delta){njoy_leapr_use_temp_delta = true;}
+        if (*njoy_num_temps){njoy_leapr_use_num_temps = true;}
         run_njoy();
     }
     if (sab.parsed()){

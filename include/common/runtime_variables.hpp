@@ -21,6 +21,9 @@ extern bool tsl_leapr_use_num_temps;
 extern double tsl_leapr_delta_temp;
 extern int tsl_leapr_num_temps;
 
+extern std::string tsl_njoy_exe_loc;
+extern std::string tsl_njoy_sim_loc;
+
 // Sab subcommand variables
 
 extern int beta_integration_scheme;

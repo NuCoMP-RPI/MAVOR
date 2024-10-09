@@ -4,6 +4,7 @@
 #include "tsl.hpp"
 #include "runtime_variables.hpp"
 #include "leapr_file.hpp"
+#include "njoy_runner.hpp"
 
 void run_tsl(){
     if (!silence){
@@ -27,7 +28,7 @@ void run_tsl(){
     }
 
     auto process_start = std::chrono::high_resolution_clock::now();
-    // data.generate_coefficients();
+    njoy_runner();
     auto process_end = std::chrono::high_resolution_clock::now();
     auto process_duration = std::chrono::duration_cast<std::chrono::milliseconds>(process_end-process_start);
     if (!silence){

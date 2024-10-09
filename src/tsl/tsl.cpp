@@ -1,17 +1,17 @@
 #include <iostream>
 #include <chrono>
 
-#include "njoy.hpp"
+#include "tsl.hpp"
 #include "runtime_variables.hpp"
 #include "leapr_file.hpp"
 
-void run_njoy(){
+void run_tsl(){
     if (!silence){
-        std::cout << "Leapr file | " << njoy_leapr_file << std::endl;
+        std::cout << "Leapr file | " << tsl_leapr_file << std::endl;
     }
     
     auto file_read_start = std::chrono::high_resolution_clock::now();
-    LeaprFile leapr_file(njoy_leapr_file);
+    LeaprFile leapr_file(tsl_leapr_file);
     auto file_read_end = std::chrono::high_resolution_clock::now();
     auto file_read_duration = std::chrono::duration_cast<std::chrono::milliseconds>(file_read_end - file_read_start);
     if (!silence){

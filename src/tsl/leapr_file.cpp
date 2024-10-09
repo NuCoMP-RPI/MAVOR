@@ -308,8 +308,8 @@ void LeaprFile::get_card_19__(){
 
 void LeaprFile::write_leapr_file(const double temperature, const int file_number){
     // std::cout << "Writing input for MAT number " << material_number << " at " << temperature << "K\n";
-    std::filesystem::create_directory(njoy_leapr_write_dir);
-    std::filesystem::path location_path(njoy_leapr_write_dir);
+    std::filesystem::create_directory(tsl_leapr_write_dir);
+    std::filesystem::path location_path(tsl_leapr_write_dir);
     std::filesystem::path file_path = location_path / (std::to_string(material_number) + "_" + std::to_string(file_number) + ".leapr");
     std::ofstream file(file_path);
     if (!file.is_open()) {throw std::runtime_error("Error opening file for writing");}
@@ -410,8 +410,8 @@ void LeaprFile::write_leapr_file(const double temperature, const int file_number
 
 void LeaprFile::write_leapr_files(){
     set_leapr_file_write_temps__();
-    for (int i = 0; i<njoy_leapr_temps.size(); ++i){
-        write_leapr_file(njoy_leapr_temps[i], i);
+    for (int i = 0; i<tsl_leapr_temps.size(); ++i){
+        write_leapr_file(tsl_leapr_temps[i], i);
     }
 }
 
@@ -429,16 +429,16 @@ void LeaprFile::write_formatted_vector__(std::ofstream &file, const std::vector<
 }
 
 void LeaprFile::set_leapr_file_write_temps__(){
-    if (njoy_leapr_use_temp_delta){
-        njoy_leapr_temps = arange(temps.front(), temps.back(), njoy_leapr_delta_temp);
-        if (njoy_leapr_temps.back() != temps.back()){
-            njoy_leapr_temps.push_back(temps.back());
+    if (tsl_leapr_use_temp_delta){
+        tsl_leapr_temps = arange(temps.front(), temps.back(), tsl_leapr_delta_temp);
+        if (tsl_leapr_temps.back() != temps.back()){
+            tsl_leapr_temps.push_back(temps.back());
         }
     }
-    if (njoy_leapr_use_num_temps){
-        njoy_leapr_temps = linspace(temps.front(), temps.back(), njoy_leapr_num_temps);
+    if (tsl_leapr_use_num_temps){
+        tsl_leapr_temps = linspace(temps.front(), temps.back(), tsl_leapr_num_temps);
     }
-    if (njoy_leapr_temps.empty()){
-        njoy_leapr_temps.push_back(temps[0]);
+    if (tsl_leapr_temps.empty()){
+        tsl_leapr_temps.push_back(temps[0]);
     }
 }

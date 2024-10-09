@@ -13,13 +13,13 @@ extern bool log_run;
 
 // NJOY subcommand variables
 
-extern std::string njoy_leapr_file;
-extern std::string njoy_leapr_write_dir;
-extern std::vector<double> njoy_leapr_temps;
-extern bool njoy_leapr_use_temp_delta;
-extern bool njoy_leapr_use_num_temps;
-extern double njoy_leapr_delta_temp;
-extern int njoy_leapr_num_temps;
+extern std::string tsl_leapr_file;
+extern std::string tsl_leapr_write_dir;
+extern std::vector<double> tsl_leapr_temps;
+extern bool tsl_leapr_use_temp_delta;
+extern bool tsl_leapr_use_num_temps;
+extern double tsl_leapr_delta_temp;
+extern int tsl_leapr_num_temps;
 
 // Sab subcommand variables
 

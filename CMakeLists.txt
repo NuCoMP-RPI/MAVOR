@@ -12,39 +12,23 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-# Add compile options
 add_compile_options(-fopenmp)
 
-include(FetchContent)
+include(ExternalProject)
 
-message(STATUS "Retrieving and building NJOY2016.76 (This takes a while usually).")
-FetchContent_Declare(
+ExternalProject_Add(
     NJOY
-    QUIET
+    PREFIX ${CMAKE_BINARY_DIR}/NJOY
     GIT_REPOSITORY https://github.com/njoy/NJOY2016
     GIT_TAG 2016.76
     GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-    EXCLUDE_FROM_ALL)
+    UPDATE_COMMAND ""
+    BUILD_IN_SOURCE TRUE
+    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_Fortran_FLAGS="-w"
+    INSTALL_COMMAND ""
+    )
 
-FetchContent_MakeAvailable(NJOY)
-
-set(NJOY_BUILD_DIR "${CMAKE_BINARY_DIR}/NJOY2016_build")
-file(MAKE_DIRECTORY ${NJOY_BUILD_DIR})
-
-execute_process(
-    COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Release -DCMAKE_Fortran_FLAGS="-w" ${njoy_SOURCE_DIR}
-    WORKING_DIRECTORY ${NJOY_BUILD_DIR}
-)
-
-cmake_host_system_information(RESULT NCORES QUERY NUMBER_OF_LOGICAL_CORES)
-
-message(STATUS "Number of available cores: ${NCORES}")
-
-execute_process(
-    COMMAND make -j${NCORES}
-    WORKING_DIRECTORY ${NJOY_BUILD_DIR}
-)
+include(FetchContent)    
 
 message(STATUS "Retrieving CLI11 version 2.4.1.")
 FetchContent_Declare(

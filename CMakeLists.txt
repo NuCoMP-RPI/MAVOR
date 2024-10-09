@@ -17,6 +17,35 @@ add_compile_options(-fopenmp)
 
 include(FetchContent)
 
+message(STATUS "Retrieving and building NJOY2016.76 (This takes a while usually).")
+FetchContent_Declare(
+    NJOY
+    QUIET
+    GIT_REPOSITORY https://github.com/njoy/NJOY2016
+    GIT_TAG 2016.76
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    EXCLUDE_FROM_ALL)
+
+FetchContent_MakeAvailable(NJOY)
+
+set(NJOY_BUILD_DIR "${CMAKE_BINARY_DIR}/NJOY2016_build")
+file(MAKE_DIRECTORY ${NJOY_BUILD_DIR})
+
+execute_process(
+    COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Release -DCMAKE_Fortran_FLAGS="-w" ${njoy_SOURCE_DIR}
+    WORKING_DIRECTORY ${NJOY_BUILD_DIR}
+)
+
+cmake_host_system_information(RESULT NCORES QUERY NUMBER_OF_LOGICAL_CORES)
+
+message(STATUS "Number of available cores: ${NCORES}")
+
+execute_process(
+    COMMAND make -j${NCORES}
+    WORKING_DIRECTORY ${NJOY_BUILD_DIR}
+)
+
 message(STATUS "Retrieving CLI11 version 2.4.1.")
 FetchContent_Declare(
     CLI11 

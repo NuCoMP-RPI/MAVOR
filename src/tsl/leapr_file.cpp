@@ -18,7 +18,7 @@ LeaprFile::LeaprFile(const std::string &file_path) :
     iprint(1), 
     nphon(100), 
     isabt(0),
-    ilog(1), 
+    ilog(0), 
     smin(1e-75), 
     iel(0), 
     ncold(0), 

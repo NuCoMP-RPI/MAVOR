@@ -30,7 +30,7 @@ double ENDF_float(const std::string &str) {
         throw std::invalid_argument("Empty string passed to ENDF_float.");
     }
     size_t pos = trimmed.find_first_of("+-", 1);
-    if (pos != std::string::npos && (pos + 1 < trimmed.size()) && isdigit(trimmed[pos + 1]) && trimmed[pos-1] != 'e') {
+    if (pos != std::string::npos && (pos + 1 < trimmed.size()) && isdigit(trimmed[pos + 1]) && std::tolower(trimmed[pos-1]) != 'e') {
         trimmed.insert(trimmed.begin()+pos, 'e');
     }
     return std::stod(trimmed);

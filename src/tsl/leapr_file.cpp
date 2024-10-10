@@ -410,6 +410,7 @@ void LeaprFile::write_leapr_file(const double temperature, const int file_number
 
 void LeaprFile::write_leapr_files(){
     set_leapr_file_write_temps__();
+    if (!silence){std::cout << "Number of files to write | " << tsl_leapr_temps.size() << std::endl;}
     for (int i = 0; i<tsl_leapr_temps.size(); ++i){
         write_leapr_file(tsl_leapr_temps[i], i);
     }

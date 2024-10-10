@@ -33,6 +33,8 @@ void njoy_runner(){
     if (std::filesystem::exists(tsl_njoy_sim_loc)){std::filesystem::remove_all(tsl_njoy_sim_loc);}
     std::filesystem::create_directory(tsl_njoy_sim_loc);
 
+    if (!silence){std::cout << "Number of leapr files to run | " << file_paths.size() << std::endl;}
+
     #pragma omp parallel for
     for (int i = 0; i < file_paths.size(); ++i) {
         execute_njoy(file_paths[i], i);

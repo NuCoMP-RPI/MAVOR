@@ -415,14 +415,14 @@ void LeaprFile::write_leapr_files(){
     }
 }
 
-void LeaprFile::write_formatted_vector__(std::ofstream &file, const std::vector<double> &vec, const int width){
+void LeaprFile::write_formatted_vector__(std::ofstream &file, const std::vector<double> &vec, const int width, const int precision){
     // ostringstream is used to avoid formatting effecting file
     std::ostringstream oss;
     for (size_t i = 0; i < vec.size(); ++i) {
         if (i % width == 0 && i != 0) {
             oss << '\n';
         }
-        oss << std::scientific << std::setprecision(6) << vec[i] << " ";
+        oss << std::scientific << std::setprecision(precision) << vec[i] << " ";
     }
     oss << "/ \n";
     file << oss.str();

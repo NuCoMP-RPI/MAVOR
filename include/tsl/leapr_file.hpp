@@ -87,7 +87,7 @@ class LeaprFile{
         void get_card_18__();
         void get_card_19__();
         
-        void write_formatted_vector__(std::ofstream &file, const std::vector<double> &vec, const int width);
+        void write_formatted_vector__(std::ofstream &file, const std::vector<double> &vec, const int width = 4, const int precision = 6);
         void set_leapr_file_write_temps__();
 };
 

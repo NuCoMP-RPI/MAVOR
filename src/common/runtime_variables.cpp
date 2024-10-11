@@ -12,6 +12,7 @@ bool log_run = false;
 
 std::string tsl_leapr_file = "test_files/tsl-HinYH2.leapr";
 std::string tsl_leapr_write_dir = "leapr_files";
+std::string tsl_njoy_results_dir = "njoy_results";
 bool tsl_leapr_use_temp_delta = false;
 bool tsl_leapr_use_num_temps = false;
 std::vector<double> tsl_leapr_temps;

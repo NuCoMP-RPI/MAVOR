@@ -28,7 +28,29 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
     )
 
-include(FetchContent)    
+include(FetchContent)
+
+# message(STATUS "Retrieving ENDFtk version 1.1.0")
+# FetchContent_Declare(
+#     ENDFtk
+#     QUIET
+#     GIT_REPOSITORY https://github.com/njoy/ENDFtk.git
+#     GIT_TAG v1.1.0
+#     GIT_SHALLOW TRUE
+#     GIT_PROGRESS TRUE)
+
+# FetchContent_MakeAvailable(ENDFtk)
+
+message(STATUS "Retrieving ENDFtk develop")
+FetchContent_Declare(
+    ENDFtk
+    QUIET
+    GIT_REPOSITORY https://github.com/njoy/ENDFtk.git
+    GIT_TAG develop
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE)
+
+FetchContent_MakeAvailable(ENDFtk)
 
 message(STATUS "Retrieving CLI11 version 2.4.1.")
 FetchContent_Declare(

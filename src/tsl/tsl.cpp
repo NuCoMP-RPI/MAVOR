@@ -32,6 +32,6 @@ void run_tsl(){
     auto process_end = std::chrono::high_resolution_clock::now();
     auto process_duration = std::chrono::duration_cast<std::chrono::milliseconds>(process_end-process_start);
     if (!silence){
-        std::cout << "Time to run NJOY | milliseconds " << process_duration.count() << std::endl;
+        std::cout << "Time to run NJOY and process outputs to HDF5 | milliseconds " << process_duration.count() << std::endl;
     }
 }

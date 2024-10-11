@@ -11,9 +11,10 @@ target_link_libraries(sab_lib PRIVATE
                               common_lib
                               predefined_lib)
 
-# Link HDF5 library
 target_link_libraries(sab_lib PRIVATE ${HDF5_LIBRARIES})
+target_link_libraries(sab_lib PRIVATE ENDFtk)
 target_include_directories(sab_lib PRIVATE ${HDF5_INCLUDE_DIRS})
+target_include_directories(sab_lib PRIVATE ENDFtk)
                               
 target_include_directories(sab_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/sab")
 target_include_directories(sab_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/common")

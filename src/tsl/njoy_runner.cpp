@@ -5,6 +5,7 @@
 
 #include "njoy_runner.hpp"
 #include "runtime_variables.hpp"
+#include "file_read.hpp"
 
 void execute_njoy(const std::filesystem::path &file, const int sim_num){
     std::filesystem::path sim_loc(tsl_njoy_sim_loc);
@@ -16,7 +17,22 @@ void execute_njoy(const std::filesystem::path &file, const int sim_num){
     std::filesystem::copy_file(njoy_exe_src, sim_loc / "njoy");
     std::filesystem::copy_file(file, sim_loc / "input");
     std::string command = "cd " + sim_loc.string() + " && ./njoy < input > out";
-    int _ = system(command.c_str());
+    // int _ = system(command.c_str());
+    int _ = -1;
+    while (_ != 0)
+    {
+        _ = system(command.c_str());
+        if (_ != 0)
+        {
+            std::cout << sim_num << std::endl;
+        }
+        
+    }
+    std::filesystem::path endf_tape = sim_loc / "tape20";
+    TslFileData endf_data(endf_tape, "endf");
+    std::filesystem::path hdf5_write_loc(tsl_njoy_results_dir);
+    std::filesystem::path hdf5_file = hdf5_write_loc / (file.stem().string() + "_njoy_results.h5");
+    endf_data.write_to_hdf5__(hdf5_file);
 }
 
 void njoy_runner(){
@@ -32,6 +48,7 @@ void njoy_runner(){
     }
     if (std::filesystem::exists(tsl_njoy_sim_loc)){std::filesystem::remove_all(tsl_njoy_sim_loc);}
     std::filesystem::create_directory(tsl_njoy_sim_loc);
+    std::filesystem::create_directory(tsl_njoy_results_dir);
 
     if (!silence){std::cout << "Number of leapr files to run | " << file_paths.size() << std::endl;}
 

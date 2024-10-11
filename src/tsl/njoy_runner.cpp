@@ -22,11 +22,6 @@ void execute_njoy(const std::filesystem::path &file, const int sim_num){
     while (_ != 0)
     {
         _ = system(command.c_str());
-        if (_ != 0)
-        {
-            std::cout << sim_num << std::endl;
-        }
-        
     }
     std::filesystem::path endf_tape = sim_loc / "tape20";
     TslFileData endf_data(endf_tape, "endf");

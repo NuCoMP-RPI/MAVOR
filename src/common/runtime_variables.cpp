@@ -10,6 +10,7 @@ bool log_run = false;
 
 // NJOY subcommand variables
 
+bool force_run = false;
 std::string tsl_leapr_file = "test_files/tsl-HinYH2.leapr";
 std::string tsl_leapr_write_dir = "leapr_files";
 std::string tsl_njoy_results_dir = "njoy_results";

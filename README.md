@@ -1,10 +1,12 @@
 # Mavor
-A C++ code to calculate linearized incoherent inelastic sampling distributions in alpha,beta space.
+A tool for handling thermal neutron scattering data.
 
-# Dependencies 
+# Prior Dependencies 
+* HDF5 (Needs to have the cpp enabled)
 
-* HDF5 (Needs to be user installed)
-* CLI11 (Automatically fetched)
-* Eigen (Automatically fetched)
-* GoogleTest (Automatically fetched)
-* NJOY2016.76 (Automatically fetched and built)
+# Auto Fetched Dependencies
+* CLI11
+* Eigen
+* GoogleTest
+* ENDFtk
+* NJOY2016.76 (Automatically built)

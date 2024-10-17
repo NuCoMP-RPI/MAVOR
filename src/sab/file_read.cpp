@@ -4,14 +4,22 @@
 #include <math.h>
 
 #include "H5Cpp.h"
+#include "ENDFtk/tree/Tape.hpp"
+#include "ENDFtk/tree/fromFile.hpp"
+#include "ENDFtk/section/7/4.hpp"
 
 #include "file_read.hpp"
 #include "runtime_variables.hpp"
 #include "hdf5_file.hpp"
 
 // Class Constructor
-TslFileData::TslFileData(const std::string& file_path)
-{
+TslFileData::TslFileData(const std::string& file_path, const std::string & file_type){
+    if (file_type == "hdf5"){read_from_hdf5__(file_path);}
+    else if (file_type == "endf"){read_from_endf__(file_path);}
+    else{throw std::runtime_error("File type was not recognized.");}
+}
+
+void TslFileData::read_from_hdf5__(const std::string & file_path){
     H5::H5File file(file_path, H5F_ACC_RDONLY);
 
     readHDF5Int(file, "lat", lat);
@@ -34,6 +42,81 @@ TslFileData::TslFileData(const std::string& file_path)
     tsl_vals = __vector_to_matrix__(tsl_vals_array, betas.size(), alphas.size());
     
     file.close();
+}
+
+void TslFileData::write_to_hdf5__(const std::string & file_path){
+    H5::FileCreatPropList fcpl;
+    H5::FileAccPropList fapl;
+    H5::H5File file(file_path, H5F_ACC_TRUNC, fcpl, fapl);
+
+    writeHDF5Int(file, lat, "lat");
+    writeHDF5Int(file, lasym, "lasym");
+    writeHDF5Int(file, lln, "lln");
+    writeHDF5Int(file, za, "za");
+    writeHDF5Int(file, mat, "mat");
+    writeHDF5Double(file, temp, "temp");
+    writeHDF5Double(file, t_eff, "t_eff");
+    writeHDF5Double(file, temp_ratio, "temp_ratio");
+    writeHDF5Double(file, a0, "a0");
+    writeHDF5Double(file, e_max, "e_max");
+    writeHDF5Double(file, m0, "m0");
+    writeHDF5Double(file, free_xs, "free_xs");
+    writeHDF5Double(file, bound_xs, "bound_xs");
+    writeHDF5DoubleVector(file, alphas, "alphas");
+    writeHDF5DoubleVector(file, betas, "betas");
+    writeHDF5DoubleMatrix(file, tsl_vals, "tsl_vals");
+
+    file.close();
+}
+
+// type aliases
+using Tape = njoy::ENDFtk::tree::Tape;
+using MF7MT4 = njoy::ENDFtk::section::Type<7,4>;
+using Constants = njoy::ENDFtk::section::Type<7,4>::ScatteringLawConstants;
+using TEFF = njoy::ENDFtk::section::Type<7, 4>::EffectiveTemperature;
+using TabulatedScatteringFunction = njoy::ENDFtk::section::Type<7,4>::TabulatedFunctions;
+
+void TslFileData::read_from_endf__(const std::string & file_path){
+    Tape tape = njoy::ENDFtk::tree::fromFile(file_path);
+    mat = tape.materialNumbers()[0];
+
+    MF7MT4 mt4 = tape.materials().front().section(7,4).parse<7,4>();
+
+    lat = mt4.LAT();
+    lasym = mt4.LASYM();
+    za = mt4.ZA();
+    a0 = mt4.AWR();
+
+    Constants constants = mt4.constants();
+    lln = constants.LLN();
+    e_max = constants.upperEnergyLimit();
+    m0 = constants.numberAtoms()[0];
+    free_xs = constants.totalFreeCrossSections()[0] / m0;
+    bound_xs = free_xs * std::pow((a0 + 1) / a0, 2);
+
+    TEFF pet = mt4.principalEffectiveTemperature();
+    TabulatedScatteringFunction scattering_law = std::get<1>(mt4.scatteringLaw());
+
+    if (pet.NT() > 1) {throw std::runtime_error("More than one temperature found in ENDF file.");}
+
+    t_eff = pet.TEFF()[0];
+    temp = scattering_law.scatteringFunctions()[0].temperatures()[0];
+    temp_ratio = t_eff / temp;
+    
+    int nb = scattering_law.betas().size();
+    int na = scattering_law.scatteringFunctions()[0].alphas().size();
+
+    betas.resize(nb);
+    alphas.resize(na);
+    tsl_vals.resize(nb, std::vector<double>(na));
+
+    for (int i = 0; i < nb; ++i){
+        betas[i] = scattering_law.betas()[i];
+        for (int j = 0; j < na; ++j){
+            if (i == 0){alphas[j] = scattering_law.scatteringFunctions()[i].alphas()[j];}
+            tsl_vals[i][j] = scattering_law.scatteringFunctions()[i].thermalScatteringValues()[0][j];
+        }
+    }
 }
 
 // Private Methods //

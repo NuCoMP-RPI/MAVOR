@@ -3,7 +3,7 @@
 #include <chrono>
 
 #include "runtime_variables.hpp"
-#include "njoy.hpp"
+#include "tsl.hpp"
 #include "sab.hpp"
 #include "otf.hpp"
 #include "sample.hpp"
@@ -34,9 +34,18 @@ int main(int argc, char* argv[]){
     mavor.add_flag("-v,--verbose", verbose, "Enables additional terminal output (NOT SUPPORTED YET)");
     mavor.add_flag("-l,--log", log_run, "Enables logging (NOT SUPPORTED YET)");
 
-    // NJOY subcommand
-    CLI::App &njoy = *mavor.add_subcommand("njoy", "Runs NJOY and LEAPR to generate TSL data.");
-    njoy.ignore_case();
+    // TSL subcommand
+    CLI::App &tsl = *mavor.add_subcommand("tsl", "Deals with the generation of TSL data through leapr files and NJOY.");
+    tsl.ignore_case();
+    tsl.add_flag("-f,--force_run", force_run, "Deletes working leapr write directory to ensure only desired temperatures are run thorugh NJOY.  If not set, Mavor will ask to continue.");
+    tsl.add_option("-i,--input_file", tsl_leapr_file, "Sets the path to the Leapr file to read.");
+    tsl.add_option("--leapr_dir", tsl_leapr_write_dir, "Sets the write location of the created leapr inputs.");
+    tsl.add_option("-o,--output_dir", tsl_njoy_results_dir, "Sets the write location for the processed NJOY results.");
+    auto &tsl_temps_options = *tsl.add_option_group("Temperature settings", "Determines at what temperatures leapr files will created.");
+    tsl_temps_options.add_option("-t,--temps", tsl_leapr_temps, "Sets a vector of doubles for temperatures at which to create leapr inputs.");
+    auto tsl_temp_delta = tsl_temps_options.add_option("-d,--delta_t", tsl_leapr_delta_temp, "Sets the delta t of temperature to create leapr inputs.");
+    auto tsl_num_temps = tsl_temps_options.add_option("-n,--num_t", tsl_leapr_num_temps, "Sets the number of evenly spaced temperatures.");
+    tsl_temps_options.require_option(0, 1);
 
     // SAB subcommand
     CLI::App &sab = *mavor.add_subcommand("sab", "Generates TSL sampling data given the output from LEAPR or similar tools.");
@@ -172,9 +181,11 @@ int main(int argc, char* argv[]){
         print_name();
     }
 
-    if (njoy.parsed()){
-        if (!silence){std::cout << "Running njoy subroutines" << std::endl;}
-        run_njoy();
+    if (tsl.parsed()){
+        if (!silence){std::cout << "Running tsl subroutines" << std::endl;}
+        if (*tsl_temp_delta){tsl_leapr_use_temp_delta = true;}
+        if (*tsl_num_temps){tsl_leapr_use_num_temps = true;}
+        run_tsl();
     }
     if (sab.parsed()){
         if (!silence){std::cout << "Running sab subroutines" << std::endl;}

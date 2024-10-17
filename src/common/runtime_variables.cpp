@@ -10,7 +10,18 @@ bool log_run = false;
 
 // NJOY subcommand variables
 
+bool force_run = false;
+std::string tsl_leapr_file = "test_files/tsl-HinYH2.leapr";
+std::string tsl_leapr_write_dir = "leapr_files";
+std::string tsl_njoy_results_dir = "njoy_results";
+bool tsl_leapr_use_temp_delta = false;
+bool tsl_leapr_use_num_temps = false;
+std::vector<double> tsl_leapr_temps;
+double tsl_leapr_delta_temp = 5;
+int tsl_leapr_num_temps = 5;
 
+std::string tsl_njoy_exe_loc = "NJOY/src/NJOY/njoy";
+std::string tsl_njoy_sim_loc = "njoy_sims";
 
 // SAB subcommand variables 
 

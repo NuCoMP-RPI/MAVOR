@@ -13,7 +13,18 @@ extern bool log_run;
 
 // NJOY subcommand variables
 
+extern bool force_run;
+extern std::string tsl_leapr_file;
+extern std::string tsl_leapr_write_dir;
+extern std::string tsl_njoy_results_dir;
+extern std::vector<double> tsl_leapr_temps;
+extern bool tsl_leapr_use_temp_delta;
+extern bool tsl_leapr_use_num_temps;
+extern double tsl_leapr_delta_temp;
+extern int tsl_leapr_num_temps;
 
+extern std::string tsl_njoy_exe_loc;
+extern std::string tsl_njoy_sim_loc;
 
 // Sab subcommand variables
 

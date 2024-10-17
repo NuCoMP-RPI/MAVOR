@@ -12,10 +12,45 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-# Add compile options
 add_compile_options(-fopenmp)
 
+include(ExternalProject)
+
+ExternalProject_Add(
+    NJOY
+    PREFIX ${CMAKE_BINARY_DIR}/NJOY
+    GIT_REPOSITORY https://github.com/njoy/NJOY2016
+    GIT_TAG 2016.76
+    GIT_SHALLOW TRUE
+    UPDATE_COMMAND ""
+    BUILD_IN_SOURCE TRUE
+    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_Fortran_FLAGS="-w"
+    INSTALL_COMMAND ""
+    )
+
 include(FetchContent)
+
+# message(STATUS "Retrieving ENDFtk version 1.1.0")
+# FetchContent_Declare(
+#     ENDFtk
+#     QUIET
+#     GIT_REPOSITORY https://github.com/njoy/ENDFtk.git
+#     GIT_TAG v1.1.0
+#     GIT_SHALLOW TRUE
+#     GIT_PROGRESS TRUE)
+
+# FetchContent_MakeAvailable(ENDFtk)
+
+message(STATUS "Retrieving ENDFtk develop")
+FetchContent_Declare(
+    ENDFtk
+    QUIET
+    GIT_REPOSITORY https://github.com/njoy/ENDFtk.git
+    GIT_TAG develop
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE)
+
+FetchContent_MakeAvailable(ENDFtk)
 
 message(STATUS "Retrieving CLI11 version 2.4.1.")
 FetchContent_Declare(
@@ -49,6 +84,7 @@ configure_file(test_files/HinYH2_energies.txt test_files/HinYH2_energies.txt COP
 configure_file(test_files/HinYH2_293K_tsl.h5 test_files/HinYH2_293K_tsl.h5 COPYONLY)
 configure_file(test_files/HinYH2_293K_CDFs.h5 test_files/HinYH2_293K_CDFs.h5 COPYONLY)
 configure_file(test_files/HinYH2_coeffs.h5 test_files/HinYH2_coeffs.h5 COPYONLY)
+configure_file(test_files/tsl-HinYH2.leapr test_files/tsl-HinYH2.leapr COPYONLY)
 
 set(COMPILE_TESTS on)
 

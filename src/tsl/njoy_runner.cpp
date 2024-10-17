@@ -11,23 +11,14 @@ void execute_njoy(const std::filesystem::path &file, const int sim_num){
     std::filesystem::path sim_loc(tsl_njoy_sim_loc);
     sim_loc = sim_loc / std::to_string(sim_num);
     sim_loc = std::filesystem::absolute(sim_loc);
-    std::filesystem::create_directory(sim_loc);
-    std::filesystem::path njoy_exe_src(tsl_njoy_exe_loc);
-    njoy_exe_src = std::filesystem::absolute(njoy_exe_src);
-    std::filesystem::copy_file(njoy_exe_src, sim_loc / "njoy");
-    std::filesystem::copy_file(file, sim_loc / "input");
     std::string command = "cd " + sim_loc.string() + " && ./njoy < input > out";
-    // int _ = system(command.c_str());
-    int _ = -1;
-    while (_ != 0)
-    {
-        _ = system(command.c_str());
-    }
+    int _ = system(command.c_str());
     std::filesystem::path endf_tape = sim_loc / "tape20";
     TslFileData endf_data(endf_tape, "endf");
     std::filesystem::path hdf5_write_loc(tsl_njoy_results_dir);
     std::filesystem::path hdf5_file = hdf5_write_loc / (file.stem().string() + "_njoy_results.h5");
     endf_data.write_to_hdf5__(hdf5_file);
+    std::filesystem::remove_all(sim_loc);
 }
 
 void njoy_runner(){
@@ -47,9 +38,21 @@ void njoy_runner(){
 
     if (!silence){std::cout << "Number of leapr files to run | " << file_paths.size() << std::endl;}
 
+    // Create the simulation directories and copy njoy exe before parallel call
+    for (int sim_num = 0; sim_num < file_paths.size(); ++sim_num){
+        std::filesystem::path file = file_paths[sim_num];
+        std::filesystem::path sim_loc(tsl_njoy_sim_loc);
+        sim_loc = sim_loc / std::to_string(sim_num);
+        sim_loc = std::filesystem::absolute(sim_loc);
+        std::filesystem::create_directory(sim_loc);
+        std::filesystem::path njoy_exe_src(tsl_njoy_exe_loc);
+        njoy_exe_src = std::filesystem::absolute(njoy_exe_src);
+        std::filesystem::copy_file(njoy_exe_src, sim_loc / "njoy");
+        std::filesystem::copy_file(file, sim_loc / "input");
+    }
+
     #pragma omp parallel for
     for (int i = 0; i < file_paths.size(); ++i) {
         execute_njoy(file_paths[i], i);
     }
 }
-

@@ -37,8 +37,10 @@ int main(int argc, char* argv[]){
     // TSL subcommand
     CLI::App &tsl = *mavor.add_subcommand("tsl", "Deals with the generation of TSL data through leapr files and NJOY.");
     tsl.ignore_case();
+    tsl.add_flag("-f,--force_run", force_run, "Deletes working leapr write directory to ensure only desired temperatures are run thorugh NJOY.  If not set, Mavor will ask to continue.");
     tsl.add_option("-i,--input_file", tsl_leapr_file, "Sets the path to the Leapr file to read.");
-    tsl.add_option("-o,--output_dir", tsl_leapr_write_dir, "Sets the write location of the created leapr inputs.");
+    tsl.add_option("--leapr_dir", tsl_leapr_write_dir, "Sets the write location of the created leapr inputs.");
+    tsl.add_option("-o,--output_dir", tsl_njoy_results_dir, "Sets the write location for the processed NJOY results.");
     auto &tsl_temps_options = *tsl.add_option_group("Temperature settings", "Determines at what temperatures leapr files will created.");
     tsl_temps_options.add_option("-t,--temps", tsl_leapr_temps, "Sets a vector of doubles for temperatures at which to create leapr inputs.");
     auto tsl_temp_delta = tsl_temps_options.add_option("-d,--delta_t", tsl_leapr_delta_temp, "Sets the delta t of temperature to create leapr inputs.");

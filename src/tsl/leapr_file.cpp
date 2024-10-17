@@ -409,6 +409,20 @@ void LeaprFile::write_leapr_file(const double temperature, const int file_number
 }
 
 void LeaprFile::write_leapr_files(){
+    if (std::filesystem::exists(tsl_leapr_write_dir)){
+        if (std::filesystem::is_directory(tsl_leapr_write_dir)){
+            if (!force_run){
+                std::string response;
+                std::cout << "Are you sure you want to delete the directory '" << tsl_leapr_write_dir << "' and all its contents? (yes/no): ";
+                std::cin >> response;
+                std::transform(response.begin(), response.end(), response.begin(), ::tolower);
+                if (response == "no"){
+                    throw std::runtime_error("Operation cancelled.");
+                }
+            }
+            std::filesystem::remove_all(tsl_leapr_write_dir);
+        }
+    }
     set_leapr_file_write_temps__();
     if (!silence){std::cout << "Number of files to write | " << tsl_leapr_temps.size() << std::endl;}
     for (int i = 0; i<tsl_leapr_temps.size(); ++i){

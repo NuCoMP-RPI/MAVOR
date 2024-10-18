@@ -11,17 +11,17 @@ bool log_run = false;
 // NJOY subcommand variables
 
 bool force_run = false;
-std::string tsl_leapr_file = "test_files/tsl-HinYH2.leapr";
-std::string tsl_leapr_write_dir = "leapr_files";
-std::string tsl_njoy_results_dir = "njoy_results";
+std::string tsl_leapr_file = std::string(BUILD_DIR) + "/test_files/tsl-HinYH2.leapr";
+std::string tsl_leapr_write_dir = std::string(BUILD_DIR) + "/leapr_files";
+std::string tsl_njoy_results_dir = std::string(BUILD_DIR) + "/njoy_results";
 bool tsl_leapr_use_temp_delta = false;
 bool tsl_leapr_use_num_temps = false;
 std::vector<double> tsl_leapr_temps;
 double tsl_leapr_delta_temp = 5;
 int tsl_leapr_num_temps = 5;
 
-std::string tsl_njoy_exe_loc = NJOY_EXE_LOC;
-std::string tsl_njoy_sim_loc = "njoy_sims";
+std::string tsl_njoy_exe_loc = TSL_NJOY_EXE_LOC;
+std::string tsl_njoy_sim_loc = std::string(BUILD_DIR) + "/njoy_sims";
 
 // SAB subcommand variables 
 
@@ -35,8 +35,8 @@ int beta_cdf_extent = 10;
 int num_alpha_cdf_points = 100;
 int alpha_cdf_extent = 10;
 
-std::string sab_input_file = "test_files/HinYH2_293K_tsl.h5";
-std::string sab_output_file = "CDF_distributions.h5";
+std::string sab_input_file = std::string(BUILD_DIR) + "/test_files/HinYH2_293K_tsl.h5";
+std::string sab_output_file = std::string(BUILD_DIR) + "/CDF_distributions.h5";
 
 bool use_external_energy_grid = false;
 std::string energy_grid_loc;
@@ -67,7 +67,7 @@ bool convert_to_eemu = false;
 // OTF subcommand variables
 
 std::string otf_input_directory = "/home/blakec4/extra_space/My_Programs/test_Mavor/Unioned_Results/HinYH2";
-std::string otf_output_file = "OTF_Coefficients.h5";
+std::string otf_output_file = std::string(BUILD_DIR) + "/OTF_Coefficients.h5";
 
 int fit_group = 0;
 
@@ -124,10 +124,10 @@ bool alpha_override_fit_function = false;
 // sample subcommand variables
 
 std::string sample_input_file = "";
-std::string sample_cdf_test_file = "test_files/HinYH2_293K_CDFs.h5";
-std::string sample_coeff_test_file = "test_files/HinYH2_coeffs.h5";
-std::string sample_cdf_output_file = "CDF_sampling_results.h5";
-std::string sample_coeff_output_file = "COEFF_sampling_results.h5";
+std::string sample_cdf_test_file = std::string(BUILD_DIR) + "/test_files/HinYH2_293K_CDFs.h5";
+std::string sample_coeff_test_file = std::string(BUILD_DIR) + "/test_files/HinYH2_coeffs.h5";
+std::string sample_cdf_output_file = std::string(BUILD_DIR) + "/CDF_sampling_results.h5";
+std::string sample_coeff_output_file = std::string(BUILD_DIR) + "/COEFF_sampling_results.h5";
 std::string sample_output_file = "";
 bool sample_cdf_file = false;
 bool sample_coeff_file = false;

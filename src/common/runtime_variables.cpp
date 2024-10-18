@@ -20,7 +20,7 @@ std::vector<double> tsl_leapr_temps;
 double tsl_leapr_delta_temp = 5;
 int tsl_leapr_num_temps = 5;
 
-std::string tsl_njoy_exe_loc = "NJOY/src/NJOY/njoy";
+std::string tsl_njoy_exe_loc = NJOY_EXE_LOC;
 std::string tsl_njoy_sim_loc = "njoy_sims";
 
 // SAB subcommand variables 

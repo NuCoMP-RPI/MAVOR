@@ -28,6 +28,12 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
     )
 
+find_program(NJOY_EXE_LOC njoy PATHS ${CMAKE_BINARY_DIR}/NJOY/src/NJOY NO_DEFAULT_PATH)
+if(NOT NJOY_EXE_LOC)
+    message(FATAL_ERROR "NJOY executable not found")
+endif()
+add_compile_definitions(NJOY_EXE_LOC="${NJOY_EXE_LOC}")
+
 include(FetchContent)
 
 # message(STATUS "Retrieving ENDFtk version 1.1.0")

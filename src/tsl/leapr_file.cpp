@@ -318,7 +318,7 @@ void LeaprFile::write_leapr_file(const double temperature, const int file_number
     auto tm = *std::localtime(&t);
 
     file << "leapr / \n";
-    file << nout << " / \n";
+    file << "20 / \n";
     file << "MAT Number " << material_number << " at " << temperature << "K - Created " << std::put_time(&tm, "%d-%m-%Y") << " by MAVOR / \n";
     file << "1 1 " << nphon << " / \n";
     file << material_number << " " << za << " " << isabt << " " << ilog << " " << smin << " / \n";

@@ -52,8 +52,8 @@ LeaprFile::LeaprFile(const std::string &file_path) :
 }
 
 bool LeaprFile::get_line_single_item__(){
-    bool result = debug_getline(file, line);
-    // bool result = static_cast<bool>(std::getline(file, line));
+    // bool result = debug_getline(file, line);
+    bool result = static_cast<bool>(std::getline(file, line));
     line = split(line, '/').at(0);
     line.erase(0, line.find_first_not_of(" \t\n\r"));
     line.erase(line.find_last_not_of(" \t\n\r") + 1);
@@ -102,7 +102,7 @@ std::vector<double> LeaprFile::get_leapr_array__(int num_items) {
             if (count == num_items) break;
         }
     }
-    std::cout << "Finished reading leapr array" << std::endl;
+    // std::cout << "Finished reading leapr array" << std::endl;
     return array;
 }
 
@@ -115,19 +115,19 @@ void LeaprFile::find_file_start__(){
     }
 
 void LeaprFile::get_card_1__(){
-    std::cout << "Reading Card 1" << std::endl;
+    // std::cout << "Reading Card 1" << std::endl;
     get_line_single_item__();
     nout = std::stoi(line);
 }
 
 void LeaprFile::get_card_2__(){
-    std::cout << "Reading Card 2" << std::endl;
+    // std::cout << "Reading Card 2" << std::endl;
     get_line_single_item__();
     title = line;
 }
 
 void LeaprFile::get_card_3__(){
-    std::cout << "Reading Card 3" << std::endl;
+    // std::cout << "Reading Card 3" << std::endl;
     get_line_all_numbers__();
     if (endf_numbers.size() > 0) {ntemp = static_cast<int>(endf_numbers[0]);}
     if (endf_numbers.size() > 1) {iprint = static_cast<int>(endf_numbers[1]);}
@@ -135,7 +135,7 @@ void LeaprFile::get_card_3__(){
 }
 
 void LeaprFile::get_card_4__(){
-    std::cout << "Reading Card 4" << std::endl;
+    // std::cout << "Reading Card 4" << std::endl;
     get_line_all_numbers__();
     material_number = static_cast<int>(endf_numbers[0]);
     za = static_cast<int>(endf_numbers[1]);
@@ -145,7 +145,7 @@ void LeaprFile::get_card_4__(){
 }
 
 void LeaprFile::get_card_5__(){
-    std::cout << "Reading Card 5" << std::endl;
+    // std::cout << "Reading Card 5" << std::endl;
     get_line_all_numbers__();
     awr = endf_numbers[0];
     spr = endf_numbers[1];
@@ -156,7 +156,7 @@ void LeaprFile::get_card_5__(){
 }
 
 void LeaprFile::get_card_6__(){
-    std::cout << "Reading Card 6" << std::endl;
+    // std::cout << "Reading Card 6" << std::endl;
     get_line_all_numbers__();
     nss = static_cast<int>(endf_numbers[0]);
     if (nss == 1) {
@@ -168,7 +168,7 @@ void LeaprFile::get_card_6__(){
 }
 
 void LeaprFile::get_card_7__(){
-    std::cout << "Reading Card 7" << std::endl;
+    // std::cout << "Reading Card 7" << std::endl;
     get_line_all_numbers__();
     nalpha = static_cast<int>(endf_numbers[0]);
     nbeta = static_cast<int>(endf_numbers[1]);
@@ -176,18 +176,18 @@ void LeaprFile::get_card_7__(){
 }
 
 void LeaprFile::get_card_8__(){
-    std::cout << "Reading Card 8" << std::endl;
+    // std::cout << "Reading Card 8" << std::endl;
     alphas = get_leapr_array__(nalpha);
 }
 
 void LeaprFile::get_card_9__(){
-    std::cout << "Reading Card 9" << std::endl;
+    // std::cout << "Reading Card 9" << std::endl;
     betas = get_leapr_array__(nbeta);
 }
 
 void LeaprFile::get_all_cards_10_19_ps__(){
     for (int i = 0; i < ntemp; ++i) {
-        std::cout << "Primary Scatterer Temperature Number: "<< i << std::endl;
+        // std::cout << "Primary Scatterer Temperature Number: "<< i << std::endl;
         get_card_10_ps__();
         get_card_11_ps__();
         get_card_12_ps__();
@@ -202,7 +202,7 @@ void LeaprFile::get_all_cards_10_19_ps__(){
 }
 
 void LeaprFile::get_card_10_ps__(){
-    std::cout << "Primary Scatterer Reading Card 10" << std::endl;
+    // std::cout << "Primary Scatterer Reading Card 10" << std::endl;
     get_line_single_item__();
     double temp = ENDF_float(line);
     pos_temp_ps.push_back(temp > 0);
@@ -210,7 +210,7 @@ void LeaprFile::get_card_10_ps__(){
 }
 
 void LeaprFile::get_card_11_ps__(){
-    std::cout << "Primary Scatterer Reading Card 11" << std::endl;
+    // std::cout << "Primary Scatterer Reading Card 11" << std::endl;
     if (pos_temp_ps.back()) {
         get_line_all_numbers__();
         deltas_ps.push_back(endf_numbers[0]);
@@ -223,7 +223,7 @@ void LeaprFile::get_card_11_ps__(){
 }
 
 void LeaprFile::get_card_12_ps__(){
-    std::cout << "Primary Scatterer Reading Card 12" << std::endl;
+    // std::cout << "Primary Scatterer Reading Card 12" << std::endl;
     if (pos_temp_ps.back()) {
         rhos_ps.push_back(get_leapr_array__(nis_ps.back()));
     } 
@@ -233,7 +233,7 @@ void LeaprFile::get_card_12_ps__(){
 }
 
 void LeaprFile::get_card_13_ps__(){
-    std::cout << "Primary Scatterer Reading Card 13" << std::endl;
+    // std::cout << "Primary Scatterer Reading Card 13" << std::endl;
     if (pos_temp_ps.back()) {
         get_line_all_numbers__();
         twts_ps.push_back(endf_numbers[0]);
@@ -248,7 +248,7 @@ void LeaprFile::get_card_13_ps__(){
 }
 
 void LeaprFile::get_card_14_ps__(){
-    std::cout << "Primary Scatterer Reading Card 14" << std::endl;
+    // std::cout << "Primary Scatterer Reading Card 14" << std::endl;
     if (pos_temp_ps.back()) {
         get_line_single_item__();
         nds_ps.push_back(static_cast<int>(ENDF_float(line)));
@@ -258,7 +258,7 @@ void LeaprFile::get_card_14_ps__(){
 }
 
 void LeaprFile::get_card_15_ps__(){
-    std::cout << "Primary Scatterer Reading Card 15" << std::endl;
+    // std::cout << "Primary Scatterer Reading Card 15" << std::endl;
     if (pos_temp_ps.back()) {
         osc_eners_ps.push_back(get_leapr_array__(nds_ps.back()));
     } else {
@@ -267,7 +267,7 @@ void LeaprFile::get_card_15_ps__(){
 }
 
 void LeaprFile::get_card_16_ps__(){
-    std::cout << "Primary Scatterer Reading Card 16" << std::endl;
+    // std::cout << "Primary Scatterer Reading Card 16" << std::endl;
     if (pos_temp_ps.back()) {
         osc_weights_ps.push_back(get_leapr_array__(nds_ps.back()));
     } else {
@@ -276,7 +276,7 @@ void LeaprFile::get_card_16_ps__(){
 }
 
 void LeaprFile::get_card_17_ps__(){
-    std::cout << "Primary Scatterer Reading Card 17" << std::endl;
+    // std::cout << "Primary Scatterer Reading Card 17" << std::endl;
     if (nsk != 0){
         if (pos_temp_ps.back()) {
             get_line_all_numbers__();
@@ -290,7 +290,7 @@ void LeaprFile::get_card_17_ps__(){
 }
 
 void LeaprFile::get_card_18_ps__(){
-    std::cout << "Primary Scatterer Reading Card 18" << std::endl;
+    // std::cout << "Primary Scatterer Reading Card 18" << std::endl;
     if (nsk != 0){
         if (pos_temp_ps.back()) {
             skappas_ps.push_back(get_leapr_array__(nkas_ps.back()));
@@ -301,7 +301,7 @@ void LeaprFile::get_card_18_ps__(){
 }
 
 void LeaprFile::get_card_19_ps__(){
-    std::cout << "Primary Scatterer Reading Card 19" << std::endl;
+    // std::cout << "Primary Scatterer Reading Card 19" << std::endl;
     if (nsk == 2){
         if (pos_temp_ps.back()) {
             get_line_single_item__();
@@ -314,7 +314,7 @@ void LeaprFile::get_card_19_ps__(){
 
 void LeaprFile::get_all_cards_10_19_ss__(){
     for (int i = 0; i < ntemp; ++i) {
-        std::cout << "Secondary Scatterer Temperature Number: "<< i << std::endl;
+        // std::cout << "Secondary Scatterer Temperature Number: "<< i << std::endl;
         get_card_10_ss__();
         get_card_11_ss__();
         get_card_12_ss__();
@@ -329,7 +329,7 @@ void LeaprFile::get_all_cards_10_19_ss__(){
 }
 
 void LeaprFile::get_card_10_ss__(){
-    std::cout << "Secondary Scatterer Reading Card 10" << std::endl;
+    // std::cout << "Secondary Scatterer Reading Card 10" << std::endl;
     get_line_single_item__();
     double temp = ENDF_float(line);
     pos_temp_ss.push_back(temp > 0);
@@ -337,7 +337,7 @@ void LeaprFile::get_card_10_ss__(){
 }
 
 void LeaprFile::get_card_11_ss__(){
-    std::cout << "Secondary Scatterer Reading Card 11" << std::endl;
+    // std::cout << "Secondary Scatterer Reading Card 11" << std::endl;
     if (pos_temp_ss.back()) {
         get_line_all_numbers__();
         deltas_ss.push_back(endf_numbers[0]);
@@ -350,7 +350,7 @@ void LeaprFile::get_card_11_ss__(){
 }
 
 void LeaprFile::get_card_12_ss__(){
-    std::cout << "Secondary Scatterer Reading Card 12" << std::endl;
+    // std::cout << "Secondary Scatterer Reading Card 12" << std::endl;
     if (pos_temp_ss.back()) {
         rhos_ss.push_back(get_leapr_array__(nis_ss.back()));
     } 
@@ -360,7 +360,7 @@ void LeaprFile::get_card_12_ss__(){
 }
 
 void LeaprFile::get_card_13_ss__(){
-    std::cout << "RSecondary Scatterer eading Card 13" << std::endl;
+    // std::cout << "Secondary Scatterer Reading Card 13" << std::endl;
     if (pos_temp_ss.back()) {
         get_line_all_numbers__();
         twts_ss.push_back(endf_numbers[0]);
@@ -375,7 +375,7 @@ void LeaprFile::get_card_13_ss__(){
 }
 
 void LeaprFile::get_card_14_ss__(){
-    std::cout << "Secondary Scatterer Reading Card 14" << std::endl;
+    // std::cout << "Secondary Scatterer Reading Card 14" << std::endl;
     if (pos_temp_ss.back()) {
         get_line_single_item__();
         nds_ss.push_back(static_cast<int>(ENDF_float(line)));
@@ -385,7 +385,7 @@ void LeaprFile::get_card_14_ss__(){
 }
 
 void LeaprFile::get_card_15_ss__(){
-    std::cout << "Secondary Scatterer Reading Card 15" << std::endl;
+    // std::cout << "Secondary Scatterer Reading Card 15" << std::endl;
     if (pos_temp_ss.back()) {
         osc_eners_ss.push_back(get_leapr_array__(nds_ss.back()));
     } else {
@@ -394,7 +394,7 @@ void LeaprFile::get_card_15_ss__(){
 }
 
 void LeaprFile::get_card_16_ss__(){
-    std::cout << "Secondary Scatterer Reading Card 16" << std::endl;
+    // std::cout << "Secondary Scatterer Reading Card 16" << std::endl;
     if (pos_temp_ss.back()) {
         osc_weights_ss.push_back(get_leapr_array__(nds_ss.back()));
     } else {
@@ -403,7 +403,7 @@ void LeaprFile::get_card_16_ss__(){
 }
 
 void LeaprFile::get_card_17_ss__(){
-    std::cout << "Secondary Scatterer Reading Card 17" << std::endl;
+    // std::cout << "Secondary Scatterer Reading Card 17" << std::endl;
     if (nsk != 0){
         if (pos_temp_ss.back()) {
             get_line_all_numbers__();
@@ -417,7 +417,7 @@ void LeaprFile::get_card_17_ss__(){
 }
 
 void LeaprFile::get_card_18_ss__(){
-    std::cout << "Secondary Scatterer Reading Card 18" << std::endl;
+    // std::cout << "Secondary Scatterer Reading Card 18" << std::endl;
     if (nsk != 0){
         if (pos_temp_ss.back()) {
             skappas_ss.push_back(get_leapr_array__(nkas_ss.back()));
@@ -428,7 +428,7 @@ void LeaprFile::get_card_18_ss__(){
 }
 
 void LeaprFile::get_card_19_ss__(){
-    std::cout << "Secondary Scatterer Reading Card 19" << std::endl;
+    // std::cout << "Secondary Scatterer Reading Card 19" << std::endl;
     if (nsk == 2){
         if (pos_temp_ss.back()) {
             get_line_single_item__();
@@ -440,7 +440,7 @@ void LeaprFile::get_card_19_ss__(){
 }
 
 void LeaprFile::write_leapr_file(const double temperature, const int file_number){
-    std::cout << "Writing input for MAT number " << material_number << " at " << temperature << "K\n";
+    // std::cout << "Writing input for MAT number " << material_number << " at " << temperature << "K\n";
     std::filesystem::create_directory(tsl_leapr_write_dir);
     std::filesystem::path location_path(tsl_leapr_write_dir);
     std::filesystem::path file_path = location_path / (std::to_string(material_number) + "_" + std::to_string(file_number) + ".leapr");

@@ -66,24 +66,24 @@ class DistData {
         std::vector<double> alphas_to_scatting_angles(double const& inc_energy, double const& out_energy, std::vector<double> const& alphas);
 
     private:
-        double __inc_ener_hold__;
-        double __beta_hold__;
+        double inc_ener_hold__;
+        double beta_hold__;
 
-        double __asym_SCT_alpha_integral_bounds__(double const& alpha, double const& beta);
-        double __calculate_beta_min__(double const& inc_energy);
-        double __calculate_beta_max__(double const& inc_energy);
-        std::pair<double, double> __calculate_alpha_extrema__(double const& inc_energy, double const& beta);
+        double asym_SCT_alpha_integral_bounds__(double const& alpha, double const& beta);
+        double calculate_beta_min__(double const& inc_energy);
+        double calculate_beta_max__(double const& inc_energy);
+        std::pair<double, double> calculate_alpha_extrema__(double const& inc_energy, double const& beta);
 
-        std::vector<double> __get_viable_alphas__(double const& inc_energy, double const& beta);
-        std::vector<double> __get_viable_betas__(double const& inc_energy);
-        std::pair<std::vector<double>, std::vector<bool>> __get_alpha_line__(std::vector<double> const& alpha_vals, double const& beta);
-        double __integrate_alpha_line__(std::vector<double> const& alpha_vals, std::vector<double> const& vals, std::vector<bool> const& truthy, double const& beta);
-        double __get_beta_pdf_val__(double const& inc_energy, double const& beta);
-        double __wrapper_get_beta_pdf_val__(double const& beta);
+        std::vector<double> get_viable_alphas__(double const& inc_energy, double const& beta);
+        std::vector<double> get_viable_betas__(double const& inc_energy);
+        std::pair<std::vector<double>, std::vector<bool>> get_alpha_line__(std::vector<double> const& alpha_vals, double const& beta);
+        double integrate_alpha_line__(std::vector<double> const& alpha_vals, std::vector<double> const& vals, std::vector<bool> const& truthy, double const& beta);
+        double get_beta_pdf_val__(double const& inc_energy, double const& beta);
+        double wrapper_get_beta_pdf_val__(double const& beta);
 
-        double __wrapper_get_alpha_pdf_val__(double const& alpha);
+        double wrapper_get_alpha_pdf_val__(double const& alpha);
 
-        void __get_beta_sampling_dists__();
-        void __get_alpha_sampling_dists__();
+        void get_beta_sampling_dists__();
+        void get_alpha_sampling_dists__();
 };
 #endif

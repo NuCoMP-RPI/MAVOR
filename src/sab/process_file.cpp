@@ -50,7 +50,7 @@ DistData::DistData(TslFileData& file_data){
 
 // Private Methods
 
-double DistData::__asym_SCT_alpha_integral_bounds__(double const& alpha, double const& beta){
+double DistData::asym_SCT_alpha_integral_bounds__(double const& alpha, double const& beta){
     double abs_b = abs(beta);
     double two_sqrt_ar = 2*sqrt(alpha*temp_ratio);
     double erfc_1 = erfc((abs_b-alpha)/two_sqrt_ar);
@@ -60,15 +60,15 @@ double DistData::__asym_SCT_alpha_integral_bounds__(double const& alpha, double 
     return 0.5*(outer_exp*(erfc_1 - inner_exp*erfc_2));
 }
 
-double DistData::__calculate_beta_min__(double const& inc_energy){
+double DistData::calculate_beta_min__(double const& inc_energy){
     return -(inc_energy)/(boltz*temp);
 }
 
-double DistData::__calculate_beta_max__(double const& inc_energy){
+double DistData::calculate_beta_max__(double const& inc_energy){
     return beta_max;
 }
 
-std::pair<double, double> DistData::__calculate_alpha_extrema__(double const& inc_energy, double const& beta){
+std::pair<double, double> DistData::calculate_alpha_extrema__(double const& inc_energy, double const& beta){
     double t1 = sqrt(inc_energy);
     double t2 = sqrt(abs(inc_energy + beta*boltz*temp));
     double t3 = a0*boltz*temp;
@@ -90,8 +90,8 @@ double DistData::return_asym_SCT(double const& alpha, double const& beta){
 }
 
 double DistData::return_asym_SCT_alpha_integral(double const& alpha_l, double const& alpha_u, double const& beta){
-    double l = __asym_SCT_alpha_integral_bounds__(alpha_l, beta);
-    double u = __asym_SCT_alpha_integral_bounds__(alpha_u, beta);
+    double l = asym_SCT_alpha_integral_bounds__(alpha_l, beta);
+    double u = asym_SCT_alpha_integral_bounds__(alpha_u, beta);
     return u-l;
 }
 
@@ -126,9 +126,9 @@ std::pair<double, bool> DistData::return_arbitrary_TSL_val(double const& alpha, 
     }       
 }
 
-std::vector<double> DistData::__get_viable_betas__(double const& inc_energy){
-    double b_min = __calculate_beta_min__(inc_energy);
-    double b_max = __calculate_beta_max__(inc_energy);
+std::vector<double> DistData::get_viable_betas__(double const& inc_energy){
+    double b_min = calculate_beta_min__(inc_energy);
+    double b_max = calculate_beta_max__(inc_energy);
     auto lo_insert = std::lower_bound(betas.begin(), betas.end(), b_min) - betas.begin();
     auto hi_insert = std::lower_bound(betas.begin(), betas.end(), b_max) - betas.begin();
     std::vector<double> result;
@@ -141,8 +141,8 @@ std::vector<double> DistData::__get_viable_betas__(double const& inc_energy){
     return result;
 }
 
-std::vector<double> DistData::__get_viable_alphas__(double const& inc_energy, double const& beta){
-    auto [a_min, a_max] = __calculate_alpha_extrema__(inc_energy, beta);
+std::vector<double> DistData::get_viable_alphas__(double const& inc_energy, double const& beta){
+    auto [a_min, a_max] = calculate_alpha_extrema__(inc_energy, beta);
     auto lo_insert = std::lower_bound(alphas.begin(), alphas.end(), a_min) - alphas.begin();
     auto hi_insert = std::lower_bound(alphas.begin(), alphas.end(), a_max) - alphas.begin();
     std::vector<double> result;
@@ -155,7 +155,7 @@ std::vector<double> DistData::__get_viable_alphas__(double const& inc_energy, do
     return result;
 }
 
-std::pair<std::vector<double>, std::vector<bool>> DistData::__get_alpha_line__(std::vector<double> const& alpha_vals, double const& beta){
+std::pair<std::vector<double>, std::vector<bool>> DistData::get_alpha_line__(std::vector<double> const& alpha_vals, double const& beta){
     std::vector<double> vals;
     std::vector<bool> truthy;
     vals.reserve(alpha_vals.size());
@@ -168,7 +168,7 @@ std::pair<std::vector<double>, std::vector<bool>> DistData::__get_alpha_line__(s
     return std::make_pair(vals, truthy);
 }
 
-double DistData::__integrate_alpha_line__(std::vector<double> const& alpha_vals, std::vector<double> const& vals, std::vector<bool> const& truthy, double const& beta){
+double DistData::integrate_alpha_line__(std::vector<double> const& alpha_vals, std::vector<double> const& vals, std::vector<bool> const& truthy, double const& beta){
     double integral = 0;
     for(int i=0; i<alpha_vals.size()-1; i++){
         if (truthy[i] || truthy[i+1]){
@@ -181,35 +181,35 @@ double DistData::__integrate_alpha_line__(std::vector<double> const& alpha_vals,
     return integral;
 }
 
-double DistData::__get_beta_pdf_val__(double const& inc_energy, double const& beta){
-    std::vector<double> alpha_vals = __get_viable_alphas__(inc_energy, beta);
-    auto [vals, truthy] = __get_alpha_line__(alpha_vals, beta);
-    return __integrate_alpha_line__(alpha_vals, vals, truthy, beta);
+double DistData::get_beta_pdf_val__(double const& inc_energy, double const& beta){
+    std::vector<double> alpha_vals = get_viable_alphas__(inc_energy, beta);
+    auto [vals, truthy] = get_alpha_line__(alpha_vals, beta);
+    return integrate_alpha_line__(alpha_vals, vals, truthy, beta);
 }
 
-double DistData::__wrapper_get_beta_pdf_val__(double const& beta){
-    return __get_beta_pdf_val__(__inc_ener_hold__, beta);
+double DistData::wrapper_get_beta_pdf_val__(double const& beta){
+    return get_beta_pdf_val__(inc_ener_hold__, beta);
 }
 
 std::pair<std::vector<double>, std::vector<double>> DistData::return_beta_pdf(double const& inc_energy){
-    std::vector<double> beta_vals = __get_viable_betas__(inc_energy);
+    std::vector<double> beta_vals = get_viable_betas__(inc_energy);
     std::vector<double> beta_pdf;
     beta_pdf.reserve(beta_vals.size());
     for (double beta: beta_vals){
-        beta_pdf.push_back(__get_beta_pdf_val__(inc_energy, beta));
+        beta_pdf.push_back(get_beta_pdf_val__(inc_energy, beta));
     }
     return std::make_pair(beta_vals, beta_pdf);
 }
 
 std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_beta_pdf(double const& inc_energy){
-    __inc_ener_hold__ = inc_energy;
-    std::vector<double> beta_vals = __get_viable_betas__(inc_energy);
+    inc_ener_hold__ = inc_energy;
+    std::vector<double> beta_vals = get_viable_betas__(inc_energy);
     std::vector<double> beta_pdf;
     beta_pdf.reserve(beta_vals.size());
     for (double beta: beta_vals){
-        beta_pdf.push_back(__get_beta_pdf_val__(inc_energy, beta));
+        beta_pdf.push_back(get_beta_pdf_val__(inc_energy, beta));
     }
-    auto get_new_beta_pdf_val = [&](double x) {return __wrapper_get_beta_pdf_val__(x);};
+    auto get_new_beta_pdf_val = [&](double x) {return wrapper_get_beta_pdf_val__(x);};
     linearize(beta_vals, beta_pdf, get_new_beta_pdf_val);
     return std::make_pair(beta_vals, beta_pdf);
 }
@@ -250,7 +250,7 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_final_ii_xs
     }
 }
 
-void DistData::__get_beta_sampling_dists__(){
+void DistData::get_beta_sampling_dists__(){
     beta_vals.reserve(inc_energy_grid.size());
     beta_pdfs.reserve(inc_energy_grid.size());
     beta_cdfs.reserve(inc_energy_grid.size());
@@ -264,30 +264,30 @@ void DistData::__get_beta_sampling_dists__(){
     }
 }
 
-double DistData::__wrapper_get_alpha_pdf_val__(double const& alpha){
-    auto [val, truthy] = return_arbitrary_TSL_val(alpha, __beta_hold__);
+double DistData::wrapper_get_alpha_pdf_val__(double const& alpha){
+    auto [val, truthy] = return_arbitrary_TSL_val(alpha, beta_hold__);
     return val;
 }
 
 std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_alpha_pdf(double const& beta){
-    __beta_hold__ = beta;
+    beta_hold__ = beta;
     std::vector<double> a_vals = alphas;
-    auto [alpha_pdf, truthy] = __get_alpha_line__(a_vals, __beta_hold__);
-    auto get_new_alpha_pdf_val = [&](double x) {return __wrapper_get_alpha_pdf_val__(x);};
+    auto [alpha_pdf, truthy] = get_alpha_line__(a_vals, beta_hold__);
+    auto get_new_alpha_pdf_val = [&](double x) {return wrapper_get_alpha_pdf_val__(x);};
     linearize(a_vals, alpha_pdf, get_new_alpha_pdf_val);
     return std::make_pair(a_vals, alpha_pdf);
 }
 
 std::pair<std::vector<double>, std::vector<double>> DistData::return_viable_linearized_alpha_pdf(double const& inc_energy, double const& beta){
-    __beta_hold__ = beta;
-    std::vector<double> a_vals = __get_viable_alphas__(inc_energy, beta);
-    auto [alpha_pdf, truthy] = __get_alpha_line__(a_vals, __beta_hold__);
-    auto get_new_alpha_pdf_val = [&](double x) {return __wrapper_get_alpha_pdf_val__(x);};
+    beta_hold__ = beta;
+    std::vector<double> a_vals = get_viable_alphas__(inc_energy, beta);
+    auto [alpha_pdf, truthy] = get_alpha_line__(a_vals, beta_hold__);
+    auto get_new_alpha_pdf_val = [&](double x) {return wrapper_get_alpha_pdf_val__(x);};
     linearize(a_vals, alpha_pdf, get_new_alpha_pdf_val);
     return std::make_pair(a_vals, alpha_pdf);
 }
 
-void DistData::__get_alpha_sampling_dists__(){
+void DistData::get_alpha_sampling_dists__(){
     // NOTE: Beta grid for storage is determined at initialization and is set to the leapr input grid
     // NOTE: Alpha distributions are symmetric about b=0 so only do the positive half
     alpha_vals.reserve(beta_grid.size());
@@ -299,7 +299,7 @@ void DistData::__get_alpha_sampling_dists__(){
         alpha_vals.push_back(vals);
         alpha_pdfs.push_back(pdf);
         alpha_cdfs.push_back(pdf_to_cdf(vals, pdf));
-        fit_alpha_vals.push_back(fit_cdf(vals, alpha_cdfs.back(), alpha_cdf_grid));
+        fit_alpha_vals.push_back(fit_cdf(vals, alpha_cdfs.back(), alpha_cdf_grid, 2));
     }
 }
 
@@ -307,8 +307,8 @@ void DistData::calculate_sampling_dists(){
     auto [ene, xs] = return_final_ii_xs();
     inc_energy_grid = ene;
     ii_xs = xs;
-    __get_beta_sampling_dists__();
-    __get_alpha_sampling_dists__();
+    get_beta_sampling_dists__();
+    get_alpha_sampling_dists__();
 }
 
 double DistData::beta_to_outgoing_energy(double const& inc_energy, double const& beta){

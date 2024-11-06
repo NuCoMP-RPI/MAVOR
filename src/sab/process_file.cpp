@@ -36,8 +36,16 @@ DistData::DistData(TslFileData& file_data){
 
     beta_grid = file_data.return_betas();
 
-    beta_cdf_grid = sigmoid_space(0, 1, num_beta_cdf_points, beta_cdf_extent);
-    alpha_cdf_grid = sigmoid_space(0, 1, num_alpha_cdf_points, alpha_cdf_extent);
+    beta_cdf_grid = sigmoid_space(0, 1, num_beta_cdf_points + 2, beta_cdf_extent);
+    alpha_cdf_grid = sigmoid_space(0, 1, num_alpha_cdf_points + 2, alpha_cdf_extent);
+
+    // Trim off the 0 and 1 for the cdf grids
+    // Including them causes trouble with the fitting across multiple temperatures as finding fit points at 0 and 1 cause
+    // large spikes as the edges of the fit values
+    beta_cdf_grid.erase(beta_cdf_grid.begin());
+    beta_cdf_grid.erase(beta_cdf_grid.end()-1);
+    alpha_cdf_grid.erase(alpha_cdf_grid.begin());
+    alpha_cdf_grid.erase(alpha_cdf_grid.end()-1);
 }
 
 // Private Methods

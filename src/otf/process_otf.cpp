@@ -96,8 +96,8 @@ OTFData::OTFData(const std::string & directory){
     }
 
     // load in alpha vals
-    for (size_t i; i<beta_grid.size(); i++){
-        for (size_t j; j<alpha_cdf_grid.size(); j++){
+    for (int i = 0; i<beta_grid.size(); i++){
+        for (int j = 0; j<alpha_cdf_grid.size(); j++){
             fit_alpha_vals[i][j][k] = it->second.fit_alpha_vals[i][j];
         }
     }

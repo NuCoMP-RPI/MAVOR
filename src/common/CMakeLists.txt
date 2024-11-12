@@ -19,7 +19,7 @@ target_include_directories(common_lib PRIVATE ${HDF5_INCLUDE_DIRS})
 target_include_directories(common_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/common")
 
 # Set compile definitions so that mavor can always work in the build directory by defualt
-add_compile_definitions(TSL_NJOY_EXE_LOC="${NJOY_EXE_LOC}")
+add_compile_definitions(TSL_NJOY_EXE_LOC="${TSL_NJOY_EXE_LOC}")
 add_compile_definitions(BUILD_DIR="${CMAKE_BINARY_DIR}")
 
 if(COMPILE_TESTS)

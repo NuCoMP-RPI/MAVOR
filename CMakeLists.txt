@@ -15,7 +15,7 @@ endif()
 add_compile_options(-fopenmp)
 
 include(ExternalProject)
-
+set(NJOY_BINARY_DIR ${CMAKE_BINARY_DIR}/NJOY/src/NJOY)
 ExternalProject_Add(
     NJOY
     PREFIX ${CMAKE_BINARY_DIR}/NJOY
@@ -28,10 +28,8 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
     )
 
-find_program(NJOY_EXE_LOC njoy PATHS ${CMAKE_BINARY_DIR}/NJOY/src/NJOY NO_DEFAULT_PATH)
-if(NOT NJOY_EXE_LOC)
-    message(FATAL_ERROR "NJOY executable not found")
-endif()
+# Define TSL_NJOY_EXE_LOC as the path to the NJOY executable
+set(TSL_NJOY_EXE_LOC ${NJOY_BINARY_DIR}/njoy CACHE STRING "Path to NJOY executable")
 
 include(FetchContent)
 

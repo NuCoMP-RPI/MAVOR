@@ -39,14 +39,15 @@ void njoy_runner(){
     if (!silence){std::cout << "Number of leapr files to run | " << file_paths.size() << std::endl;}
 
     // Create the simulation directories and copy njoy exe before parallel call
+    std::filesystem::path parent_sim_loc(tsl_njoy_sim_loc);
+    std::filesystem::path njoy_exe_src(tsl_njoy_exe_loc);
+    njoy_exe_src = std::filesystem::absolute(njoy_exe_src);
+    if (!silence){std::cout << "NJOY executable | " << njoy_exe_src << std::endl;}
     for (int sim_num = 0; sim_num < file_paths.size(); ++sim_num){
         std::filesystem::path file = file_paths[sim_num];
-        std::filesystem::path sim_loc(tsl_njoy_sim_loc);
-        sim_loc = sim_loc / std::to_string(sim_num);
+        std::filesystem::path sim_loc = parent_sim_loc / std::to_string(sim_num);
         sim_loc = std::filesystem::absolute(sim_loc);
         std::filesystem::create_directory(sim_loc);
-        std::filesystem::path njoy_exe_src(tsl_njoy_exe_loc);
-        njoy_exe_src = std::filesystem::absolute(njoy_exe_src);
         std::filesystem::copy_file(njoy_exe_src, sim_loc / "njoy");
         std::filesystem::copy_file(file, sim_loc / "input");
     }

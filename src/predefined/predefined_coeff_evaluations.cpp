@@ -607,21 +607,20 @@ const PredefinedEvaluationsMap NaiveEvaluationsMap = {
     {"SqrtPower", sqrtPowerNaiveFunction},
 };
 
-// NOTE: This needs to be filled in later with the fastest evaluation methods
 const PredefinedEvaluationsMap OptimalEvaluationsMap = {
-    {"Chebyshev", chebyshevNaiveFunction},
+    {"Chebyshev", chebyshevDirectRecurrenceCustomFunction},
     {"Cosine", cosineNaiveFunction},
-    {"Exponential", exponentialNaiveFunction},
-    {"InverseExponential", inverseExponentialNaiveFunction},
-    {"InverseLogPower", inverseLogPowerNaiveFunction},
-    {"InversePower", inversePowerNaiveFunction},
-    {"InverseSqrtLogPower", inverseSqrtLogPowerNaiveFunction},
-    {"InverseSqrtPower", inverseSqrtPowerNaiveFunction},
-    {"Legendre", legendreNaiveFunction},
-    {"LogPower", logPowerNaiveFunction},
-    {"Power", powerNaiveFunction},
+    {"Exponential", exponentialClenshawCustomFunction},
+    {"InverseExponential", inverseExponentialClenshawCustomFunction},
+    {"InverseLogPower", inverseLogPowerHornerCustomFunction},
+    {"InversePower", inversePowerClenshawCustomFunction},
+    {"InverseSqrtLogPower", inverseSqrtLogPowerClenshawCustomFunction},
+    {"InverseSqrtPower", inverseSqrtPowerClenshawCustomFunction},
+    {"Legendre", legendreDirectRecurrenceCustomFunction},
+    {"LogPower", logPowerHornerCustomFunction},
+    {"Power", powerHornerCustomFunction},
     {"SineCosine", sineCosineNaiveFunction},
     {"Sine", sineNaiveFunction},
-    {"SqrtLogPower", sqrtLogPowerNaiveFunction},
-    {"SqrtPower", sqrtPowerNaiveFunction},
+    {"SqrtLogPower", sqrtLogPowerHornerCustomFunction},
+    {"SqrtPower", sqrtPowerHornerCustomFunction},
 };

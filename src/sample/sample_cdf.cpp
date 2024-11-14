@@ -47,87 +47,84 @@ std::pair<double, double> CDFFile::return_alpha_extrema__(const double &inc_ener
     return std::pair<double, double>((t4*t4)/t2,(t5*t5)/t2);
 }
 
-std::pair<double, double> CDFFile::single_sample(const double &inc_ener, const double &xi_1, const double &xi_2){
+std::pair<double, double> CDFFile::single_sample(const double & inc_ener, const double & xi_1, const double & xi_2){
+    double sampled_beta = sample_beta__(inc_ener, xi_1);
+    double sampled_scattering_energy = calculate_secondary_energy__(inc_ener, sampled_beta);
+    double sampled_alpha = sample_alpha__(inc_ener, sampled_beta, xi_2);
+    double sampled_scattering_cosine = calculate_scattering_cosine__(inc_ener, sampled_scattering_energy, sampled_alpha);
+    return std::pair<double, double>(sampled_scattering_energy, sampled_scattering_cosine);
+}
+
+double CDFFile::sample_beta__(const double &inc_ener, const double &xi)
+{
     auto [lo_inc_ener_ind, hi_inc_ener_ind] = findSampleInterpolationIndices(inc_ener_grid.begin(), inc_ener_grid.end(), inc_ener);
-    auto [lo_beta_cdf_ind, hi_beta_cdf_ind] = findSampleInterpolationIndices(beta_cdf_grid.begin(), beta_cdf_grid.end(), xi_1);
-    double beta = bi_interp(inc_ener_grid[lo_inc_ener_ind], // x1
-                            inc_ener_grid[hi_inc_ener_ind], // x2
-                            beta_cdf_grid[lo_beta_cdf_ind], // y1
-                            beta_cdf_grid[hi_beta_cdf_ind], // y2
-                            fit_betas[lo_inc_ener_ind*beta_cdf_grid.size() + lo_beta_cdf_ind], //f11
-                            fit_betas[lo_inc_ener_ind*beta_cdf_grid.size() + hi_beta_cdf_ind], //f12
-                            fit_betas[hi_inc_ener_ind*beta_cdf_grid.size() + lo_beta_cdf_ind], //f21
-                            fit_betas[hi_inc_ener_ind*beta_cdf_grid.size() + hi_beta_cdf_ind], //f22
-                            inc_ener, // x
-                            xi_1); // y
+    auto [lo_beta_cdf_ind, hi_beta_cdf_ind] = findSampleInterpolationIndices(beta_cdf_grid.begin(), beta_cdf_grid.end(), xi);
+    return bi_interp(inc_ener_grid[lo_inc_ener_ind], // x1
+                     inc_ener_grid[hi_inc_ener_ind], // x2
+                     beta_cdf_grid[lo_beta_cdf_ind], // y1
+                     beta_cdf_grid[hi_beta_cdf_ind], // y2
+                     fit_betas[lo_inc_ener_ind*beta_cdf_grid.size() + lo_beta_cdf_ind], //f11
+                     fit_betas[lo_inc_ener_ind*beta_cdf_grid.size() + hi_beta_cdf_ind], //f12
+                     fit_betas[hi_inc_ener_ind*beta_cdf_grid.size() + lo_beta_cdf_ind], //f21
+                     fit_betas[hi_inc_ener_ind*beta_cdf_grid.size() + hi_beta_cdf_ind], //f22
+                     inc_ener, // x
+                     xi); // y
+}
 
-    double secondary_energy = inc_ener + beta*boltz*temp;
+double CDFFile::calculate_secondary_energy__(const double &inc_ener, const double &beta)
+{
+    return inc_ener + beta*boltz*temp;
+}
 
-    auto [amin, amax] = return_alpha_extrema__(inc_ener, beta);
+double CDFFile::sample_alpha__(const double &inc_ener, const double &beta, const double &xi)
+{
+    std::pair<double, double> alpha_extrema = return_alpha_extrema__(inc_ener, beta);
     
     // Unscale and abs the beta to search the alpha storage beta grid
     double grid_beta = abs(beta * temp/ref_temp_k);
 
     auto [lo_beta_ind, hi_beta_ind] = findSampleInterpolationIndices(beta_grid.begin(), beta_grid.end(), grid_beta);
 
-    // lo beta
-    std::vector<double>::iterator l_alpha_start = fit_alphas.begin() + lo_beta_ind*alpha_cdf_grid.size();
-    int l_alpha_start_ind = std::distance(fit_alphas.begin(), l_alpha_start);
-    std::vector<double>::iterator l_alpha_end = l_alpha_start + alpha_cdf_grid.size();
-    auto [ll_amin_ind, lu_amin_ind] = findSampleInterpolationIndices(l_alpha_start, l_alpha_end, amin);
-    double l_amin_cdf = ENDF_interp(fit_alphas[l_alpha_start_ind+ll_amin_ind],
-                                    fit_alphas[l_alpha_start_ind+lu_amin_ind],
-                                    alpha_cdf_grid[ll_amin_ind],
-                                    alpha_cdf_grid[lu_amin_ind],
-                                    amin);
-    auto [ll_amax_ind, lu_amax_ind] = findSampleInterpolationIndices(l_alpha_start, l_alpha_end, amax);
-    double l_amax_cdf = ENDF_interp(fit_alphas[l_alpha_start_ind+ll_amax_ind],
-                                    fit_alphas[l_alpha_start_ind+lu_amax_ind],
-                                    alpha_cdf_grid[ll_amax_ind],
-                                    alpha_cdf_grid[lu_amax_ind],
-                                    amax);
-    double l_xi_2_prime = scale_value(xi_2, 0, 1, l_amin_cdf, l_amax_cdf);
-    auto [ll_alpha_cdf_ind, lu_alpha_cdf_ind] = findSampleInterpolationIndices(alpha_cdf_grid.begin(), alpha_cdf_grid.end(), l_xi_2_prime);
-    double l_alpha = ENDF_interp(alpha_cdf_grid[ll_alpha_cdf_ind],
-                                 alpha_cdf_grid[lu_alpha_cdf_ind],
-                                 fit_alphas[l_alpha_start_ind+ll_alpha_cdf_ind],
-                                 fit_alphas[l_alpha_start_ind+lu_alpha_cdf_ind],
-                                 l_xi_2_prime);
-
-    // hi beta
-    std::vector<double>::iterator u_alpha_start = fit_alphas.begin() + hi_beta_ind*alpha_cdf_grid.size();
-    int u_alpha_start_ind = std::distance(fit_alphas.begin(), u_alpha_start);
-    std::vector<double>::iterator u_alpha_end = u_alpha_start + alpha_cdf_grid.size();
-    auto [ul_amin_ind, uu_amin_ind] = findSampleInterpolationIndices(u_alpha_start, u_alpha_end, amin);
-    double u_amin_cdf = ENDF_interp(fit_alphas[u_alpha_start_ind+ul_amin_ind],
-                                    fit_alphas[u_alpha_start_ind+uu_amin_ind],
-                                    alpha_cdf_grid[ul_amin_ind],
-                                    alpha_cdf_grid[uu_amin_ind],
-                                    amin);
-    auto [ul_amax_ind, uu_amax_ind] = findSampleInterpolationIndices(u_alpha_start, u_alpha_end, amax);
-    double u_amax_cdf = ENDF_interp(fit_alphas[u_alpha_start_ind+ul_amax_ind],
-                                    fit_alphas[u_alpha_start_ind+uu_amax_ind],
-                                    alpha_cdf_grid[ul_amax_ind],
-                                    alpha_cdf_grid[uu_amax_ind],
-                                    amax);
-    double u_xi_2_prime = scale_value(xi_2, 0, 1, u_amin_cdf, u_amax_cdf);
-    auto [ul_alpha_cdf_ind, uu_alpha_cdf_ind] = findSampleInterpolationIndices(alpha_cdf_grid.begin(), alpha_cdf_grid.end(), u_xi_2_prime);
-    double u_alpha = ENDF_interp(alpha_cdf_grid[ul_alpha_cdf_ind],
-                                 alpha_cdf_grid[uu_alpha_cdf_ind],
-                                 fit_alphas[u_alpha_start_ind+ul_alpha_cdf_ind],
-                                 fit_alphas[u_alpha_start_ind+uu_alpha_cdf_ind],
-                                 u_xi_2_prime);
-
-    double alpha = ENDF_interp(beta_grid[lo_beta_ind],
-                               beta_grid[hi_beta_ind],
-                               l_alpha,
-                               u_alpha,
-                               grid_beta);
-
-    double scattering_cosine = ((inc_ener + secondary_energy) - alpha*a0*boltz*temp)/(2*sqrt(inc_ener*secondary_energy));
-
-    return std::pair<double, double>(secondary_energy, scattering_cosine);
+    double l_alpha = sample_bounding_alpha__(lo_beta_ind, alpha_extrema, xi);
+    double u_alpha = sample_bounding_alpha__(hi_beta_ind, alpha_extrema, xi);
+    return ENDF_interp(beta_grid[lo_beta_ind],
+                       beta_grid[hi_beta_ind],
+                       l_alpha,
+                       u_alpha,
+                       grid_beta);   
 }
+
+double CDFFile::sample_bounding_alpha__(const int &beta_ind, const std::pair<double, double> &alpha_extrema, const double &xi)
+{
+    std::vector<double>::iterator alpha_start = fit_alphas.begin() + beta_ind*alpha_cdf_grid.size();
+    int alpha_start_ind = std::distance(fit_alphas.begin(), alpha_start);
+    std::vector<double>::iterator alpha_end = alpha_start + alpha_cdf_grid.size();
+    auto [l_amin_ind, u_amin_ind] = findSampleInterpolationIndices(alpha_start, alpha_end, alpha_extrema.first);
+    double amin_cdf = ENDF_interp(fit_alphas[alpha_start_ind+l_amin_ind],
+                                    fit_alphas[alpha_start_ind+u_amin_ind],
+                                    alpha_cdf_grid[l_amin_ind],
+                                    alpha_cdf_grid[u_amin_ind],
+                                    alpha_extrema.first);
+    auto [l_amax_ind, u_amax_ind] = findSampleInterpolationIndices(alpha_start, alpha_end, alpha_extrema.second);
+    double amax_cdf = ENDF_interp(fit_alphas[alpha_start_ind+l_amax_ind],
+                                    fit_alphas[alpha_start_ind+u_amax_ind],
+                                    alpha_cdf_grid[l_amax_ind],
+                                    alpha_cdf_grid[u_amax_ind],
+                                    alpha_extrema.second);
+    double xi_prime = scale_value(xi, 0, 1, amin_cdf, amax_cdf);
+    auto [l_alpha_cdf_ind, u_alpha_cdf_ind] = findSampleInterpolationIndices(alpha_cdf_grid.begin(), alpha_cdf_grid.end(), xi_prime);
+    return ENDF_interp(alpha_cdf_grid[l_alpha_cdf_ind],
+                                 alpha_cdf_grid[u_alpha_cdf_ind],
+                                 fit_alphas[alpha_start_ind+l_alpha_cdf_ind],
+                                 fit_alphas[alpha_start_ind+u_alpha_cdf_ind],
+                                 xi_prime);
+}
+
+double CDFFile::calculate_scattering_cosine__(const double &inc_ener, const double &sec_ener, const double &alpha)
+{
+    return ((inc_ener + sec_ener) - alpha*a0*boltz*temp)/(2*sqrt(inc_ener*sec_ener));
+}
+
 
 void CDFFile::all_sample(const double &inc_ener){
     #pragma omp parallel for

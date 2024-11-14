@@ -43,6 +43,12 @@ class CDFFile{
         void all_sample(const double & inc_ener);
         void write_results();
     private:
+        double sample_beta__(const double & inc_ener, const double & xi);
+        double calculate_secondary_energy__(const double & inc_ener, const double & beta);
+        double sample_alpha__(const double & inc_ener, const double & beta, const double & xi);
+        double sample_bounding_alpha__(const int & beta_ind, const std::pair<double, double> & alpha_extrema, const double & xi);
+        double calculate_scattering_cosine__(const double & inc_ener, const double & sec_ener, const double & alpha);
+
         std::pair<double, double> return_alpha_extrema__(const double & inc_ener, const double & beta);
 };
 

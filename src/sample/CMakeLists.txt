@@ -5,8 +5,7 @@ add_library(sample_lib)
 target_sources(sample_lib PRIVATE 
                "${CMAKE_CURRENT_LIST_DIR}/sample.cpp"
                "${CMAKE_CURRENT_LIST_DIR}/sample_cdf.cpp"
-               "${CMAKE_CURRENT_LIST_DIR}/sample_coeff.cpp"
-               "${CMAKE_CURRENT_LIST_DIR}/sample_search.cpp")
+               "${CMAKE_CURRENT_LIST_DIR}/sample_coeff.cpp")
 
 target_link_libraries(sample_lib PRIVATE 
                               common_lib

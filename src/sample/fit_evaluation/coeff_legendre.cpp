@@ -1,8 +1,6 @@
 #include <math.h>
 #include <vector>
 
-#include "clenshaw.hpp"
-
 #include "coeff_legendre.hpp"
 
 double legendre_alpha_recurrence__(double const & x, int const & k){
@@ -50,123 +48,13 @@ double eval_legendre_order__(double const & x, int const order){
     }
 }
 
-double naive_legendre_vec(double const & x, std::vector<double> const& coeffs){
-    double val = 0;
-    for (int i = 0; i < coeffs.size(); ++i){
-        val += coeffs[i]*eval_legendre_order__(x, i);
-    }
-    return val;
-}
-
-double naive_legendre_iter(double const & x, Iter begin, Iter end) {
-    double val = 0;
-    int index = 0;
-    for (auto it = begin; it != end; ++it, ++index) {
-        val += *it * eval_legendre_order__(x, index);
-    }
-    return val;
-}
-
-double direct_recurrence_legendre_custom_vec(double const & x, std::vector<double> const & coeffs){
-    size_t n = coeffs.size();
-    if (n == 0) {
-        return 0.0;
-    }
-    double P_prev = 1.0;
-    double result = coeffs[0] * P_prev;
-    if (n == 1) {
-        return result;
-    }
-    double P_curr = x;
-    result += coeffs[1] * P_curr;
-    for (size_t i = 2; i < n; ++i) {
-        double P_next = legendre_alpha_recurrence__(x,i-1) * P_curr + legendre_beta_recurrence__(x,i-1) * P_prev;
-        result += coeffs[i] * P_next;
-        P_prev = P_curr;
-        P_curr = P_next;
-    }
-    return result;
-}
-
-double direct_recurrence_legendre_custom_iter(double const & x, Iter begin, Iter end) {
-    size_t n = std::distance(begin, end);
-    if (n == 0) {
-        return 0.0;
-    }
-    double P_prev = 1.0;
-    double result = *begin * P_prev;
-    if (n == 1) {
-        return result;
-    }
-    double P_curr = x;
-    result += *(begin + 1) * P_curr;
-    for (size_t i = 2; i < n; ++i) {
-        double P_next = legendre_alpha_recurrence__(x, i - 1) * P_curr + legendre_beta_recurrence__(x, i - 1) * P_prev;
-        result += *(begin + i) * P_next;
-        P_prev = P_curr;
-        P_curr = P_next;
-    }
-    return result;
-}
-
-std::vector<double> eval_legendre_direct_recurrence__(double x, int n) {
-    std::vector<double> T(n + 1);
-    T[0] = 1;
-    if (n > 0) {T[1] = x;}
+std::vector<double> eval_legendre_orders(double const &x, int const &n)
+{
+    std::vector<double> P(n + 1);
+    P[0] = 1;
+    if (n > 0) {P[1] = x;}
     for (int i = 2; i <= n; ++i){
-        T[i] = legendre_alpha_recurrence__(x,i-1)*T[i-1] + legendre_beta_recurrence__(x,i-1)*T[i-2];
+        P[i] = legendre_alpha_recurrence__(x,i-1)*P[i-1] + legendre_beta_recurrence__(x,i-1)*P[i-2];
     }
-    return T;
-}
-
-double direct_recurrence_legendre_general_vec(double const & x, std::vector<double> const & coeffs){
-    std::vector<double> leg_points = eval_legendre_direct_recurrence__(x, coeffs.size());
-    double val = 0;
-    for (int i = 0; i < coeffs.size(); ++i){
-        val += coeffs[i]*leg_points[i];
-    }
-    return val;
-}
-
-double direct_recurrence_legendre_general_iter(double const & x, Iter begin, Iter end) {
-    std::vector<double> leg_points = eval_legendre_direct_recurrence__(x, std::distance(begin, end));
-    double val = 0;
-    int index = 0;
-    for (auto it = begin; it != end; ++it, ++index) {
-        val += *it * leg_points[index];
-    }
-    return val;
-}
-
-double clenshaw_legendre_custom_vec(double const & x, std::vector<double> const & coeffs) {
-    double bk2 = 0;
-    double bk1 = 0;
-    double bk = 0;
-    for (int k = coeffs.size() - 1; k > 0; --k) {
-        bk = coeffs[k] + legendre_alpha_recurrence__(x, k) * bk1 + legendre_beta_recurrence__(x, k + 1) * bk2;
-        bk2 = bk1;
-        bk1 = bk;
-    }
-    return coeffs[0] + x*bk1 - 0.5*bk2;
-}
-
-double clenshaw_legendre_custom_iter(double const & x, Iter begin, Iter end) {
-    double bk2 = 0;
-    double bk1 = 0;
-    double bk = 0;
-    int size = std::distance(begin, end);
-    for (int k = size - 1; k > 0; --k) {
-        bk = *(begin + k) + legendre_alpha_recurrence__(x, k) * bk1 + legendre_beta_recurrence__(x, k + 1) * bk2;
-        bk2 = bk1;
-        bk1 = bk;
-    }
-    return *begin + x * bk1 - 0.5 * bk2;
-}
-
-double clenshaw_legendre_general_vec(double const & x, std::vector<double> const & coeffs){
-    return clenshaw(x, coeffs, legendre_alpha_recurrence__, legendre_beta_recurrence__, eval_legendre_order__);
-}
-
-double clenshaw_legendre_general_iter(double const & x, Iter begin, Iter end) {
-    return clenshaw(x, begin, end, legendre_alpha_recurrence__, legendre_beta_recurrence__, eval_legendre_order__);
+    return P;
 }

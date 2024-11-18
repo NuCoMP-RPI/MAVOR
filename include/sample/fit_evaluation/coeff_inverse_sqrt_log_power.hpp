@@ -3,18 +3,12 @@
 
 #include<vector>
 
-double naive_inverse_sqrt_log_power_vec(double const & x, std::vector<double> const & coeffs);
-double horner_inverse_sqrt_log_power_custom_vec(double const & x, std::vector<double> const & coeffs);
-double horner_inverse_sqrt_log_power_general_vec(double const & x, std::vector<double> const & coeffs);
-double clenshaw_inverse_sqrt_log_power_custom_vec(double const & x, std::vector<double> const & coeffs);
-double clenshaw_inverse_sqrt_log_power_general_vec(double const & x, std::vector<double> const & coeffs);
-
-typedef std::vector<double>::const_iterator Iter;
-
-double naive_inverse_sqrt_log_power_iter(double const & x, Iter begin, Iter end);
-double horner_inverse_sqrt_log_power_custom_iter(double const & x, Iter begin, Iter end);
-double horner_inverse_sqrt_log_power_general_iter(double const & x, Iter begin, Iter end);
-double clenshaw_inverse_sqrt_log_power_custom_iter(double const & x, Iter begin, Iter end);
-double clenshaw_inverse_sqrt_log_power_general_iter(double const & x, Iter begin, Iter end);
+/**
+ * @brief Evaluates inverse sqrt log power functions at the given x up to order n and returns the results in a vector
+ * @param x Value at which to evaluate the functions
+ * @param n Max order to evaluate the functions
+ * @return std::vector<double>(n+1) of the evaluated inverse sqrt log power functions in ascending order
+ */
+std::vector<double> eval_inverse_sqrt_log_power_orders(double const &x, int const &n);
 
 #endif

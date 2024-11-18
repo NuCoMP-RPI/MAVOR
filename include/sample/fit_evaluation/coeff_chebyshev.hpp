@@ -3,18 +3,12 @@
 
 #include<vector>
 
-double naive_chebyshev_vec(double const & x, std::vector<double> const & coeffs);
-double direct_recurrence_chebyshev_custom_vec(double const & x, std::vector<double> const & coeffs);
-double direct_recurrence_chebyshev_general_vec(double const & x, std::vector<double> const & coeffs);
-double clenshaw_chebyshev_custom_vec(double const & x, std::vector<double> const & coeffs);
-double clenshaw_chebyshev_general_vec(double const & x, std::vector<double> const & coeffs);
-
-typedef std::vector<double>::const_iterator Iter;
-
-double naive_chebyshev_iter(double const & x, Iter begin, Iter end);
-double direct_recurrence_chebyshev_custom_iter(double const & x, Iter begin, Iter end);
-double direct_recurrence_chebyshev_general_iter(double const & x, Iter begin, Iter end);
-double clenshaw_chebyshev_custom_iter(double const & x, Iter begin, Iter end);
-double clenshaw_chebyshev_general_iter(double const & x, Iter begin, Iter end);
+/**
+ * @brief Evaluates the chebyshev polynomials at the given x up to order n and returns the results in a vector
+ * @param x Value at which to evaluate the polynomials
+ * @param n Max order to evaluate the polynomials
+ * @return std::vector<double>(n+1) of the evaluated chebyshev polynomials in ascending order
+ */
+std::vector<double> eval_chebyshev_orders(double const &x, int const &n);
 
 #endif

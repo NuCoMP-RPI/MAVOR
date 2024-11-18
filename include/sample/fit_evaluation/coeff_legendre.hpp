@@ -3,18 +3,12 @@
 
 #include<vector>
 
-double naive_legendre_vec(double const & x, std::vector<double> const & coeffs);
-double direct_recurrence_legendre_custom_vec(double const & x, std::vector<double> const & coeffs);
-double direct_recurrence_legendre_general_vec(double const & x, std::vector<double> const & coeffs);
-double clenshaw_legendre_custom_vec(double const & x, std::vector<double> const & coeffs);
-double clenshaw_legendre_general_vec(double const & x, std::vector<double> const & coeffs);
-
-typedef std::vector<double>::const_iterator Iter;
-
-double naive_legendre_iter(double const & x, Iter begin, Iter end);
-double direct_recurrence_legendre_custom_iter(double const & x, Iter begin, Iter end);
-double direct_recurrence_legendre_general_iter(double const & x, Iter begin, Iter end);
-double clenshaw_legendre_custom_iter(double const & x, Iter begin, Iter end);
-double clenshaw_legendre_general_iter(double const & x, Iter begin, Iter end);
+/**
+ * @brief Evaluates the legendre polynomials at the given x up to order n and returns the results in a vector
+ * @param x Value at which to evaluate the polynomials
+ * @param n Max order to evaluate the polynomials
+ * @return std::vector<double>(n+1) of the evaluated legendre polynomials in ascending order
+ */
+std::vector<double> eval_legendre_orders(double const &x, int const &n);
 
 #endif

@@ -6,11 +6,23 @@
 #include <string>
 #include <iostream>
 
-typedef std::vector<double>::const_iterator Iter;
-// typedef double(*EvaluationFunctionPointer)(double const &, std::vector<double> const &);
-typedef double(*EvaluationFunctionPointer)(double const &, Iter, Iter);
+/**
+ * @brief Pointer to a function that evaluates basis functions at a given x value up to a specified order.
+ *
+ * The function takes a double value and an integer order as inputs and returns a vector of doubles.
+ * 
+ * Order indexing starts at 0, so a n value of 4 will yield a vector of length 5
+ *
+ * @param x The value at which the basis functions are evaluated.
+ * @param n The maximum order up to which the basis functions are evaluated.
+ * @return std::vector<double>(n+1) containing the evaluated basis functions up to order n, in ascending order.
+ */
+typedef std::vector<double>(*EvalBasisFuncPointer)(double const &, int const &);
 
-enum class FittingType{
+/**
+ * @brief Enum class representing the different types of basis functions available for evaluation.
+ */
+enum class BasisFunction {
     Chebyshev,
     Cosine,
     Exponential,
@@ -28,29 +40,38 @@ enum class FittingType{
     SqrtPower
 };
 
-enum class EvaluationMethod{
-    Naive,
-    Improved,
-    DirectRecurrenceCustom,
-    DirectRecurrenceGeneral,
-    HornerCustom,
-    HornerGeneral,
-    ClenshawCustom,
-    ClenshawGeneral
+/**
+ * @struct EvaluationFunction
+ * @brief Associates a basis function with its evaluation function pointer.
+ *
+ * This structure contains information about the type of basis function 
+ * and a function pointer to the corresponding evaluation method.
+ *
+ * @var EvaluationFunction::basis_function
+ * The type of basis function being evaluated, specified as a `BasisFunction` enum.
+ *
+ * @var EvaluationFunction::eval_basis_func_pointer
+ * A pointer to the function that evaluates the basis function for given inputs.
+ */
+struct EvaluationFunction {
+    BasisFunction basis_function;
+    EvalBasisFuncPointer eval_basis_func_pointer;
 };
 
-struct EvaluationFunction{
-    FittingType type;
-    EvaluationMethod method;
-    EvaluationFunctionPointer function;
-};
-
+/**
+ * @brief Typedef for a map associating a string key with an EvaluationFunction.
+ *
+ * The key is a string representing the name of the basis function, and the value
+ * is an EvaluationFunction structure containing details about the function and its evaluation.
+ */
 typedef std::map<std::string, EvaluationFunction> EvaluationFunctionMap;
-typedef std::map<std::string, EvaluationFunctionMap> EvaluationTypeMap;
-typedef std::map<std::string, EvaluationFunction> PredefinedEvaluationsMap;
 
-extern const EvaluationTypeMap FitEvaluationMap;
-extern const PredefinedEvaluationsMap NaiveEvaluationsMap;
-extern const PredefinedEvaluationsMap OptimalEvaluationsMap;
+/**
+ * @brief Global map of available evaluation functions.
+ *
+ * This map associates basis function names (as strings) with their corresponding
+ * EvaluationFunction structures, allowing dynamic lookup and usage of evaluation routines.
+ */
+extern const EvaluationFunctionMap evaluation_functions;
 
 #endif 

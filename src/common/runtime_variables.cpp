@@ -124,8 +124,8 @@ bool alpha_override_fit_function = false;
 // sample subcommand variables
 
 std::string sample_input_file = "";
-std::string sample_cdf_test_file = std::string(BUILD_DIR) + "/test_files/HinYH2_293K_CDFs.h5";
-std::string sample_coeff_test_file = std::string(BUILD_DIR) + "/test_files/HinYH2_coeffs.h5";
+std::string sample_cdf_test_file = std::string(BUILD_DIR) + "/test_files/HinYH2_293_6K_CDFs.h5";
+std::string sample_coeff_test_file = std::string(BUILD_DIR) + "/test_files/HinYH2_Coeffs.h5";
 std::string sample_cdf_output_file = std::string(BUILD_DIR) + "/CDF_sampling_results.h5";
 std::string sample_coeff_output_file = std::string(BUILD_DIR) + "/COEFF_sampling_results.h5";
 std::string sample_output_file = "";

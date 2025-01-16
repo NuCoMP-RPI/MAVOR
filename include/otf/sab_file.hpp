@@ -31,7 +31,7 @@ class SabData{
         SabData(const std::string& file_path);
 
     private:
-        std::vector<std::vector<double>> __vector_to_matrix__(std::vector<double> const & flat_vec, int const n_rows, int const n_cols);
+        std::vector<std::vector<double>> vector_to_matrix__(std::vector<double> const & flat_vec, int const n_rows, int const n_cols);
 
 };
 

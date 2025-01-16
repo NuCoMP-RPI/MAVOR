@@ -6,9 +6,8 @@
 
 #include "predefined_coeff_evaluations.hpp"
 
-/**
- * @brief Class to read in coefficient sampling data, perform the sampling, and then write the results
- */
+
+/// @brief Class to read in coefficient sampling data, perform the sampling, and then write the results
 class CoeffFile{
     public:
         // Variables
@@ -61,32 +60,26 @@ class CoeffFile{
         std::vector<double> sampled_secondary_energies;
         std::vector<double> sampled_scattering_cosines;
 
-        // Constructor
-        /**
-         * @brief Constructor to initialize the coefficient sampling data.
-         * @param file_path Path to the coefficient file to be read in.
-         */
+        /// Constructor
+        /// @brief Constructor to initialize the coefficient sampling data.
+        /// @param file_path Path to the coefficient file to be read in.
         CoeffFile(std::string const & file_path);
 
-        // Public Methods
-        /**
-         * @brief Performs a single random sample of the coefficient data.
-         * @param temp Temperature to perform the sample
-         * @param inc_ener Incident energy of the neutron 
-         * @param xi_1 First random variable to sample energy
-         * @param xi_2 Second random variable to sample scattering cosine
-         * @return std::pair<double, double> containing the sampled energy and scattering cosine
-         */
+        /// @brief Performs a single random sample of the coefficient data.
+        /// @param temp Temperature to perform the sample
+        /// @param inc_ener Incident energy of the neutron 
+        /// @param xi_1 First random variable to sample energy
+        /// @param xi_2 Second random variable to sample scattering cosine
+        /// @return std::pair<double, double> containing the sampled energy and scattering cosine
         std::pair<double, double> single_sample(const double & temp, const double & inc_ener, const double & xi_1, const double & xi_2);
-        /**
-         * @brief Performs sampling over two random variable vectors that are already initalized and writes results into class vectors
-         * @param inc_ener Incident energy of the neutron
-         */
+
+        /// @brief Performs sampling over two random variable vectors that are already initalized and writes results into class vectors
+        /// @param inc_ener Incident energy of the neutron
         void all_sample(const double & inc_ener);
-        /**
-         * @brief Writes the results of the sampling to an HDF5 file
-         */
+
+        /// @brief Writes the results of the sampling to an HDF5 file
         void write_results();
+
     private:
         /// @brief Sets the evaluation function for the coefficients
         /// @param eval_func Struct that contains a pointer to the evaluation function

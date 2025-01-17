@@ -109,17 +109,17 @@ OTFData::OTFData(const std::string & directory){
     // Read in the rest of the data
     while (it !=files.end())
     {
-        __check__(za, it->second.za, "ZA");
-        __check__(mat, it->second.mat, "MAT");
-        __check__(a0, it->second.a0, "A0");
-        __check__(e_max, it->second.e_max, "E_MAX");
-        __check__(m0, it->second.m0, "M0");
-        __check__(free_xs, it->second.free_xs, "FREE_XS");
-        __check__(bound_xs, it->second.bound_xs, "BOUND_XS");
-        __check__(inc_energy_grid, it->second.inc_energy_grid, "INCIDENT ENERGY GRID");
-        __check__(beta_cdf_grid, it->second.beta_cdf_grid, "BETA CDF GRID");
-        __check__(beta_grid, it->second.beta_grid, "BETA GRID");
-        __check__(alpha_cdf_grid, it->second.alpha_cdf_grid, "ALPHA CDF GRID");
+        check__(za, it->second.za, "ZA");
+        check__(mat, it->second.mat, "MAT");
+        check__(a0, it->second.a0, "A0");
+        check__(e_max, it->second.e_max, "E_MAX");
+        check__(m0, it->second.m0, "M0");
+        check__(free_xs, it->second.free_xs, "FREE_XS");
+        check__(bound_xs, it->second.bound_xs, "BOUND_XS");
+        check__(inc_energy_grid, it->second.inc_energy_grid, "INCIDENT ENERGY GRID");
+        check__(beta_cdf_grid, it->second.beta_cdf_grid, "BETA CDF GRID");
+        check__(beta_grid, it->second.beta_grid, "BETA GRID");
+        check__(alpha_cdf_grid, it->second.alpha_cdf_grid, "ALPHA CDF GRID");
         temps[k] = it->second.temp;
         // load in beta vals
         for (int i = 0; i<inc_energy_grid.size(); i++){
@@ -236,8 +236,8 @@ void OTFData::override_fit_settings__(){
 }
 
 void OTFData::generate_coefficients(){
-    __generate_A_matrices__();
-    __solve__();
+    generate_A_matrices__();
+    solve__();
 }
 
 void OTFData::write_coefficients(){
@@ -281,7 +281,7 @@ void OTFData::write_coefficients(){
     __write_fit_Coeffs__(file, alpha_coeffs, "Alpha Coefficients");
 }
 
-void OTFData::__generate_A_matrices__(){
+void OTFData::generate_A_matrices__(){
     if (std::get<0>(class_xs_fit.first.second)){xs_temps = scale_array(temps, std::get<1>(class_xs_fit.first.second), std::get<2>(class_xs_fit.first.second));}
     else {xs_temps = temps;}
     if (std::get<0>(class_beta_fit.first.second)){beta_temps = scale_array(temps, std::get<1>(class_beta_fit.first.second), std::get<2>(class_beta_fit.first.second));}
@@ -291,26 +291,26 @@ void OTFData::__generate_A_matrices__(){
     xs_A.resize(temps.size(), class_xs_fit.second);
     beta_A.resize(temps.size(), class_beta_fit.second);
     alpha_A.resize(temps.size(), class_alpha_fit.second);
-    __fill_A_matrices__();
+    fill_A_matrices__();
 }
 
-void OTFData::__fill_A_matrices__(){
+void OTFData::fill_A_matrices__(){
     if (!silence){
         std::cout << "Energy fitting function selected | " << class_xs_fit.first.first << " | Number Coefficients | " << class_xs_fit.second << std::endl;
         std::cout << "Beta fitting function selected | " << class_beta_fit.first.first << " | Number Coefficients | " << class_beta_fit.second << std::endl;
         std::cout << "Alpha fitting function selected | " << class_alpha_fit.first.first << " | Number Coefficients | " << class_alpha_fit.second << std::endl;
     }
     for (int i = 0; i<temps.size(); i++){
-        Eigen::VectorXd evaled_xs_points = __eval_fit_func__(xs_temps[i], class_xs_fit.second, std::get<3>(class_xs_fit.first.second).second);
+        Eigen::VectorXd evaled_xs_points = eval_fit_func__(xs_temps[i], class_xs_fit.second, std::get<3>(class_xs_fit.first.second).second);
         xs_A(i, Eigen::placeholders::all) = evaled_xs_points;
-        Eigen::VectorXd evaled_beta_points = __eval_fit_func__(beta_temps[i], class_beta_fit.second, std::get<3>(class_beta_fit.first.second).second);
+        Eigen::VectorXd evaled_beta_points = eval_fit_func__(beta_temps[i], class_beta_fit.second, std::get<3>(class_beta_fit.first.second).second);
         beta_A(i, Eigen::placeholders::all) = evaled_beta_points;
-        Eigen::VectorXd evaled_alpha_points = __eval_fit_func__(alpha_temps[i], class_alpha_fit.second, std::get<3>(class_alpha_fit.first.second).second);
+        Eigen::VectorXd evaled_alpha_points = eval_fit_func__(alpha_temps[i], class_alpha_fit.second, std::get<3>(class_alpha_fit.first.second).second);
         alpha_A(i, Eigen::placeholders::all) = evaled_alpha_points;
     }
 }
 
-Eigen::VectorXd OTFData::__eval_fit_func__(double const & x, int const & number, FuncPointer func){
+Eigen::VectorXd OTFData::eval_fit_func__(double const & x, int const & number, FuncPointer func){
     Eigen::VectorXd eval(number);
     for (int i = 0; i<number; i++){
         eval(i) = func(x, i);
@@ -318,7 +318,7 @@ Eigen::VectorXd OTFData::__eval_fit_func__(double const & x, int const & number,
     return eval;
 }
 
-void OTFData::__solve__(){
+void OTFData::solve__(){
     // Currently just implements the normal equations.  From eye, this doesn't seem to cause numerical errors.
     Eigen::MatrixXd xs_A_T = xs_A.transpose();
     Eigen::MatrixXd beta_A_T = beta_A.transpose();
@@ -349,7 +349,7 @@ void OTFData::__solve__(){
     }
 }
 
-template<typename T> void OTFData::__check__(T const & val_1, T const & val_2, std::string const item_name){
+template<typename T> void OTFData::check__(T const & val_1, T const & val_2, std::string const item_name){
     std::string error_message = item_name + " are not equal.  Terminating.";
     if (val_1 != val_2){
         throw std::runtime_error(error_message);

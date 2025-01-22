@@ -69,6 +69,7 @@ double ENDF_interp(double const & x1, double const & x2, double const & y1, doub
 std::vector<double> ENDF_interp_vector(double const & x1, double const & x2, std::vector<double> const & y1_vec, std::vector<double> const & y2_vec, double const & x, int const scheme = 2);
 
 /// @brief Bilinear interpolation for a grid of points.
+/// Interpolation over the x values is conducted first, and then interpolation over the y values.
 /// @param x1 The first x value.
 /// @param x2 The second x value.
 /// @param y1 The first y value.

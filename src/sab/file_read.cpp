@@ -11,6 +11,7 @@
 #include "file_read.hpp"
 #include "runtime_variables.hpp"
 #include "hdf5_file.hpp"
+#include "interpolation.hpp"
 
 // Class Constructor
 TslFileData::TslFileData(const std::string& file_path, const std::string & file_type){
@@ -36,6 +37,12 @@ void TslFileData::read_from_hdf5__(const std::string & file_path){
     readHDF5Double(file, "m0", m0);
     readHDF5Double(file, "free_xs", free_xs);
     readHDF5Double(file, "bound_xs", bound_xs);
+
+    readHDF5IntVector(file, "alpha_interpolants", alpha_interpolants);
+    readHDF5IntVector(file, "alpha_interpolants_boundaries", alpha_interpolants_boundaries);
+    readHDF5IntVector(file, "beta_interpolants", beta_interpolants);
+    readHDF5IntVector(file, "beta_interpolants_boundaries", beta_interpolants_boundaries);
+
     readHDF5DoubleVector(file, "alphas", alphas);
     readHDF5DoubleVector(file, "betas", betas);
     readHDF5DoubleVector(file, "tsl_vals", tsl_vals_array);
@@ -62,6 +69,12 @@ void TslFileData::write_to_hdf5__(const std::string & file_path){
     writeHDF5Double(file, m0, "m0");
     writeHDF5Double(file, free_xs, "free_xs");
     writeHDF5Double(file, bound_xs, "bound_xs");
+
+    writeHDF5IntVector(file, alpha_interpolants, "alpha_interpolants");
+    writeHDF5IntVector(file, alpha_interpolants_boundaries, "alpha_interpolants_boundaries");
+    writeHDF5IntVector(file, beta_interpolants, "beta_interpolants");
+    writeHDF5IntVector(file, beta_interpolants_boundaries, "beta_interpolants_boundaries");
+
     writeHDF5DoubleVector(file, alphas, "alphas");
     writeHDF5DoubleVector(file, betas, "betas");
     writeHDF5DoubleMatrix(file, tsl_vals, "tsl_vals");
@@ -102,6 +115,13 @@ void TslFileData::read_from_endf__(const std::string & file_path){
     t_eff = pet.TEFF()[0];
     temp = scattering_law.scatteringFunctions()[0].temperatures()[0];
     temp_ratio = t_eff / temp;
+
+    auto beta_interpolants_range = scattering_law.interpolants();
+    beta_interpolants.reserve(beta_interpolants_range.size());
+    for (auto item:beta_interpolants_range) {beta_interpolants.push_back(item);}
+    auto beta_interpolants_boundaries_range = scattering_law.boundaries();
+    beta_interpolants_boundaries.reserve(beta_interpolants_boundaries_range.size());
+    for (auto item:beta_interpolants_boundaries_range) {beta_interpolants_boundaries.push_back(item);}
     
     int nb = scattering_law.betas().size();
     int na = scattering_law.scatteringFunctions()[0].alphas().size();
@@ -110,11 +130,24 @@ void TslFileData::read_from_endf__(const std::string & file_path){
     alphas.resize(na);
     tsl_vals.resize(nb, std::vector<double>(na));
 
+
     for (int i = 0; i < nb; ++i){
         betas[i] = scattering_law.betas()[i];
+        auto scat_func = scattering_law.scatteringFunctions()[i];
+
+        /// NOTE: This assumes all alpha ranges are the as the first beta.
+        if (i == 0) {
+            auto alpha_interolants_range = scat_func.interpolants();
+            alpha_interpolants.reserve(alpha_interolants_range.size());
+            for (auto item:alpha_interolants_range) {alpha_interpolants.push_back(item);}
+            auto alpha_interpolants_boundaries_range = scat_func.boundaries();
+            alpha_interpolants_boundaries.reserve(alpha_interpolants_boundaries_range.size());
+            for (auto item:alpha_interpolants_boundaries_range) {alpha_interpolants_boundaries.push_back(item);}
+        }
+
         for (int j = 0; j < na; ++j){
-            if (i == 0){alphas[j] = scattering_law.scatteringFunctions()[i].alphas()[j];}
-            tsl_vals[i][j] = scattering_law.scatteringFunctions()[i].thermalScatteringValues()[0][j];
+            if (i == 0){alphas[j] = scat_func.alphas()[j];}
+            tsl_vals[i][j] = scat_func.thermalScatteringValues()[0][j];
         }
     }
 }
@@ -197,6 +230,10 @@ std::vector<double> TslFileData::lat_scale__(std::vector<double> const & vec, do
 // Public Methods //
 // Alpha and Betas
 
+std::vector<double> TslFileData::return_alphas(){
+    return alphas;
+}
+
 std::vector<double> TslFileData::return_scaled_alphas(double const & ref_temp){
     return lat_scale__(alphas);
 }
@@ -264,4 +301,116 @@ std::vector<std::vector<double>> TslFileData::return_full_asym_tsl_vals(){
         vec_element_mult__(new_mat[i], std::exp(-temp_betas[i]));
     }
     return new_mat;
+}
+
+double TslFileData::asym_SCT_alpha_integral_bounds__(double const& alpha, double const& beta){
+    double abs_b = abs(beta);
+    double two_sqrt_ar = 2*sqrt(alpha*temp_ratio);
+    double erfc_1 = erfc((abs_b-alpha)/two_sqrt_ar);
+    double erfc_2 = erfc((abs_b+alpha)/two_sqrt_ar);
+    double inner_exp = exp(beta/(std::copysign(temp_ratio, beta)));
+    double outer_exp = exp(-(abs_b/2)-(beta/2));
+    return 0.5*(outer_exp*(erfc_1 - inner_exp*erfc_2));
+}
+
+double TslFileData::calculate_beta_min(double const& inc_energy){
+    return -(inc_energy)/(boltz*temp);
+}
+
+double TslFileData::calculate_beta_max(double const& inc_energy){
+    return beta_max;
+}
+
+std::pair<double, double> TslFileData::calculate_alpha_extrema(double const& inc_energy, double const& beta){
+    double t1 = sqrt(inc_energy);
+    double t2 = sqrt(abs(inc_energy + beta*boltz*temp));
+    double t3 = a0*boltz*temp;
+    return std::make_pair(std::max(alpha_min, pow((t1 - t2), 2)/t3), pow((t1 + t2), 2)/t3);
+}
+
+double TslFileData::return_sym_SCT(double const& alpha, double const& beta){
+    double numer_numer = pow((alpha-abs(beta)), 2);
+    double numer_denom = 4*alpha*temp_ratio;
+    double numer = exp(-(numer_numer/numer_denom) - (abs(beta)/2));
+    double denom = sqrt(4*PI*alpha*temp_ratio);
+    return numer/denom;
+}
+
+double TslFileData::return_asym_SCT(double const& alpha, double const& beta){
+    return exp(-beta/2) * return_sym_SCT(alpha, beta);
+}
+
+double TslFileData::return_asym_SCT_alpha_integral(double const& alpha_l, double const& alpha_u, double const& beta){
+    double l = asym_SCT_alpha_integral_bounds__(alpha_l, beta);
+    double u = asym_SCT_alpha_integral_bounds__(alpha_u, beta);
+    return u-l;
+}
+
+std::pair<double, bool> TslFileData::return_arbitrary_TSL_val(double const& alpha, double const& beta){
+    // Convert alpha and beta into search values that are in the same domain as the stored values
+    double search_alpha = alpha;
+    double search_beta = beta;
+    if (lat == 1){
+        search_alpha *= temp/ref_temp_k;
+        search_beta *= temp/ref_temp_k;
+    }
+    if (lasym == 0){
+        search_beta = abs(search_beta);
+    }
+    // If the desired alpha/beta is not contained within the stored data, use SCT
+    bool off_data = (search_alpha < alphas.front() || 
+                     search_alpha > alphas.back() || 
+                     search_beta < betas.front() || 
+                     search_beta > betas.back());
+    if(off_data){return std::make_pair(return_asym_SCT(alpha, beta), true);}
+
+    else{
+        // std::cout << "Data point is on grid." << std::endl;
+        // Extract the S values that bracket the desired point
+        int alpha_lo_insert = std::lower_bound(alphas.begin()+1, alphas.end(), search_alpha) - alphas.begin();
+        int beta_lo_insert = std::lower_bound(betas.begin()+1, betas.end(), search_beta) - betas.begin();
+        double f11 = tsl_vals[beta_lo_insert-1][alpha_lo_insert-1];
+        double f12 = tsl_vals[beta_lo_insert-1][alpha_lo_insert];
+        double f21 = tsl_vals[beta_lo_insert][alpha_lo_insert-1];
+        double f22 = tsl_vals[beta_lo_insert][alpha_lo_insert];
+
+        // If the any of the bracketing S values fall below the SCT cutoff, use SCT
+        // Ensure to compare the true S value and not ln(S)
+        // Ternary operator looks to see if lln is set, if so take exp, if not use value directly
+        // Cant update the values themselves cause interpolation is only valid on stored values
+        bool below_cutoff = ((lln ? exp(f11) : f11) < sct_cutoff ||
+                             (lln ? exp(f12) : f12) < sct_cutoff ||
+                             (lln ? exp(f21) : f21) < sct_cutoff ||
+                             (lln ? exp(f22) : f22) < sct_cutoff);
+        if (below_cutoff){return std::make_pair(return_asym_SCT(alpha, beta), true);}
+
+        else{
+            double& b_l = betas[beta_lo_insert-1];
+            double& b_u = betas[beta_lo_insert];
+            double& a_l = alphas[alpha_lo_insert-1];
+            double& a_u = alphas[alpha_lo_insert];
+
+            // Determine the interpolation schemes
+            int alpha_range_insert = std::lower_bound(alpha_interpolants_boundaries.begin(), 
+                                                      alpha_interpolants_boundaries.end(), 
+                                                      alpha_lo_insert) - alpha_interpolants_boundaries.begin();
+            int alpha_interp_scheme = alpha_interpolants[alpha_range_insert];
+            int beta_range_insert = std::lower_bound(beta_interpolants_boundaries.begin(), 
+                                                     beta_interpolants_boundaries.end(), 
+                                                     beta_lo_insert) - beta_interpolants_boundaries.begin();
+            int beta_interp_scheme = beta_interpolants[beta_range_insert];
+
+            double s = bi_interp(b_l, b_u, a_l, a_u,
+                                 f11, f12, f21, f22,
+                                 search_beta, search_alpha,
+                                 beta_interp_scheme, alpha_interp_scheme);
+
+            // Take exp(s) if lln is set
+            if (lln == 1){s = exp(s);}
+            // Mulitply by exp(-beta/2) if lasym is set
+            if (lasym == 0){s = exp(-beta/2) * s;}
+
+            return std::make_pair(s, false);
+        }
+    }
 }

@@ -42,6 +42,18 @@ void readHDF5Double(H5::H5File& file, const std::string& datasetName, double& va
 /// @param value_name Name of the dataset to create.
 void writeHDF5Double(H5::H5File file, double const& value, std::string const& value_name);
 
+/// @brief Reads a vector of integers from an HDF5 dataset.
+/// @param file Reference to the HDF5 file object.
+/// @param datasetName Name of the dataset to read.
+/// @param array Output vector of integers.
+void readHDF5IntVector(H5::H5File& file, const std::string& datasetName, std::vector<int>& array);
+
+/// @brief Writes a vector of integers to an HDF5 dataset.
+/// @param file HDF5 file object.
+/// @param vector The vector of integers to write.
+/// @param vector_name Name of the dataset to create.
+void writeHDF5IntVector(H5::H5File file, const std::vector<int>& vector, const std::string& vector_name);
+
 /// @brief Reads a vector of doubles from an HDF5 dataset.
 /// @param file Reference to the HDF5 file object.
 /// @param datasetName Name of the dataset to read.

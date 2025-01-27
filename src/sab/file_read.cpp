@@ -358,10 +358,12 @@ std::pair<double, bool> TslFileData::return_arbitrary_TSL_val(double const& alph
         search_beta = abs(search_beta);
     }
     // If the desired alpha/beta is not contained within the stored data, use SCT
-    bool off_data = (search_alpha < alphas.front() || 
+    bool off_data = (
+                    //  search_alpha < alphas.front() || 
                      search_alpha > alphas.back() || 
                      search_beta < betas.front() || 
-                     search_beta > betas.back());
+                     search_beta > betas.back()
+                     );
     if(off_data){return std::make_pair(return_asym_SCT(alpha, beta), true);}
 
     else{

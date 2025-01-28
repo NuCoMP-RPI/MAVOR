@@ -23,6 +23,9 @@ double ENDF_interp_scheme_5(double const & x1, double const & x2, double const &
 }
 
 double ENDF_interp(double const & x1, double const & x2, double const & y1, double const & y2, double const & x, int const scheme){
+    if (x1 == x2){
+        return y1;
+    }
     switch (scheme)
     {
     case 1:

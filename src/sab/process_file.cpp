@@ -26,6 +26,9 @@ DistData::DistData(TslFileData& file_data) : tsl_data(file_data){
     calculation_alphas = tsl_data.return_scaled_alphas();
     calculation_betas = tsl_data.return_full_scaled_betas();
     calculation_half_betas = tsl_data.return_scaled_betas();
+    calculation_tsl_vals = tsl_data.return_full_asym_tsl_vals();
+
+    set_interp_integration_schemes__();
 
     beta_cdf_grid = sigmoid_space(0, 1, num_beta_cdf_points + 2, beta_cdf_extent);
     alpha_cdf_grid = sigmoid_space(0, 1, num_alpha_cdf_points + 2, alpha_cdf_extent);
@@ -37,6 +40,49 @@ DistData::DistData(TslFileData& file_data) : tsl_data(file_data){
     beta_cdf_grid.erase(beta_cdf_grid.end()-1);
     alpha_cdf_grid.erase(alpha_cdf_grid.begin());
     alpha_cdf_grid.erase(alpha_cdf_grid.end()-1);
+}
+
+void DistData::set_interp_integration_schemes__(){
+    alpha_interpolation_scheme = tsl_data.return_alpha_schemes();
+    alpha_integration_scheme = alpha_interpolation_scheme;
+    beta_interpolation_scheme = tsl_data.return_beta_schemes();
+    /// NOTE: Beta arrays are linearized
+    // beta_integration_scheme = beta_interpolation_scheme;
+    beta_integration_scheme = 2;
+}
+
+std::pair<double, bool> DistData::return_arbitrary_TSL_val(double const& alpha, double const& beta){
+    bool off_data = (
+        alpha > calculation_alphas.back() || 
+        beta  < calculation_betas.front() || 
+        beta  > calculation_betas.back()
+        );
+    if (off_data){
+        return std::make_pair(tsl_data.return_asym_SCT(alpha, beta), true);
+    }
+    else {
+        int alpha_lo_insert = std::lower_bound(calculation_alphas.begin()+1, calculation_alphas.end(), alpha) - calculation_alphas.begin();
+        int beta_lo_insert = std::lower_bound(calculation_betas.begin()+1, calculation_betas.end(), beta) - calculation_betas.begin();
+        double& f11 = calculation_tsl_vals[beta_lo_insert-1][alpha_lo_insert-1];
+        double& f12 = calculation_tsl_vals[beta_lo_insert-1][alpha_lo_insert];
+        double& f21 = calculation_tsl_vals[beta_lo_insert][alpha_lo_insert-1];
+        double& f22 = calculation_tsl_vals[beta_lo_insert][alpha_lo_insert];
+        bool below_cutoff = (f11<sct_cutoff || f12<sct_cutoff || f21<sct_cutoff || f22<sct_cutoff);
+        if (below_cutoff){
+            return std::make_pair(tsl_data.return_asym_SCT(alpha, beta), true);
+        }
+        else{
+            double& b_l = calculation_betas[beta_lo_insert-1];
+            double& b_u = calculation_betas[beta_lo_insert];
+            double& a_l = calculation_alphas[alpha_lo_insert-1];
+            double& a_u = calculation_alphas[alpha_lo_insert];
+            return std::make_pair(bi_interp(b_l, b_u, a_l, a_u,
+                                             f11, f12, f21, f22,
+                                             beta, alpha,
+                                             beta_interpolation_scheme, alpha_interpolation_scheme), 
+                                             false);
+        }
+    }       
 }
 
 std::vector<double> DistData::get_viable_betas__(double const& inc_energy){
@@ -54,7 +100,7 @@ std::vector<double> DistData::get_viable_betas__(double const& inc_energy){
     return result;
 }
 
-std::vector<double> DistData::get_viable_alphas__(double const& inc_energy, double const& beta){
+std::vector<double> DistData::get_viable_alphas__(double const &inc_energy, double const &beta){
     auto [a_min, a_max] = tsl_data.calculate_alpha_extrema(inc_energy, beta);
     auto lo_insert = std::lower_bound(calculation_alphas.begin(), calculation_alphas.end(), a_min) - calculation_alphas.begin();
     auto hi_insert = std::lower_bound(calculation_alphas.begin(), calculation_alphas.end(), a_max) - calculation_alphas.begin();
@@ -74,7 +120,7 @@ std::pair<std::vector<double>, std::vector<bool>> DistData::get_alpha_line__(std
     vals.reserve(alpha_vals.size());
     truthy.reserve(alpha_vals.size());
     for(double alpha:alpha_vals){
-        auto [val, thruth] = tsl_data.return_arbitrary_TSL_val(alpha, beta);
+        auto [val, thruth] = return_arbitrary_TSL_val(alpha, beta);
         vals.push_back(val);
         truthy.push_back(thruth);
     }
@@ -85,7 +131,7 @@ double DistData::integrate_alpha_line__(std::vector<double> const& alpha_vals, s
     double integral = 0;
     for(int i=0; i<alpha_vals.size()-1; i++){
         if (truthy[i] || truthy[i+1]){
-            integral += tsl_data.return_asym_SCT_alpha_integral(alpha_vals[i], alpha_vals[i+1], beta);            
+            integral += tsl_data.return_asym_SCT_alpha_integral(alpha_vals[i], alpha_vals[i+1], beta);
         }
         else{
             /// NOTE: The alpha integration scheme is not set properly, it needs to reflect the storage interpolation scheme
@@ -164,16 +210,14 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_final_ii_xs
 }
 
 void DistData::get_beta_sampling_dists__(){
-    std::vector<std::vector<double>> beta_vals_dist(incident_energy_grid.size());
-    std::vector<std::vector<double>> beta_pdfs_dist(incident_energy_grid.size());
-    std::vector<std::vector<double>> beta_cdfs_dist(incident_energy_grid.size());
+    calculation_beta_vals.reserve(incident_energy_grid.size());
+    calculation_beta_cdfs.reserve(incident_energy_grid.size());
     beta_vals.reserve(incident_energy_grid.size());
     for (auto inc_energy: incident_energy_grid){
         auto [vals, pdf] = return_linearized_beta_pdf(inc_energy);
-        beta_vals_dist.push_back(vals);
-        beta_pdfs_dist.push_back(pdf);
-        beta_cdfs_dist.push_back(pdf_to_cdf(vals, pdf));
-        beta_vals.push_back(fit_cdf(vals, beta_cdfs_dist.back(), beta_cdf_grid));
+        calculation_beta_vals.push_back(vals);
+        calculation_beta_cdfs.push_back(pdf_to_cdf(vals, pdf));
+        beta_vals.push_back(fit_cdf(vals, calculation_beta_cdfs.back(), beta_cdf_grid));
     }
 }
 
@@ -204,16 +248,14 @@ void DistData::get_alpha_sampling_dists__(){
     /// NOTE: Beta grid for storage is determined at initialization and is set to the leapr input grid and is not used here
     /// NOTE: Alpha distributions are symmetric about b=0 so only do the positive half
     /// NOTE: Ensure that you are using the scaled half betas for calculation
-    std::vector<std::vector<double>> alpha_vals_dist(beta_grid.size());
-    std::vector<std::vector<double>> alpha_pdfs_dist(beta_grid.size());
-    std::vector<std::vector<double>> alpha_cdfs_dist(beta_grid.size());
+    calculation_alpha_vals.reserve(beta_grid.size());
+    calculation_alpha_cdfs.reserve(beta_grid.size());
     alpha_vals.reserve(beta_grid.size());
     for (auto beta: calculation_half_betas){
         auto [vals, pdf] = return_linearized_alpha_pdf(beta);
-        alpha_vals_dist.push_back(vals);
-        alpha_pdfs_dist.push_back(pdf);
-        alpha_cdfs_dist.push_back(pdf_to_cdf(vals, pdf));
-        alpha_vals.push_back(fit_cdf(vals, alpha_cdfs_dist.back(), alpha_cdf_grid, 2));
+        calculation_alpha_vals.push_back(vals);
+        calculation_alpha_cdfs.push_back(pdf_to_cdf(vals, pdf));
+        alpha_vals.push_back(fit_cdf(vals, calculation_alpha_cdfs.back(), alpha_cdf_grid, 2));
     }
 }
 

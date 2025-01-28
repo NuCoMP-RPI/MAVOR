@@ -137,9 +137,9 @@ void TslFileData::read_from_endf__(const std::string & file_path){
 
         /// NOTE: This assumes all alpha ranges are the as the first beta.
         if (i == 0) {
-            auto alpha_interolants_range = scat_func.interpolants();
-            alpha_interpolants.reserve(alpha_interolants_range.size());
-            for (auto item:alpha_interolants_range) {alpha_interpolants.push_back(item);}
+            auto alpha_interpolants_range = scat_func.interpolants();
+            alpha_interpolants.reserve(alpha_interpolants_range.size());
+            for (auto item:alpha_interpolants_range) {alpha_interpolants.push_back(item);}
             auto alpha_interpolants_boundaries_range = scat_func.boundaries();
             alpha_interpolants_boundaries.reserve(alpha_interpolants_boundaries_range.size());
             for (auto item:alpha_interpolants_boundaries_range) {alpha_interpolants_boundaries.push_back(item);}
@@ -229,6 +229,34 @@ std::vector<double> TslFileData::lat_scale__(std::vector<double> const & vec, do
 
 // Public Methods //
 // Alpha and Betas
+
+int TslFileData::return_alpha_schemes(){
+    // This is a gross oversimplification of the interpolation rules
+    int interp = alpha_interpolants[0];
+    // check for lln setting
+    if (lln == 1){
+        // Only interp rules 2 and 3 can be changed
+        if (interp == 2){interp = 4;}
+        else if (interp == 3){interp = 5;}
+        else{
+            // If you are here cause of the warning, I recommend using the "return_arbitrary_TSL_val" in this source file.
+            // That function will treat the data properly (if you add functionality for the alpha interpolants to change with beta but that shouldn't be hard to add).
+            // You then would have to abandon the analytic integration schemes and just ensure that you linearize before integrating.
+            if (!silence){
+                std::cout << "Warning: LLN flag is set but alpha interpolation and integration scheme is not valid for conversion." << std::endl;
+                std::cout << "No conversion will be applied." << std::endl;
+            }
+        }
+    }
+    return interp;
+}
+
+int TslFileData::return_beta_schemes(){
+    // This is a gross oversimplification of the interpolation rules.
+    // This assumes that only one interpolation rule is present.
+    // It also does not account for the symmetric to asymmetric conversion as I do not know how to handle it. 
+    return beta_interpolants[0];
+}
 
 std::vector<double> TslFileData::return_alphas(){
     return alphas;

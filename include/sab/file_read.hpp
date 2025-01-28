@@ -37,6 +37,24 @@ class TslFileData {
 
         // Public facing methods to return desired versions of the TSL data
 
+        /// @brief Returns the interpolation and integration scheme for the alpha axis.
+        /// This current implementation is not correct.  It assumes that only one scheme is applied to all values and no ranges exist.
+        /// It also does not correct for the non-linear exp(-beta/2) term when converting to the asymmetric form of the TSL.  
+        /// This term should should change the beta schemes to reflect this but I was unable to find a way to do that without moving everything into file_read.cpp.
+        /// That implementation was also 10x slower and had no noticeable effects for the metal hydrides so it was abandoned in place.
+        /// If you want a more accurate implementation, use the "return_arbitrary_TSL_val" in file_read.cpp instead of the one in this source file.
+        /// @return Interpolation and Integration scheme
+        int return_alpha_schemes();
+
+        /// @brief Returns the interpolation and integration scheme for the beta axis.
+        /// This current implementation is not correct.  It assumes that only one scheme is applied to all values and no ranges exist.
+        /// It also does not correct for the non-linear exp(-beta/2) term when converting to the asymmetric form of the TSL.  
+        /// This term should should change the beta schemes to reflect this but I was unable to find a way to do that without moving everything into file_read.cpp.
+        /// That implementation was also 10x slower and had no noticeable effects for the metal hydrides so it was abandoned in place.
+        /// If you want a more accurate implementation, use the "return_arbitrary_TSL_val" in file_read.cpp instead of the one in this source file.
+        /// @return Interpolation and Integration scheme
+        int return_beta_schemes();
+
         /// @brief Returns the alpha values that are stored in the file
         /// @return Storage alpha values
         std::vector<double> return_alphas();
@@ -92,14 +110,14 @@ class TslFileData {
         
         /// @brief Calculates teh maximum beta value given an incident energy.
         /// Currently only returns the value set in runtime variables
-        /// @param inc_energy Desried incident energy in eV
+        /// @param inc_energy Desired incident energy in eV
         /// @return Maximum beta value
         double calculate_beta_max(double const& inc_energy);
         
         /// @brief Calculates the minimum and maximum alpha values given an incident energy and beta value.
         /// @param inc_energy Desired incident energy in eV
-        /// @param beta Deisred beta value
-        /// @return Minimum and maxiumum alpha values, respectively
+        /// @param beta Desired beta value
+        /// @return Minimum and maximum alpha values, respectively
         std::pair<double, double> calculate_alpha_extrema(double const& inc_energy, double const& beta);
 
         /// @brief Calculates the symmetric short collision time approximation
@@ -114,7 +132,7 @@ class TslFileData {
         /// @return Asymmetric SCT approximation at alpha and beta
         double return_asym_SCT(double const& alpha, double const& beta);
         
-        /// @brief Calculated the definte integral of the asymmetric short collision time approximation at a given beta between two alpha points
+        /// @brief Calculated the definite integral of the asymmetric short collision time approximation at a given beta between two alpha points
         /// @param alpha_l Lower alpha bound
         /// @param alpha_u Upper alpha bound
         /// @param beta Beta value to calculate integral
@@ -123,7 +141,7 @@ class TslFileData {
         
         /// @brief Calculates an arbitrary asymmetric TSL value given the TSL data.
         /// This method assumes that the desired alpha and beta points given are the true points.
-        /// Meaning that they have alraedy been scaled to the temperature of this data file.
+        /// Meaning that they have already been scaled to the temperature of this data file.
         /// @param alpha Desired alpha value at temperature
         /// @param beta Desired beta value at temperature
         /// @return TSL value
@@ -160,7 +178,7 @@ class TslFileData {
         /// @param matrix Matrix to exponentiate
         void matrix_element_exp__(std::vector<std::vector<double>>&matrix);
         
-        /// @brief In-place element-wise vector mulitplication
+        /// @brief In-place element-wise vector multiplication
         /// @param vec Vector to multiply
         /// @param val value to multiply by
         void vec_element_mult__(std::vector<double>&vec, double const val);

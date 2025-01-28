@@ -46,7 +46,7 @@ class DistData {
         /// @return XS values in barns
         std::vector<double> return_ii_xs_vector(std::vector<double> const& inc_energies);
         
-        /// @brief Calculates the XS values at 100 logrithmically spaced points from the minimum incident energy 
+        /// @brief Calculates the XS values at 100 logarithmically spaced points from the minimum incident energy 
         /// (set by command line argument) to the maximum incident energy (as defined in the ENDF file for the material).
         /// @return (first) incident energies in eV, (second) XS values in barns
         std::pair<std::vector<double>, std::vector<double>> return_linearized_ii_xs();
@@ -67,7 +67,7 @@ class DistData {
         /// @return (first) Alpha values, (second) PDF values
         std::pair<std::vector<double>, std::vector<double>> return_viable_linearized_alpha_pdf(double const& inc_energy, double const& beta);
         
-        /// @brief Runner function that calulates the sampling distributions and then stores them in the class
+        /// @brief Runner function that calculates the sampling distributions and then stores them in the class
         void calculate_sampling_dists();
         
         /// @brief Converts a beta value into the associated outgoing energy in eV
@@ -98,7 +98,7 @@ class DistData {
         /// @brief Calculates teh scattering angles given an incident and outgoing energy and a vector of alpha values
         /// @param inc_energy Desired incident energy in eV
         /// @param out_energy Desired outgoing energy in eV
-        /// @param alphas Desried alpha values
+        /// @param alphas Desired alpha values
         /// @return Scattering angles 
         std::vector<double> alphas_to_scatting_angles(double const& inc_energy, double const& out_energy, std::vector<double> const& alphas);
 
@@ -106,6 +106,13 @@ class DistData {
         std::vector<double> calculation_betas;
         std::vector<double> calculation_half_betas;
         std::vector<double> calculation_alphas;
+        std::vector<std::vector<double>> calculation_tsl_vals;
+
+        std::vector<std::vector<double>> calculation_beta_vals;
+        std::vector<std::vector<double>> calculation_beta_cdfs;
+
+        std::vector<std::vector<double>> calculation_alpha_vals;
+        std::vector<std::vector<double>> calculation_alpha_cdfs;
 
         /// @brief A working variable to hold the incident energy in the linearization process
         double inc_ener_hold__;
@@ -113,18 +120,32 @@ class DistData {
         /// @brief A working variable to hold the beta value in the linearization process
         double beta_hold__;
 
+        /// @brief Sets the interpolation and integration schemes in the runtime variables given the TSL data.
+        /// This current implementation is not correct.  It assumes that only one scheme is applied to all values and no ranges exist.
+        /// It also does not correct for the non-linear exp(-beta/2) term when converting to the asymmetric form of the TSL.  
+        /// This term should should change the beta schemes to reflect this but I was unable to find a way to do that without moving everything into file_read.cpp.
+        /// That implementation was also 10x slower and had no noticeable effects for the metal hydrides so it was abandoned in place.
+        /// If you want a more accurate implementation, use the "return_arbitrary_TSL_val" in file_read.cpp instead of the one in this source file.
+        void set_interp_integration_schemes__();
+
+        /// @brief Calculates an arbitrary TSL value given the TSL data
+        /// @param alpha Desired alpha value
+        /// @param beta Desired beta value
+        /// @return Desired TSL value
+        std::pair<double, bool> return_arbitrary_TSL_val(double const& alpha, double const& beta);
+
         /// @brief Returns a vector of stored alpha values that are within the alpha extrema and adds the extrema if not already present
-        /// @param inc_energy Desried incident energy in eV
+        /// @param inc_energy Desired incident energy in eV
         /// @param beta Desired beta value
         /// @return Viable alpha values
         std::vector<double> get_viable_alphas__(double const& inc_energy, double const& beta);
         
-        /// @brief Returns a vector of stored beta values that are within the alpha beta extrema and adds teh extrema if not already present
+        /// @brief Returns a vector of stored beta values that are within the alpha beta extrema and adds the extrema if not already present
         /// @param inc_energy Desired incident energy in eV
         /// @return Viable beta values
         std::vector<double> get_viable_betas__(double const& inc_energy);
         
-        /// @brief Returns or calulates the TSL values at the given alpha points and indicates whether the SCT was used to calculate a point
+        /// @brief Returns or calculates the TSL values at the given alpha points and indicates whether the SCT was used to calculate a point
         /// @param alpha_vals Desired alpha values to calculate the TSL values
         /// @param beta Desired beta value
         /// @return (first) TSL values, (second) Was SCT time used

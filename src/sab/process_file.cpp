@@ -120,7 +120,8 @@ std::pair<std::vector<double>, std::vector<bool>> DistData::get_alpha_line__(std
     vals.reserve(alpha_vals.size());
     truthy.reserve(alpha_vals.size());
     for(double alpha:alpha_vals){
-        auto [val, thruth] = return_arbitrary_TSL_val(alpha, beta);
+        // auto [val, thruth] = return_arbitrary_TSL_val(alpha, beta);
+        auto [val, thruth] = tsl_data.return_arbitrary_TSL_val(alpha, beta);
         vals.push_back(val);
         truthy.push_back(thruth);
     }
@@ -134,7 +135,6 @@ double DistData::integrate_alpha_line__(std::vector<double> const& alpha_vals, s
             integral += tsl_data.return_asym_SCT_alpha_integral(alpha_vals[i], alpha_vals[i+1], beta);
         }
         else{
-            /// NOTE: The alpha integration scheme is not set properly, it needs to reflect the storage interpolation scheme
             /// NOTE: This function will probably need to be moved inside tsl_data in order to properly integrate
             integral += ENDF_integrate(alpha_vals[i], alpha_vals[i+1], vals[i], vals[i+1], alpha_integration_scheme);
         }

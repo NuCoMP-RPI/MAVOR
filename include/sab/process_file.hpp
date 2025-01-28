@@ -123,9 +123,6 @@ class DistData {
         /// @brief Sets the interpolation and integration schemes in the runtime variables given the TSL data.
         /// This current implementation is not correct.  It assumes that only one scheme is applied to all values and no ranges exist.
         /// It also does not correct for the non-linear exp(-beta/2) term when converting to the asymmetric form of the TSL.  
-        /// This term should should change the beta schemes to reflect this but I was unable to find a way to do that without moving everything into file_read.cpp.
-        /// That implementation was also 10x slower and had no noticeable effects for the metal hydrides so it was abandoned in place.
-        /// If you want a more accurate implementation, use the "return_arbitrary_TSL_val" in file_read.cpp instead of the one in this source file.
         void set_interp_integration_schemes__();
 
         /// @brief Calculates an arbitrary TSL value given the TSL data

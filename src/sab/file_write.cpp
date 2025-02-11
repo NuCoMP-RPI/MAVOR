@@ -22,12 +22,12 @@ void write_sampling_data(DistData const & sampling_data, std::string const & fil
 
     writeHDF5DoubleVector(file, sampling_data.incident_energy_grid, "Incident Energy Grid");
     writeHDF5DoubleVector(file, sampling_data.cross_section, "Incoherent Inelastic XS");
-    writeHDF5DoubleVector(file, sampling_data.beta_cdf_grid, "Beta CDF Grid");
-    writeHDF5DoubleMatrix(file, sampling_data.beta_vals, "Betas");
+    writeHDF5DoubleJaggedMatrix(file, sampling_data.beta_cdf_grid, "Beta CDF Grid");
+    writeHDF5DoubleJaggedMatrix(file, sampling_data.beta_vals, "Betas");
 
     writeHDF5DoubleVector(file, sampling_data.beta_grid, "Beta Grid");
-    writeHDF5DoubleVector(file, sampling_data.alpha_cdf_grid, "Alpha CDF Grid");
-    writeHDF5DoubleMatrix(file, sampling_data.alpha_vals, "Alphas");
+    writeHDF5DoubleJaggedMatrix(file, sampling_data.alpha_cdf_grid, "Alpha CDF Grid");
+    writeHDF5DoubleJaggedMatrix(file, sampling_data.alpha_vals, "Alphas");
 
     file.close();
 }

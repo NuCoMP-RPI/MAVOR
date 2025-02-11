@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <chrono>
+#include <set>
 
 #include "constants.hpp"
 #include "integration.hpp"
@@ -30,16 +31,21 @@ DistData::DistData(TslFileData& file_data) : tsl_data(file_data){
 
     set_interp_integration_schemes__();
 
-    beta_cdf_grid = sigmoid_space(0, 1, num_beta_cdf_points + 2, beta_cdf_extent);
-    alpha_cdf_grid = sigmoid_space(0, 1, num_alpha_cdf_points + 2, alpha_cdf_extent);
+    // beta_cdf_grid = sigmoid_space(0, 1, num_beta_cdf_points + 2, beta_cdf_extent);
+    // alpha_cdf_grid = sigmoid_space(0, 1, num_alpha_cdf_points + 2, alpha_cdf_extent);
 
-    // Trim off the 0 and 1 for the cdf grids
-    // Including them causes trouble with the fitting across multiple temperatures as finding fit points at 0 and 1 cause
-    // large spikes as the edges of the fit values
-    beta_cdf_grid.erase(beta_cdf_grid.begin());
-    beta_cdf_grid.erase(beta_cdf_grid.end()-1);
-    alpha_cdf_grid.erase(alpha_cdf_grid.begin());
-    alpha_cdf_grid.erase(alpha_cdf_grid.end()-1);
+    // // Trim off the 0 and 1 for the cdf grids
+    // // Including them causes trouble with the fitting across multiple temperatures as finding fit points at 0 and 1 cause
+    // // large spikes as the edges of the fit values
+    // beta_cdf_grid.erase(beta_cdf_grid.begin());
+    // beta_cdf_grid.erase(beta_cdf_grid.end()-1);
+    // alpha_cdf_grid.erase(alpha_cdf_grid.begin());
+    // alpha_cdf_grid.erase(alpha_cdf_grid.end()-1);
+
+    initialization_beta_cdf_grid.push_back(0.0001);
+    initialization_beta_cdf_grid.push_back(0.9999);
+    initialization_alpha_cdf_grid.push_back(0.0001);
+    initialization_alpha_cdf_grid.push_back(0.9999);
 }
 
 void DistData::set_interp_integration_schemes__(){
@@ -217,7 +223,23 @@ void DistData::get_beta_sampling_dists__(){
         auto [vals, pdf] = return_linearized_beta_pdf(inc_energy);
         calculation_beta_vals.push_back(vals);
         calculation_beta_cdfs.push_back(pdf_to_cdf(vals, pdf));
-        beta_vals.push_back(fit_cdf(vals, calculation_beta_cdfs.back(), beta_cdf_grid));
+        beta_vals.push_back(fit_cdf(vals, calculation_beta_cdfs.back(), initialization_beta_cdf_grid));
+        beta_cdf_grid.push_back(initialization_beta_cdf_grid);
+    }
+}
+
+void DistData::linearize_beta_sampling_dists__(){
+    for (int i = 0; i < calculation_beta_cdfs.size(); i++){
+        // Lambda function to get a new beta value that corresponds to a desired cdf value
+       auto get_new_cdf_point = [&](double desired_cdf_val){
+            int cdf_insert = std::lower_bound(calculation_beta_cdfs[i].begin()+1, calculation_beta_cdfs[i].end(), desired_cdf_val) - calculation_beta_cdfs[i].begin();
+            return ENDF_interp(calculation_beta_cdfs[i][cdf_insert],
+                               calculation_beta_cdfs[i][cdf_insert+1],
+                               calculation_beta_vals[i][cdf_insert],
+                               calculation_beta_vals[i][cdf_insert+1],
+                               desired_cdf_val);
+        };
+        linearize(beta_cdf_grid[i], beta_vals[i], get_new_cdf_point);
     }
 }
 
@@ -255,7 +277,23 @@ void DistData::get_alpha_sampling_dists__(){
         auto [vals, pdf] = return_linearized_alpha_pdf(beta);
         calculation_alpha_vals.push_back(vals);
         calculation_alpha_cdfs.push_back(pdf_to_cdf(vals, pdf));
-        alpha_vals.push_back(fit_cdf(vals, calculation_alpha_cdfs.back(), alpha_cdf_grid, 2));
+        alpha_vals.push_back(fit_cdf(vals, calculation_alpha_cdfs.back(), initialization_alpha_cdf_grid));
+        alpha_cdf_grid.push_back(initialization_alpha_cdf_grid);
+    }
+}
+
+void DistData::linearize_alpha_sampling_dists__(){
+    for (int i = 0; i < calculation_alpha_cdfs.size(); i++){
+        // Lambda function to get a new beta value that corresponds to a desired cdf value
+       auto get_new_cdf_point = [&](double desired_cdf_val){
+            int cdf_insert = std::lower_bound(calculation_alpha_cdfs[i].begin()+1, calculation_alpha_cdfs[i].end(), desired_cdf_val) - calculation_alpha_cdfs[i].begin();
+            return ENDF_interp(calculation_alpha_cdfs[i][cdf_insert],
+                               calculation_alpha_cdfs[i][cdf_insert+1],
+                               calculation_alpha_vals[i][cdf_insert],
+                               calculation_alpha_vals[i][cdf_insert+1],
+                               desired_cdf_val);
+        };
+        linearize(alpha_cdf_grid[i], alpha_vals[i], get_new_cdf_point);
     }
 }
 
@@ -264,7 +302,9 @@ void DistData::calculate_sampling_dists(){
     incident_energy_grid = ene;
     cross_section = xs;
     get_beta_sampling_dists__();
+    linearize_beta_sampling_dists__();
     get_alpha_sampling_dists__();
+    linearize_alpha_sampling_dists__();
 }
 
 double DistData::beta_to_outgoing_energy(double const& inc_energy, double const& beta){

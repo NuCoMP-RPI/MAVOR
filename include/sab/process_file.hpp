@@ -15,10 +15,10 @@ class DistData {
 
         std::vector<double> incident_energy_grid; // Grid that stores the cross section and beta_vals
         std::vector<double> cross_section; // Cross section corresponding to the incident energy grid
-        std::vector<double> beta_cdf_grid; // CDF grid that stores the beta vals
+        std::vector<std::vector<double>> beta_cdf_grid; // CDF grid that stores the beta vals
         std::vector<std::vector<double>> beta_vals; // Calculated beta values that form the SAB sampling distributions
         std::vector<double> beta_grid; // Grid that stores the alpha vals
-        std::vector<double> alpha_cdf_grid; // CDF grid that stores the alpha vals
+        std::vector<std::vector<double>> alpha_cdf_grid; // CDF grid that stores the alpha vals
         std::vector<std::vector<double>> alpha_vals; // Calculated alpha values that form the SAB sampling distributions
 
         /// Constructor
@@ -108,6 +108,9 @@ class DistData {
         std::vector<double> calculation_alphas;
         std::vector<std::vector<double>> calculation_tsl_vals;
 
+        std::vector<double> initialization_beta_cdf_grid;
+        std::vector<double> initialization_alpha_cdf_grid;
+
         std::vector<std::vector<double>> calculation_beta_vals;
         std::vector<std::vector<double>> calculation_beta_cdfs;
 
@@ -176,8 +179,12 @@ class DistData {
 
         /// @brief Runner function to calculate the beta sampling distributions
         void get_beta_sampling_dists__();
-        
+
+        void linearize_beta_sampling_dists__();
+
         /// @brief Runner function to calculate the alpha sampling distributions
         void get_alpha_sampling_dists__();
+
+        void linearize_alpha_sampling_dists__();
 };
 #endif

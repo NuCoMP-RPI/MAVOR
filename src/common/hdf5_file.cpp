@@ -116,6 +116,17 @@ void writeHDF5DoubleMatrix(H5::H5File file, std::vector<std::vector<double>> con
     dataset.write(flattenedMatrix.data(), H5::PredType::NATIVE_DOUBLE);
 }
 
+void writeHDF5DoubleJaggedMatrix(H5::H5File file, std::vector<std::vector<double>> const & jagged_matrix, std::string const & matrix_name){
+    std::vector<double> flat_data;
+    std::vector<int> offsets = {0};
+    for (const auto& vec : jagged_matrix) {
+        flat_data.insert(flat_data.end(), vec.begin(), vec.end());
+        offsets.push_back(flat_data.size());
+    }
+    writeHDF5DoubleVector(file, flat_data, matrix_name + "_flattened");
+    writeHDF5IntVector(file, offsets, matrix_name + "_offsets");
+}
+
 void readHDF5String(H5::H5File& file, const std::string& datasetName, std::string& value) {
     H5::DataSet dataset = file.openDataSet(datasetName);
     H5::DataSpace dataspace = dataset.getSpace();

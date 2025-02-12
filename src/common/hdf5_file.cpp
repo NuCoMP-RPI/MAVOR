@@ -51,6 +51,31 @@ void writeHDF5Double(H5::H5File file, double const & value, std::string const & 
     dataset.write(&value, H5::PredType::NATIVE_DOUBLE);
 }
 
+void readHDF5IntVector(H5::H5File& file, const std::string& datasetName, std::vector<int>& array) {
+    H5::DataSet dataset = file.openDataSet(datasetName);
+    H5::DataSpace dataspace = dataset.getSpace();
+    // Calculate total size for the array
+    int rank = dataspace.getSimpleExtentNdims();
+    hsize_t dims[rank];
+    dataspace.getSimpleExtentDims(dims);
+    hsize_t totalSize = 1;
+    for (int i = 0; i < rank; ++i) {
+        totalSize *= dims[i];
+    }
+    array.resize(totalSize);
+    dataset.read(array.data(), H5::PredType::NATIVE_INT);
+    dataset.close();
+    dataspace.close();
+}
+
+void writeHDF5IntVector(H5::H5File file, const std::vector<int>& vector, const std::string& vector_name) {
+    hsize_t dims[1] = {vector.size()};
+    H5::DataSpace dataspace(1, dims);
+    H5::IntType datatype(H5::PredType::NATIVE_INT);
+    H5::DataSet dataset = file.createDataSet(vector_name, datatype, dataspace);
+    dataset.write(vector.data(), H5::PredType::NATIVE_INT);
+}
+
 void readHDF5DoubleVector(H5::H5File& file, const std::string& datasetName, std::vector<double>& array) {
     H5::DataSet dataset = file.openDataSet(datasetName);
     H5::DataSpace dataspace = dataset.getSpace();
@@ -89,6 +114,17 @@ void writeHDF5DoubleMatrix(H5::H5File file, std::vector<std::vector<double>> con
         flattenedMatrix.insert(flattenedMatrix.end(), row.begin(), row.end());
     }
     dataset.write(flattenedMatrix.data(), H5::PredType::NATIVE_DOUBLE);
+}
+
+void writeHDF5DoubleJaggedMatrix(H5::H5File file, std::vector<std::vector<double>> const & jagged_matrix, std::string const & matrix_name){
+    std::vector<double> flat_data;
+    std::vector<int> offsets = {0};
+    for (const auto& vec : jagged_matrix) {
+        flat_data.insert(flat_data.end(), vec.begin(), vec.end());
+        offsets.push_back(flat_data.size());
+    }
+    writeHDF5DoubleVector(file, flat_data, matrix_name + "_flattened");
+    writeHDF5IntVector(file, offsets, matrix_name + "_offsets");
 }
 
 void readHDF5String(H5::H5File& file, const std::string& datasetName, std::string& value) {

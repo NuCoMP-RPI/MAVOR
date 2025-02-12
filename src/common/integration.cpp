@@ -26,6 +26,9 @@ double ENDF_integral_scheme_5(double const & x1, double const & x2, double const
 }
 
 double ENDF_integrate(double const & x1, double const & x2, double const & y1, double const & y2, int const scheme){
+    if (x1 == x2){
+        return y1;
+    }
     switch (scheme)
     {
     case 1:
@@ -35,7 +38,12 @@ double ENDF_integrate(double const & x1, double const & x2, double const & y1, d
     case 3:
         return ENDF_integral_scheme_3(x1, x2, y1, y2);
     case 4:
-        return ENDF_integral_scheme_4(x1, x2, y1, y2);
+        if (y1 == y2){
+            return ENDF_integral_scheme_1(x1, x2, y1, y2);
+        }
+        else{
+            return ENDF_integral_scheme_4(x1, x2, y1, y2);
+        }
     case 5:
         return ENDF_integral_scheme_5(x1, x2, y1, y2);
  

@@ -23,12 +23,12 @@ SabData::SabData(const std::string & file_path){
     readHDF5DoubleVector(file, "Incoherent Inelastic XS", ii_xs);
     readHDF5DoubleVector(file, "Beta CDF Grid", beta_cdf_grid);
     std::vector<double> fit_betas_vector;
-    readHDF5DoubleVector(file, "Fit Betas", fit_betas_vector);
+    readHDF5DoubleVector(file, "Betas", fit_betas_vector);
     fit_beta_vals = vector_to_matrix__(fit_betas_vector, inc_energy_grid.size(), beta_cdf_grid.size());
     readHDF5DoubleVector(file, "Beta Grid", beta_grid);
     readHDF5DoubleVector(file, "Alpha CDF Grid", alpha_cdf_grid);
     std::vector<double> fit_alphas_vector;
-    readHDF5DoubleVector(file, "Fit Alphas", fit_alphas_vector);
+    readHDF5DoubleVector(file, "Alphas", fit_alphas_vector);
     fit_alpha_vals = vector_to_matrix__(fit_alphas_vector, beta_grid.size(), alpha_cdf_grid.size());
 }
 

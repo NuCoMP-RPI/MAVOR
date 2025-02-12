@@ -24,10 +24,6 @@ class TslFileData {
         double m0;
         double free_xs;
         double bound_xs;
-        std::vector<double> alphas;
-        std::vector<double> betas;
-        std::vector<double> tsl_vals_array;
-        std::vector<std::vector<double>> tsl_vals;
 
         /// Constructor
         /// @brief Reads in the TSL data
@@ -40,6 +36,21 @@ class TslFileData {
         void write_to_hdf5__(const std::string & file_path);
 
         // Public facing methods to return desired versions of the TSL data
+
+        /// @brief Returns the interpolation and integration scheme for the alpha axis.
+        /// This current implementation is not correct.  It assumes that only one scheme is applied to all values and no ranges exist.
+        /// @return Interpolation and Integration scheme
+        int return_alpha_schemes();
+
+        /// @brief Returns the interpolation and integration scheme for the beta axis.
+        /// This current implementation is not correct.  It assumes that only one scheme is applied to all values and no ranges exist.
+        /// It also does not correct for the non-linear exp(-beta/2) term when converting to the asymmetric form of the TSL.  
+        /// @return Interpolation and Integration scheme
+        int return_beta_schemes();
+
+        /// @brief Returns the alpha values that are stored in the file
+        /// @return Storage alpha values
+        std::vector<double> return_alphas();
 
         /// @brief Scales the storage alphas to the correct temperature
         /// @param ref_temp Reference temperature that the alphas are stored
@@ -84,8 +95,70 @@ class TslFileData {
         /// @brief Returns the full asymmetric TSL values
         /// @return Full asym TSL values
         std::vector<std::vector<double>> return_full_asym_tsl_vals();
+        
+        /// @brief Calculates the minimum beta value given an incident energy
+        /// @param inc_energy Desired incident energy in eV
+        /// @return Minumum beta value
+        double calculate_beta_min(double const& inc_energy);
+        
+        /// @brief Calculates teh maximum beta value given an incident energy.
+        /// Currently only returns the value set in runtime variables
+        /// @param inc_energy Desired incident energy in eV
+        /// @return Maximum beta value
+        double calculate_beta_max(double const& inc_energy);
+        
+        /// @brief Calculates the minimum and maximum alpha values given an incident energy and beta value.
+        /// @param inc_energy Desired incident energy in eV
+        /// @param beta Desired beta value
+        /// @return Minimum and maximum alpha values, respectively
+        std::pair<double, double> calculate_alpha_extrema(double const& inc_energy, double const& beta);
+
+        /// @brief Calculates the symmetric short collision time approximation
+        /// @param alpha Alpha value to calculate SCT
+        /// @param beta Beta value to calculate SCT
+        /// @return Symmetric SCT approximation at alpha and beta
+        double return_sym_SCT(double const& alpha, double const& beta);
+        
+        /// @brief Calculates the asymmetric short collision time approximation
+        /// @param alpha Alpha value to calculate SCT
+        /// @param beta Beta value to calculate SCT
+        /// @return Asymmetric SCT approximation at alpha and beta
+        double return_asym_SCT(double const& alpha, double const& beta);
+        
+        /// @brief Calculated the definite integral of the asymmetric short collision time approximation at a given beta between two alpha points
+        /// @param alpha_l Lower alpha bound
+        /// @param alpha_u Upper alpha bound
+        /// @param beta Beta value to calculate integral
+        /// @return Integral of the asymmetric SCT approximation
+        double return_asym_SCT_alpha_integral(double const& alpha_l, double const& alpha_u, double const& beta);
+        
+        /// @brief Calculates an arbitrary asymmetric TSL value given the TSL data.
+        /// This method assumes that the desired alpha and beta points given are the true points.
+        /// Meaning that they have already been scaled to the temperature of this data file.
+        /// @param alpha Desired alpha value at temperature
+        /// @param beta Desired beta value at temperature
+        /// @return TSL value
+        std::pair<double, bool> return_arbitrary_TSL_val(double const& alpha, double const& beta);
 
     private:
+        std::vector<int> alpha_interpolants;
+        std::vector<int> alpha_interpolants_boundaries;
+
+        std::vector<int> beta_interpolants;
+        std::vector<int> beta_interpolants_boundaries;
+
+        std::vector<double> alphas;
+        std::vector<double> betas;
+        std::vector<double> tsl_vals_array;
+        std::vector<std::vector<double>> tsl_vals;
+
+        /// @brief Calculates the asymmetric short collision time integral bound given an alpha and beta value
+        /// Integrates d alpha from [-infty, alpha]
+        /// @param alpha Desired alpha value
+        /// @param beta Desired beta value
+        /// @return Integral bound
+        double asym_SCT_alpha_integral_bounds__(double const& alpha, double const& beta);
+
         /// @brief Reads a HDF5 TSL file from this class
         /// @param file_path Path to file
         void read_from_hdf5__(const std::string & file_path);
@@ -98,7 +171,7 @@ class TslFileData {
         /// @param matrix Matrix to exponentiate
         void matrix_element_exp__(std::vector<std::vector<double>>&matrix);
         
-        /// @brief In-place element-wise vector mulitplication
+        /// @brief In-place element-wise vector multiplication
         /// @param vec Vector to multiply
         /// @param val value to multiply by
         void vec_element_mult__(std::vector<double>&vec, double const val);

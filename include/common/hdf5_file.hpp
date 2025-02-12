@@ -42,6 +42,18 @@ void readHDF5Double(H5::H5File& file, const std::string& datasetName, double& va
 /// @param value_name Name of the dataset to create.
 void writeHDF5Double(H5::H5File file, double const& value, std::string const& value_name);
 
+/// @brief Reads a vector of integers from an HDF5 dataset.
+/// @param file Reference to the HDF5 file object.
+/// @param datasetName Name of the dataset to read.
+/// @param array Output vector of integers.
+void readHDF5IntVector(H5::H5File& file, const std::string& datasetName, std::vector<int>& array);
+
+/// @brief Writes a vector of integers to an HDF5 dataset.
+/// @param file HDF5 file object.
+/// @param vector The vector of integers to write.
+/// @param vector_name Name of the dataset to create.
+void writeHDF5IntVector(H5::H5File file, const std::vector<int>& vector, const std::string& vector_name);
+
 /// @brief Reads a vector of doubles from an HDF5 dataset.
 /// @param file Reference to the HDF5 file object.
 /// @param datasetName Name of the dataset to read.
@@ -59,6 +71,12 @@ void writeHDF5DoubleVector(H5::H5File file, std::vector<double> const& vector, s
 /// @param matrix The 2D vector (matrix) of doubles to write.
 /// @param matrix_name Name of the dataset to create.
 void writeHDF5DoubleMatrix(H5::H5File file, std::vector<std::vector<double>> const& matrix, std::string const& matrix_name);
+
+/// @brief Writes a jagged matrix of doubles to an HDF5 dataset.
+/// @param file HDF5 file object.
+/// @param matrix The 2D jagged vector (matrix) of doubles to write.
+/// @param matrix_name Name of the dataset to create.
+void writeHDF5DoubleJaggedMatrix(H5::H5File file, std::vector<std::vector<double>> const& matrix, std::string const& matrix_name);
 
 /// @brief Reads a string from an HDF5 dataset.
 /// @param file Reference to the HDF5 file object.

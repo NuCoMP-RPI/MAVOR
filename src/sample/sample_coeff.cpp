@@ -5,59 +5,56 @@
 #include <omp.h>
 #include <chrono>
 
-#include "H5Cpp.h"
-
 #include "sample_coeff.hpp"
 
 #include "sample_search.hpp"
 #include "runtime_variables.hpp"
 #include "constants.hpp"
-#include "hdf5_file.hpp"
 #include "interpolation.hpp"
 #include "scale_basis.hpp"
 
 CoeffFile::CoeffFile(std::string const & file_path){
-    H5::H5File file(file_path, H5F_ACC_RDONLY);
+    // H5::H5File file(file_path, H5F_ACC_RDONLY);
 
-    readHDF5Int(file, "ZA", za);
-    readHDF5Int(file, "MAT", mat);
-    readHDF5Double(file, "A0", a0);
-    readHDF5Double(file, "E_MAX", e_max);
-    readHDF5Double(file, "M0", m0);
-    readHDF5Double(file, "FREE_XS", free_xs);
-    readHDF5Double(file, "BOUND_XS", bound_xs);
-    readHDF5Double(file, "Minimum Temperature", minimum_temperature);
-    readHDF5Double(file, "Maximum Temperature", maximum_temperature);
+    // readHDF5Int(file, "ZA", za);
+    // readHDF5Int(file, "MAT", mat);
+    // readHDF5Double(file, "A0", a0);
+    // readHDF5Double(file, "E_MAX", e_max);
+    // readHDF5Double(file, "M0", m0);
+    // readHDF5Double(file, "FREE_XS", free_xs);
+    // readHDF5Double(file, "BOUND_XS", bound_xs);
+    // readHDF5Double(file, "Minimum Temperature", minimum_temperature);
+    // readHDF5Double(file, "Maximum Temperature", maximum_temperature);
     
-    readHDF5Bool(file, "Scale XS temperatures", xs_scale_temperatures);
-    readHDF5Double(file, "XS Minimum Scaled Value", xs_scale_minimum);
-    readHDF5Double(file, "XS Maximum Scaled Value", xs_scale_maximum);
-    readHDF5String(file, "XS Fitting Function", xs_basis_function_string);
-    set_eval_function__(xs_eval_func, xs_basis_function_string);
+    // readHDF5Bool(file, "Scale XS temperatures", xs_scale_temperatures);
+    // readHDF5Double(file, "XS Minimum Scaled Value", xs_scale_minimum);
+    // readHDF5Double(file, "XS Maximum Scaled Value", xs_scale_maximum);
+    // readHDF5String(file, "XS Fitting Function", xs_basis_function_string);
+    // set_eval_function__(xs_eval_func, xs_basis_function_string);
 
-    readHDF5Bool(file, "Scale BETA temperatures", beta_scale_temperatures);
-    readHDF5Double(file, "BETA Minimum Scaled Value", beta_scale_minimum);
-    readHDF5Double(file, "BETA Maximum Scaled Value", beta_scale_maximum);
-    readHDF5String(file, "BETA Fitting Function", beta_basis_function_string);
-    set_eval_function__(beta_eval_func, beta_basis_function_string);
+    // readHDF5Bool(file, "Scale BETA temperatures", beta_scale_temperatures);
+    // readHDF5Double(file, "BETA Minimum Scaled Value", beta_scale_minimum);
+    // readHDF5Double(file, "BETA Maximum Scaled Value", beta_scale_maximum);
+    // readHDF5String(file, "BETA Fitting Function", beta_basis_function_string);
+    // set_eval_function__(beta_eval_func, beta_basis_function_string);
 
-    readHDF5Bool(file, "Scale ALPHA temperatures", alpha_scale_temperatures);
-    readHDF5Double(file, "ALPHA Minimum Scaled Value", alpha_scale_minimum);
-    readHDF5Double(file, "ALPHA Maximum Scaled Value", alpha_scale_maximum);
-    readHDF5String(file, "ALPHA Fitting Function", alpha_basis_function_string);
-    set_eval_function__(alpha_eval_func, alpha_basis_function_string);
+    // readHDF5Bool(file, "Scale ALPHA temperatures", alpha_scale_temperatures);
+    // readHDF5Double(file, "ALPHA Minimum Scaled Value", alpha_scale_minimum);
+    // readHDF5Double(file, "ALPHA Maximum Scaled Value", alpha_scale_maximum);
+    // readHDF5String(file, "ALPHA Fitting Function", alpha_basis_function_string);
+    // set_eval_function__(alpha_eval_func, alpha_basis_function_string);
 
-    readHDF5DoubleVector(file, "Incident Energy Grid", inc_ener_grid);
-    readHDF5DoubleVector(file, "Beta CDF Grid", beta_cdf_grid);
-    readHDF5DoubleVector(file, "Beta Grid", beta_grid);
-    readHDF5DoubleVector(file, "Alpha CDF Grid", alpha_cdf_grid);
+    // readHDF5DoubleVector(file, "Incident Energy Grid", inc_ener_grid);
+    // readHDF5DoubleVector(file, "Beta CDF Grid", beta_cdf_grid);
+    // readHDF5DoubleVector(file, "Beta Grid", beta_grid);
+    // readHDF5DoubleVector(file, "Alpha CDF Grid", alpha_cdf_grid);
 
-    readHDF5DoubleVector(file, "XS_Coefficients", ii_xs_coeffs);
-    num_xs_coeffs = ii_xs_coeffs.size()/inc_ener_grid.size();
-    readHDF5DoubleVector(file, "Beta Coefficients", beta_coeffs);
-    num_beta_coeffs = beta_coeffs.size()/(inc_ener_grid.size()*beta_cdf_grid.size());
-    readHDF5DoubleVector(file, "Alpha Coefficients", alpha_coeffs);
-    num_alpha_coeffs = alpha_coeffs.size()/(beta_grid.size()*alpha_cdf_grid.size());
+    // readHDF5DoubleVector(file, "XS_Coefficients", ii_xs_coeffs);
+    // num_xs_coeffs = ii_xs_coeffs.size()/inc_ener_grid.size();
+    // readHDF5DoubleVector(file, "Beta Coefficients", beta_coeffs);
+    // num_beta_coeffs = beta_coeffs.size()/(inc_ener_grid.size()*beta_cdf_grid.size());
+    // readHDF5DoubleVector(file, "Alpha Coefficients", alpha_coeffs);
+    // num_alpha_coeffs = alpha_coeffs.size()/(beta_grid.size()*alpha_cdf_grid.size());
 }
 
 void CoeffFile::set_eval_function__(EvaluationFunction &eval_func, std::string const &basis_func_string)
@@ -187,28 +184,28 @@ void CoeffFile::all_sample(const double &inc_ener){
 }
 
 void CoeffFile::write_results(){
-    H5::FileCreatPropList fcpl;
-    H5::FileAccPropList fapl;
-    H5::H5File file(sample_output_file, H5F_ACC_TRUNC, fcpl, fapl);
+    // H5::FileCreatPropList fcpl;
+    // H5::FileAccPropList fapl;
+    // H5::H5File file(sample_output_file, H5F_ACC_TRUNC, fcpl, fapl);
 
-    writeHDF5Int(file, za, "ZA");
-    writeHDF5Int(file, mat, "MAT");
-    writeHDF5Double(file, a0, "A0");
-    writeHDF5Double(file, e_max, "E_MAX");
-    writeHDF5Double(file, m0, "M0");
-    writeHDF5Double(file, free_xs, "FREE_XS");
-    writeHDF5Double(file, bound_xs, "BOUND_XS");
+    // writeHDF5Int(file, za, "ZA");
+    // writeHDF5Int(file, mat, "MAT");
+    // writeHDF5Double(file, a0, "A0");
+    // writeHDF5Double(file, e_max, "E_MAX");
+    // writeHDF5Double(file, m0, "M0");
+    // writeHDF5Double(file, free_xs, "FREE_XS");
+    // writeHDF5Double(file, bound_xs, "BOUND_XS");
 
-    writeHDF5Int(file, xi_1.size(), "Number of Samples");
-    writeHDF5Double(file, sample_temperature, "Sampling Temperature");
-    writeHDF5Double(file, time_to_sample_ms, "Sampling Time [ms]");
+    // writeHDF5Int(file, xi_1.size(), "Number of Samples");
+    // writeHDF5Double(file, sample_temperature, "Sampling Temperature");
+    // writeHDF5Double(file, time_to_sample_ms, "Sampling Time [ms]");
 
-    if (!sample_only_timing_results){
-        writeHDF5DoubleVector(file, sampled_secondary_energies, "Sampled Energies");
-        writeHDF5DoubleVector(file, sampled_scattering_cosines, "Sampled Cosines");
-    }
+    // if (!sample_only_timing_results){
+    //     writeHDF5DoubleVector(file, sampled_secondary_energies, "Sampled Energies");
+    //     writeHDF5DoubleVector(file, sampled_scattering_cosines, "Sampled Cosines");
+    // }
 
-    file.close();
+    // file.close();
 }
 
 void sample_coeff(){

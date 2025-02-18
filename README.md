@@ -1,10 +1,9 @@
 # Mavor
 A tool for handling thermal neutron scattering data.
 
-# Prior Dependencies 
-* HDF5 (Needs to have the cpp enabled)
-
 # Auto Fetched Dependencies
+* HDF5
+* HighFive
 * CLI11
 * Eigen
 * GoogleTest

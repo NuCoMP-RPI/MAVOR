@@ -3,14 +3,14 @@
 #include <algorithm>
 #include <math.h>
 
-#include "H5Cpp.h"
+#include <highfive/highfive.hpp>
+
 #include "ENDFtk/tree/Tape.hpp"
 #include "ENDFtk/tree/fromFile.hpp"
 #include "ENDFtk/section/7/4.hpp"
 
 #include "file_read.hpp"
 #include "runtime_variables.hpp"
-#include "hdf5_file.hpp"
 #include "interpolation.hpp"
 
 // Class Constructor
@@ -21,65 +21,62 @@ TslFileData::TslFileData(const std::string& file_path, const std::string & file_
 }
 
 void TslFileData::read_from_hdf5__(const std::string & file_path){
-    H5::H5File file(file_path, H5F_ACC_RDONLY);
+    HighFive::File file(file_path, HighFive::File::ReadOnly);
 
-    readHDF5Int(file, "lat", lat);
-    readHDF5Int(file, "lasym", lasym);
-    readHDF5Int(file, "lln", lln);
-    readHDF5Int(file, "za", za);
-    readHDF5Int(file, "mat", mat);
+    lat = file.getDataSet("lat").read<int>();
+    lasym = file.getDataSet("lasym").read<int>();
+    lln = file.getDataSet("lln").read<int>();
+    za = file.getDataSet("za").read<int>();
+    mat = file.getDataSet("mat").read<int>();
     predefined_energy_grid_key = mat;
-    readHDF5Double(file, "temp", temp);
-    readHDF5Double(file, "t_eff", t_eff);
-    readHDF5Double(file, "temp_ratio", temp_ratio);
-    readHDF5Double(file, "a0", a0);
-    readHDF5Double(file, "e_max", e_max);
-    readHDF5Double(file, "m0", m0);
-    readHDF5Double(file, "free_xs", free_xs);
-    readHDF5Double(file, "bound_xs", bound_xs);
 
-    readHDF5IntVector(file, "alpha_interpolants", alpha_interpolants);
-    readHDF5IntVector(file, "alpha_interpolants_boundaries", alpha_interpolants_boundaries);
-    readHDF5IntVector(file, "beta_interpolants", beta_interpolants);
-    readHDF5IntVector(file, "beta_interpolants_boundaries", beta_interpolants_boundaries);
+    temp = file.getDataSet("temp").read<double>();
+    t_eff = file.getDataSet("t_eff").read<double>();
+    temp_ratio = file.getDataSet("temp_ratio").read<double>();
+    a0 = file.getDataSet("a0").read<double>();
+    e_max = file.getDataSet("e_max").read<double>();
+    m0 = file.getDataSet("m0").read<double>();
+    free_xs = file.getDataSet("free_xs").read<double>();
+    bound_xs = file.getDataSet("bound_xs").read<double>();
 
-    readHDF5DoubleVector(file, "alphas", alphas);
-    readHDF5DoubleVector(file, "betas", betas);
-    readHDF5DoubleVector(file, "tsl_vals", tsl_vals_array);
-    tsl_vals = vector_to_matrix__(tsl_vals_array, betas.size(), alphas.size());
-    
-    file.close();
+    alpha_interpolants = file.getDataSet("alpha_interpolants").read<std::vector<int>>();
+    alpha_interpolants_boundaries = file.getDataSet("alpha_interpolants_boundaries").read<std::vector<int>>();
+    beta_interpolants = file.getDataSet("beta_interpolants").read<std::vector<int>>();
+    beta_interpolants_boundaries = file.getDataSet("beta_interpolants_boundaries").read<std::vector<int>>();
+
+    alphas = file.getDataSet("alphas").read<std::vector<double>>();
+    betas = file.getDataSet("betas").read<std::vector<double>>();
+
+    tsl_vals = file.getDataSet("tsl_vals").read<std::vector<std::vector<double>>>();
 }
 
-void TslFileData::write_to_hdf5__(const std::string & file_path){
-    H5::FileCreatPropList fcpl;
-    H5::FileAccPropList fapl;
-    H5::H5File file(file_path, H5F_ACC_TRUNC, fcpl, fapl);
+void TslFileData::write_to_hdf5(const std::string & file_path){
+    HighFive::File file(file_path, HighFive::File::Overwrite);
 
-    writeHDF5Int(file, lat, "lat");
-    writeHDF5Int(file, lasym, "lasym");
-    writeHDF5Int(file, lln, "lln");
-    writeHDF5Int(file, za, "za");
-    writeHDF5Int(file, mat, "mat");
-    writeHDF5Double(file, temp, "temp");
-    writeHDF5Double(file, t_eff, "t_eff");
-    writeHDF5Double(file, temp_ratio, "temp_ratio");
-    writeHDF5Double(file, a0, "a0");
-    writeHDF5Double(file, e_max, "e_max");
-    writeHDF5Double(file, m0, "m0");
-    writeHDF5Double(file, free_xs, "free_xs");
-    writeHDF5Double(file, bound_xs, "bound_xs");
+    file.createDataSet("lat", lat);
+    file.createDataSet("lasym", lasym);
+    file.createDataSet("lln", lln);
+    file.createDataSet("za", za);
+    file.createDataSet("mat", mat);
 
-    writeHDF5IntVector(file, alpha_interpolants, "alpha_interpolants");
-    writeHDF5IntVector(file, alpha_interpolants_boundaries, "alpha_interpolants_boundaries");
-    writeHDF5IntVector(file, beta_interpolants, "beta_interpolants");
-    writeHDF5IntVector(file, beta_interpolants_boundaries, "beta_interpolants_boundaries");
+    file.createDataSet("temp", temp);
+    file.createDataSet("t_eff", t_eff);
+    file.createDataSet("temp_ratio", temp_ratio);
+    file.createDataSet("a0", a0);
+    file.createDataSet("e_max", e_max);
+    file.createDataSet("m0", m0);
+    file.createDataSet("free_xs", free_xs);
+    file.createDataSet("bound_xs", bound_xs);
 
-    writeHDF5DoubleVector(file, alphas, "alphas");
-    writeHDF5DoubleVector(file, betas, "betas");
-    writeHDF5DoubleMatrix(file, tsl_vals, "tsl_vals");
+    file.createDataSet("alpha_interpolants", alpha_interpolants);
+    file.createDataSet("alpha_interpolants_boundaries", alpha_interpolants_boundaries);
+    file.createDataSet("beta_interpolants", beta_interpolants);
+    file.createDataSet("beta_interpolants_boundaries", beta_interpolants_boundaries);
 
-    file.close();
+    file.createDataSet("alphas", alphas);
+    file.createDataSet("betas", betas);
+
+    file.createDataSet("tsl_vals", tsl_vals);
 }
 
 // type aliases

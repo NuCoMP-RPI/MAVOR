@@ -128,6 +128,13 @@ class DistData {
         /// It also does not correct for the non-linear exp(-beta/2) term when converting to the asymmetric form of the TSL.  
         void set_interp_integration_schemes__();
 
+        /// @brief Sets the inital CDF grids to be used to store the alpha and beta sampling distributions.
+        /// If the "linearize" CLI option is set, the CDF grids will be initalized with two extrema points and a linearization process will be executed.
+        /// This will lead to jagged sampling distributions and will not be applicable to the OTF process.
+        /// If the "sigmoids" CLI option is set, the CDF grids will be initialized with sigmoid functions that are controlled through CLI options.
+        /// If the "cdf_files" CLI option is set, Mavor will read the files and set the grids to whats contained in the files.
+        void set_initial_cdf_grids__();
+
         /// @brief Calculates an arbitrary TSL value given the TSL data
         /// @param alpha Desired alpha value
         /// @param beta Desired beta value

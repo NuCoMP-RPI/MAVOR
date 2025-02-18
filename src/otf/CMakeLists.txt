@@ -11,11 +11,9 @@ target_link_libraries(otf_lib PRIVATE common_lib
                                       fitting_functions_lib
                                       predefined_lib)  
 
-# Link HDF5 library
-target_link_libraries(otf_lib PRIVATE ${HDF5_LIBRARIES})
-target_include_directories(otf_lib PRIVATE ${HDF5_INCLUDE_DIRS})
+target_include_directories(otf_lib PUBLIC ${highfive_SOURCE_DIR}/include)
+target_link_libraries(otf_lib PUBLIC hdf5-static)
 
-# Link Eigen library
 target_link_libraries(otf_lib PRIVATE Eigen3::Eigen)
 
 target_include_directories(otf_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/otf")

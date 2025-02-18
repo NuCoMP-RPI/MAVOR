@@ -19,7 +19,17 @@
 
 #include <iostream>
 #include <vector>
-#include <H5Cpp.h>
+
+void read_cdf_file__(std::string const & file_path, std::vector<double> &grid){
+    std::fstream file(file_path);
+    std::string line;
+    while (getline(file, line))
+    {
+        // right trim the line, should only be one value per line
+        line.erase(line.find_last_not_of(" \n\r\t")+1);
+        grid.push_back(std::stod(line));
+    }
+}
 
 // Class constructor
 DistData::DistData(TslFileData& file_data) : tsl_data(file_data){
@@ -30,22 +40,7 @@ DistData::DistData(TslFileData& file_data) : tsl_data(file_data){
     calculation_tsl_vals = tsl_data.return_full_asym_tsl_vals();
 
     set_interp_integration_schemes__();
-
-    // beta_cdf_grid = sigmoid_space(0, 1, num_beta_cdf_points + 2, beta_cdf_extent);
-    // alpha_cdf_grid = sigmoid_space(0, 1, num_alpha_cdf_points + 2, alpha_cdf_extent);
-
-    // // Trim off the 0 and 1 for the cdf grids
-    // // Including them causes trouble with the fitting across multiple temperatures as finding fit points at 0 and 1 cause
-    // // large spikes as the edges of the fit values
-    // beta_cdf_grid.erase(beta_cdf_grid.begin());
-    // beta_cdf_grid.erase(beta_cdf_grid.end()-1);
-    // alpha_cdf_grid.erase(alpha_cdf_grid.begin());
-    // alpha_cdf_grid.erase(alpha_cdf_grid.end()-1);
-
-    initialization_beta_cdf_grid.push_back(0.0001);
-    initialization_beta_cdf_grid.push_back(0.9999);
-    initialization_alpha_cdf_grid.push_back(0.0001);
-    initialization_alpha_cdf_grid.push_back(0.9999);
+    set_initial_cdf_grids__();
 }
 
 void DistData::set_interp_integration_schemes__(){
@@ -57,7 +52,36 @@ void DistData::set_interp_integration_schemes__(){
     beta_integration_scheme = 2;
 }
 
-std::pair<double, bool> DistData::return_arbitrary_TSL_val(double const& alpha, double const& beta){
+void DistData::set_initial_cdf_grids__(){
+    if (linearize_cdfs){
+        initialization_beta_cdf_grid.push_back(0.0001);
+        initialization_beta_cdf_grid.push_back(0.9999);
+        initialization_alpha_cdf_grid.push_back(0.0001);
+        initialization_alpha_cdf_grid.push_back(0.9999);
+    }
+    else if (use_sigmoid_cdfs)
+    {
+        initialization_beta_cdf_grid = sigmoid_space(0, 1, num_beta_cdf_points + 2, beta_cdf_extent);
+        initialization_alpha_cdf_grid = sigmoid_space(0, 1, num_alpha_cdf_points + 2, alpha_cdf_extent);
+
+        // Trim off the 0 and 1 for the cdf grids
+        // Including them causes trouble with the fitting across multiple temperatures as finding fit points at 0 and 1 cause
+        // large spikes as the edges of the fit values
+        initialization_beta_cdf_grid.erase(initialization_beta_cdf_grid.begin());
+        initialization_beta_cdf_grid.erase(initialization_beta_cdf_grid.end()-1);
+        initialization_alpha_cdf_grid.erase(initialization_alpha_cdf_grid.begin());
+        initialization_alpha_cdf_grid.erase(initialization_alpha_cdf_grid.end()-1);
+    }
+    else
+    {
+        read_cdf_file__(alpha_cdf_grid_loc, initialization_alpha_cdf_grid);
+        read_cdf_file__(beta_cdf_grid_loc, initialization_beta_cdf_grid);
+    }
+     
+}
+
+std::pair<double, bool> DistData::return_arbitrary_TSL_val(double const &alpha, double const &beta)
+{
     bool off_data = (
         alpha > calculation_alphas.back() || 
         beta  < calculation_betas.front() || 
@@ -88,7 +112,7 @@ std::pair<double, bool> DistData::return_arbitrary_TSL_val(double const& alpha, 
                                              beta_interpolation_scheme, alpha_interpolation_scheme), 
                                              false);
         }
-    }       
+    }
 }
 
 std::vector<double> DistData::get_viable_betas__(double const& inc_energy){
@@ -302,9 +326,12 @@ void DistData::calculate_sampling_dists(){
     incident_energy_grid = ene;
     cross_section = xs;
     get_beta_sampling_dists__();
-    linearize_beta_sampling_dists__();
     get_alpha_sampling_dists__();
-    linearize_alpha_sampling_dists__();
+    if (linearize_cdfs){
+        if (!silence){std::cout << "Linearizing sampling distributions" << std::endl;}
+        linearize_beta_sampling_dists__();
+        linearize_alpha_sampling_dists__();
+    }
 }
 
 double DistData::beta_to_outgoing_energy(double const& inc_energy, double const& beta){

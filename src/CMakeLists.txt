@@ -4,6 +4,7 @@ add_subdirectory(tsl)
 add_subdirectory(sab)
 add_subdirectory(otf)
 add_subdirectory(sample)
+add_subdirectory(elastic)
 
 add_executable(mavor)
 
@@ -16,7 +17,9 @@ target_link_libraries(mavor PRIVATE
                       tsl_lib 
                       sab_lib 
                       otf_lib
-                      sample_lib)
+                      sample_lib
+                      elastic_lib
+                      )
 
 set_target_properties(mavor PROPERTIES OUTPUT_NAME "mavor")
 target_include_directories(mavor PRIVATE "${CMAKE_SOURCE_DIR}/include")
@@ -26,6 +29,7 @@ target_include_directories(mavor PRIVATE "${CMAKE_SOURCE_DIR}/include/tsl")
 target_include_directories(mavor PRIVATE "${CMAKE_SOURCE_DIR}/include/otf")
 target_include_directories(mavor PRIVATE "${CMAKE_SOURCE_DIR}/include/sab")
 target_include_directories(mavor PRIVATE "${CMAKE_SOURCE_DIR}/include/sample")
+target_include_directories(mavor PRIVATE "${CMAKE_SOURCE_DIR}/include/elastic")
 target_compile_features(mavor PRIVATE cxx_std_17)
 
 # Link CLI11

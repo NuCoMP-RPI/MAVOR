@@ -19,9 +19,8 @@ if(OpenMP_CXX_FOUND)
     target_link_libraries(sample_lib PRIVATE OpenMP::OpenMP_CXX)
 endif()
 
-# Link HDF5 library
-target_link_libraries(sample_lib PRIVATE ${HDF5_LIBRARIES})
-target_include_directories(sample_lib PRIVATE ${HDF5_INCLUDE_DIRS})
+target_include_directories(sample_lib PUBLIC ${highfive_SOURCE_DIR}/include)
+target_link_libraries(sample_lib PUBLIC hdf5-static)
                               
 target_include_directories(sample_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/sample")
 target_include_directories(sample_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/sample/fit_evaluation")

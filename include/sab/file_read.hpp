@@ -4,8 +4,6 @@
 #include <iostream>
 #include <vector>
 
-#include "H5Cpp.h"
-
 #include "constants.hpp"
 
 /// @brief Class to read in TSL data and provide methods to transform it into desired domains
@@ -33,7 +31,7 @@ class TslFileData {
 
         /// @brief Writes TSL data to a HDF5 file
         /// @param file_path File path to write
-        void write_to_hdf5__(const std::string & file_path);
+        void write_to_hdf5(const std::string & file_path);
 
         // Public facing methods to return desired versions of the TSL data
 

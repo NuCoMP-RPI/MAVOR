@@ -3,46 +3,15 @@
 #include <filesystem>
 #include <map>
 
+#include <highfive/highfive.hpp>
 #include "Eigen/Dense"
-#include "H5Cpp.h"
 
 #include "process_otf.hpp"
 #include "sab_file.hpp"
 #include "scale_basis.hpp"
 #include "runtime_variables.hpp"
-#include "hdf5_file.hpp"
 
 #include "predefined_fit_settings.hpp"
-
-void __write_xs_Coeffs__(H5::H5File file, std::vector<Eigen::VectorXd> const & matrix, std::string const & matrix_name){
-    hsize_t dims[2] = {matrix.size(), static_cast<hsize_t>(matrix[0].size())};
-    H5::DataSpace dataspace(2, dims);
-    H5::FloatType datatype(H5::PredType::NATIVE_DOUBLE);
-    H5::DataSet dataset = file.createDataSet(matrix_name, datatype, dataspace);
-    // Flatten matrix to be able to write
-    // Don't think HDF5 supports vec<vec>> writing 
-    std::vector<double> flattenedMatrix;
-    for (const auto& row : matrix) {
-        flattenedMatrix.insert(flattenedMatrix.end(), row.begin(), row.end());
-    }
-    dataset.write(flattenedMatrix.data(), H5::PredType::NATIVE_DOUBLE);
-}
-
-void __write_fit_Coeffs__(H5::H5File file, std::vector<std::vector<Eigen::VectorXd>> const & matrix, std::string const & matrix_name){
-    hsize_t dims[3] = {matrix.size(), matrix[0].size(), static_cast<hsize_t>(matrix[0][0].size())};
-    H5::DataSpace dataspace(3, dims);
-    H5::FloatType datatype(H5::PredType::NATIVE_DOUBLE);
-    H5::DataSet dataset = file.createDataSet(matrix_name, datatype, dataspace);
-    // Flatten matrix to be able to write
-    // Don't think HDF5 supports vec<vec>> writing 
-    std::vector<double> flattenedMatrix;
-    for (const auto& row : matrix) {
-        for (const auto& col : row){
-            flattenedMatrix.insert(flattenedMatrix.end(), col.begin(), col.end());
-        }
-    }
-    dataset.write(flattenedMatrix.data(), H5::PredType::NATIVE_DOUBLE);
-}
 
 OTFData::OTFData(const std::string & directory){
     std::map<double, SabData, std::less<double>> files;
@@ -80,8 +49,8 @@ OTFData::OTFData(const std::string & directory){
     xs_coeffs.resize(inc_energy_grid.size(), Eigen::VectorXd(xs_num_coeffs));
 
     // Initialize the vectors for storing the fit values (ordering needs to be <g1, g2, temps>)
-    fit_beta_vals.resize(inc_energy_grid.size(), std::vector<Eigen::VectorXd>(beta_cdf_grid.size(), Eigen::VectorXd(num_files)));
-    fit_alpha_vals.resize(beta_grid.size(), std::vector<Eigen::VectorXd>(alpha_cdf_grid.size(), Eigen::VectorXd(num_files)));
+    beta_vals.resize(inc_energy_grid.size(), std::vector<Eigen::VectorXd>(beta_cdf_grid.size(), Eigen::VectorXd(num_files)));
+    alpha_vals.resize(beta_grid.size(), std::vector<Eigen::VectorXd>(alpha_cdf_grid.size(), Eigen::VectorXd(num_files)));
 
     // Initialize the vectors for storing the coefficients (ordering needs to be <g1, g2, coeffs>)
     beta_coeffs.resize(inc_energy_grid.size(), std::vector<Eigen::VectorXd>(beta_cdf_grid.size(), Eigen::VectorXd(beta_num_coeffs)));
@@ -91,14 +60,14 @@ OTFData::OTFData(const std::string & directory){
     for (int i = 0; i<inc_energy_grid.size(); i++){
         ii_xs[i][k] = it->second.ii_xs[i];
         for (int j = 0; j<beta_cdf_grid.size(); j++){
-            fit_beta_vals[i][j][k] = it->second.fit_beta_vals[i][j];
+            beta_vals[i][j][k] = it->second.beta_vals[i][j];
         }
     }
 
     // load in alpha vals
     for (int i = 0; i<beta_grid.size(); i++){
         for (int j = 0; j<alpha_cdf_grid.size(); j++){
-            fit_alpha_vals[i][j][k] = it->second.fit_alpha_vals[i][j];
+            alpha_vals[i][j][k] = it->second.alpha_vals[i][j];
         }
     }
 
@@ -125,14 +94,14 @@ OTFData::OTFData(const std::string & directory){
         for (int i = 0; i<inc_energy_grid.size(); i++){
             ii_xs[i][k] = it->second.ii_xs[i];
             for (int j = 0; j<beta_cdf_grid.size(); j++){
-                fit_beta_vals[i][j][k] = it->second.fit_beta_vals[i][j];
+                beta_vals[i][j][k] = it->second.beta_vals[i][j];
             }
         }
 
         // load in alpha vals
         for (int i = 0; i<beta_grid.size(); i++){
             for (int j = 0; j<alpha_cdf_grid.size(); j++){
-                fit_alpha_vals[i][j][k] = it->second.fit_alpha_vals[i][j];
+                alpha_vals[i][j][k] = it->second.alpha_vals[i][j];
             }
         }
         it++;
@@ -241,44 +210,58 @@ void OTFData::generate_coefficients(){
 }
 
 void OTFData::write_coefficients(){
-    H5::FileCreatPropList fcpl;
-    H5::FileAccPropList fapl;
-    H5::H5File file(otf_output_file, H5F_ACC_TRUNC, fcpl, fapl);
+    HighFive::File file(otf_output_file, HighFive::File::Overwrite);
 
-    writeHDF5Int(file, za, "ZA");
-    writeHDF5Int(file, mat, "MAT");
-    writeHDF5Double(file, a0, "A0");
-    writeHDF5Double(file, e_max, "E_MAX");
-    writeHDF5Double(file, m0, "M0");
-    writeHDF5Double(file, free_xs, "FREE_XS");
-    writeHDF5Double(file, bound_xs, "BOUND_XS");
+    HighFive::Group inelastic = file.createGroup("Inelastic");
 
-    writeHDF5Double(file, temps.front(), "Minimum Temperature");
-    writeHDF5Double(file, temps.back(), "Maximum Temperature");
+    inelastic.createDataSet("ZA", za);
+    inelastic.createDataSet("MAT", mat);
+    inelastic.createDataSet("A0", a0);
+    inelastic.createDataSet("E_MAX", e_max);
+    inelastic.createDataSet("M0", m0);
+    inelastic.createDataSet("BOUND_XS", bound_xs);
+    inelastic.createDataSet("FREE_XS", free_xs);
+    inelastic.createDataSet("MAX_T", temps.front());
+    inelastic.createDataSet("MIN_T", temps.back());
 
-    writeHDF5Bool(file, std::get<0>(class_xs_fit.first.second), "Scale XS temperatures");
-    writeHDF5Double(file, std::get<1>(class_xs_fit.first.second), "XS Minimum Scaled Value");
-    writeHDF5Double(file, std::get<2>(class_xs_fit.first.second), "XS Maximum Scaled Value");
-    writeHDF5String(file, std::get<3>(class_xs_fit.first.second).first, "XS Fitting Function");
-    
-    writeHDF5Bool(file, std::get<0>(class_beta_fit.first.second), "Scale BETA temperatures");
-    writeHDF5Double(file, std::get<1>(class_beta_fit.first.second), "BETA Minimum Scaled Value");
-    writeHDF5Double(file, std::get<2>(class_beta_fit.first.second), "BETA Maximum Scaled Value");
-    writeHDF5String(file, std::get<3>(class_beta_fit.first.second).first, "BETA Fitting Function");
+    HighFive::Group xs = inelastic.createGroup("XS");
+    xs.createDataSet("FITTING_FUNCTION", std::get<3>(class_xs_fit.first.second).first);
+    xs.createDataSet("MAX_SCALE", std::get<2>(class_xs_fit.first.second));
+    xs.createDataSet("MIN_SCALE", std::get<1>(class_xs_fit.first.second));
+    xs.createDataSet("ENERGY_GRID", inc_energy_grid);
+    std::vector<double> flattened_xs;
+    for (const auto& vec : xs_coeffs) {
+        flattened_xs.insert(flattened_xs.end(), vec.data(), vec.data() + vec.size());
+    }
+    xs.createDataSet("COEFFS", flattened_xs);
 
-    writeHDF5Bool(file, std::get<0>(class_alpha_fit.first.second), "Scale ALPHA temperatures");
-    writeHDF5Double(file, std::get<1>(class_alpha_fit.first.second), "ALPHA Minimum Scaled Value");
-    writeHDF5Double(file, std::get<2>(class_alpha_fit.first.second), "ALPHA Maximum Scaled Value");
-    writeHDF5String(file, std::get<3>(class_alpha_fit.first.second).first, "ALPHA Fitting Function");
+    HighFive::Group beta = inelastic.createGroup("BETA");
+    beta.createDataSet("FITTING_FUNCTION", std::get<3>(class_alpha_fit.first.second).first);
+    beta.createDataSet("MAX_SCALE", std::get<2>(class_alpha_fit.first.second));
+    beta.createDataSet("MIN_SCALE", std::get<1>(class_alpha_fit.first.second));
+    beta.createDataSet("ENERGY_GRID", inc_energy_grid);
+    beta.createDataSet("CDF_GRID", beta_cdf_grid);
+    std::vector<double> flattened_beta;
+    for (const auto& inner_vec : beta_coeffs) {
+        for (const auto& vec : inner_vec) {
+            flattened_beta.insert(flattened_beta.end(), vec.data(), vec.data() + vec.size());
+        }
+    }
+    beta.createDataSet("COEFFS", flattened_beta);
 
-    writeHDF5DoubleVector(file, inc_energy_grid, "Incident Energy Grid");
-    writeHDF5DoubleVector(file, beta_cdf_grid, "Beta CDF Grid");
-    writeHDF5DoubleVector(file, beta_grid, "Beta Grid");
-    writeHDF5DoubleVector(file, alpha_cdf_grid, "Alpha CDF Grid");
-
-    __write_xs_Coeffs__(file, xs_coeffs, "XS_Coefficients");
-    __write_fit_Coeffs__(file, beta_coeffs, "Beta Coefficients");
-    __write_fit_Coeffs__(file, alpha_coeffs, "Alpha Coefficients");
+    HighFive::Group alpha = inelastic.createGroup("ALPHA");
+    alpha.createDataSet("FITTING_FUNCTION", std::get<3>(class_alpha_fit.first.second).first);
+    alpha.createDataSet("MAX_SCALE", std::get<2>(class_alpha_fit.first.second));
+    alpha.createDataSet("MIN_SCALE", std::get<1>(class_alpha_fit.first.second));
+    alpha.createDataSet("BETA_GRID", beta_grid);
+    alpha.createDataSet("CDF_GRID", alpha_cdf_grid);
+    std::vector<double> flattened_alpha;
+    for (const auto& inner_vec : alpha_coeffs) {
+        for (const auto& vec : inner_vec) {
+            flattened_alpha.insert(flattened_alpha.end(), vec.data(), vec.data() + vec.size());
+        }
+    }
+    alpha.createDataSet("COEFFS", flattened_alpha);
 }
 
 void OTFData::generate_A_matrices__(){
@@ -337,14 +320,14 @@ void OTFData::solve__(){
     #pragma omp parallel for collapse(2)
     for (int i = 0; i<inc_energy_grid.size(); i++){
         for (int j = 0; j<beta_cdf_grid.size(); j++){
-            beta_coeffs[i][j] = beta_ldlt.solve(beta_A_T * fit_beta_vals[i][j]);
+            beta_coeffs[i][j] = beta_ldlt.solve(beta_A_T * beta_vals[i][j]);
         }
     }
     //ALPHA
     #pragma omp parallel for collapse(2)
     for (int i = 0; i<beta_grid.size(); i++){
         for (int j = 0; j<alpha_cdf_grid.size(); j++){
-            alpha_coeffs[i][j] = alpha_ldlt.solve(alpha_A_T * fit_alpha_vals[i][j]);
+            alpha_coeffs[i][j] = alpha_ldlt.solve(alpha_A_T * alpha_vals[i][j]);
         }
     }
 }

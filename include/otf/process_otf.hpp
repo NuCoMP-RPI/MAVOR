@@ -36,12 +36,12 @@ class OTFData{
         std::vector<Eigen::VectorXd> ii_xs;
         std::vector<double> beta_cdf_grid;
         // order is <inc_ene, b_cdf, temp>
-        std::vector<std::vector<Eigen::VectorXd>> fit_beta_vals;
+        std::vector<std::vector<Eigen::VectorXd>> beta_vals;
 
         std::vector<double> beta_grid;
         std::vector<double> alpha_cdf_grid;
         //order is <beta, a_cdf, temp>
-        std::vector<std::vector<Eigen::VectorXd>> fit_alpha_vals;
+        std::vector<std::vector<Eigen::VectorXd>> alpha_vals;
 
         Eigen::MatrixXd xs_A;
         Eigen::MatrixXd beta_A;

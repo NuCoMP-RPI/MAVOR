@@ -17,7 +17,7 @@ void execute_njoy(const std::filesystem::path &file, const int sim_num){
     TslFileData endf_data(endf_tape, "endf");
     std::filesystem::path hdf5_write_loc(tsl_njoy_results_dir);
     std::filesystem::path hdf5_file = hdf5_write_loc / (file.stem().string() + "_njoy_results.h5");
-    endf_data.write_to_hdf5__(hdf5_file);
+    endf_data.write_to_hdf5(hdf5_file);
     std::filesystem::remove_all(sim_loc);
 }
 

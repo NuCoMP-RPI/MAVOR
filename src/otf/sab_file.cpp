@@ -1,45 +1,62 @@
 #include <iostream>
 #include <vector>
 
-#include "H5Cpp.h"
+#include <highfive/highfive.hpp>
 
 #include "sab_file.hpp"
-#include "hdf5_file.hpp"
 
-SabData::SabData(const std::string & file_path){
-    H5::H5File file(file_path, H5F_ACC_RDONLY);
-
-    readHDF5Int(file, "ZA", za);
-    readHDF5Int(file, "MAT", mat);
-    readHDF5Double(file, "Temp", temp);
-    readHDF5Double(file, "T_EFF", t_eff);
-    readHDF5Double(file, "TEMP_RATIO", temp_ratio);
-    readHDF5Double(file, "A0", a0);
-    readHDF5Double(file, "E_MAX", e_max);
-    readHDF5Double(file, "M0", m0);
-    readHDF5Double(file, "FREE_XS", free_xs);
-    readHDF5Double(file, "BOUND_XS", bound_xs);
-    readHDF5DoubleVector(file, "Incident Energy Grid", inc_energy_grid);
-    readHDF5DoubleVector(file, "Incoherent Inelastic XS", ii_xs);
-    readHDF5DoubleVector(file, "Beta CDF Grid", beta_cdf_grid);
-    std::vector<double> fit_betas_vector;
-    readHDF5DoubleVector(file, "Betas", fit_betas_vector);
-    fit_beta_vals = vector_to_matrix__(fit_betas_vector, inc_energy_grid.size(), beta_cdf_grid.size());
-    readHDF5DoubleVector(file, "Beta Grid", beta_grid);
-    readHDF5DoubleVector(file, "Alpha CDF Grid", alpha_cdf_grid);
-    std::vector<double> fit_alphas_vector;
-    readHDF5DoubleVector(file, "Alphas", fit_alphas_vector);
-    fit_alpha_vals = vector_to_matrix__(fit_alphas_vector, beta_grid.size(), alpha_cdf_grid.size());
+template<typename T>
+std::vector<std::vector<T>> read_jagged_matrix__(HighFive::File file, const std::string &name){
+    std::vector<T> flat_data = file.getDataSet(name + " Flattened").read<std::vector<T>>();
+    std::vector<int> offsets = file.getDataSet(name + " Offsets").read<std::vector<int>>();
+    std::vector<std::vector<T>> reconstructed;
+    for (size_t i = 0; i < offsets.size() - 1; i++) {
+        reconstructed.push_back(std::vector<T>(
+            flat_data.begin() + offsets[i], flat_data.begin() + offsets[i + 1]
+        ));
+    }
+    return reconstructed;
 }
 
-std::vector<std::vector<double>> SabData::vector_to_matrix__(std::vector<double> const & flat_vector, int const n_rows, int const n_cols){
-    if(n_rows*n_cols != flat_vector.size()){
-        throw std::domain_error("Length of the vector does not match the n_rows*n_cols");
+template<typename T>
+bool is_uniform_matrix(const std::vector<std::vector<T>> &matrix){
+    if (matrix.empty()) return true;
+    const std::vector<T>& first_row = matrix[0];
+    for (const auto& row : matrix) {
+        if (row.size() != first_row.size()) {return false;}
+        if (row != first_row) {return false;}
     }
-    std::vector<std::vector<double>> matrix;
-    const auto begin = std::begin(flat_vector);
-    for(std::size_t row = 0 ; row<n_rows; ++row){ 
-        matrix.push_back({begin + row*n_cols, begin + (row+1)*n_cols});
-    }
-    return matrix;
+    return true;
+}
+
+SabData::SabData(const std::string & file_path){
+    HighFive::File file(file_path, HighFive::File::ReadOnly);
+
+    za = file.getDataSet("ZA").read<int>();
+    mat = file.getDataSet("MAT").read<int>();
+    temp = file.getDataSet("Temperature").read<double>();
+    t_eff = file.getDataSet("Effective Temperature").read<double>();
+    temp_ratio = file.getDataSet("Temperature Ratio").read<double>();
+    a0 = file.getDataSet("A0").read<double>();
+    e_max = file.getDataSet("Maximum Energy").read<double>();
+    m0 = file.getDataSet("M0").read<double>();
+    free_xs = file.getDataSet("Free XS").read<double>();
+    bound_xs = file.getDataSet("Bound XS").read<double>();
+
+    inc_energy_grid = file.getDataSet("Incident Energy Grid"). read<std::vector<double>>();
+    ii_xs = file.getDataSet("Incoherent Inelastic XS"). read<std::vector<double>>();
+
+    std::vector<std::vector<double>> beta_cdf_grid_jagged = read_jagged_matrix__<double>(file, "Beta CDF Grid");
+    if (is_uniform_matrix(beta_cdf_grid_jagged)){beta_cdf_grid = beta_cdf_grid_jagged[0];}
+    else {throw std::runtime_error("Beta CDF Grids are not uniform.");}
+    
+    beta_vals = read_jagged_matrix__<double>(file, "Betas");
+
+    beta_grid = file.getDataSet("Beta Grid").read<std::vector<double>>();
+
+    std::vector<std::vector<double>> alpha_cdf_grid_jagged = read_jagged_matrix__<double>(file, "Alpha CDF Grid");
+    if (is_uniform_matrix(alpha_cdf_grid_jagged)){alpha_cdf_grid = alpha_cdf_grid_jagged[0];}
+    else {throw std::runtime_error("Alpha CDF Grids are not uniform.");}
+    
+    alpha_vals = read_jagged_matrix__<double>(file, "Alphas");
 }

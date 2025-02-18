@@ -30,12 +30,19 @@ int beta_interpolation_scheme = 2;
 int alpha_integration_scheme = 2;
 int alpha_interpolation_scheme = 2;
 
+bool linearize_cdfs = false;
+
+bool use_sigmoid_cdfs = true;
 int num_beta_cdf_points = 100;
 int beta_cdf_extent = 10;
 int num_alpha_cdf_points = 100;
 int alpha_cdf_extent = 10;
 
-std::string sab_input_file = std::string(BUILD_DIR) + "/test_files/HinYH2_293K_tsl.h5";
+bool use_external_cdfs = false;
+std::string alpha_cdf_grid_loc;
+std::string beta_cdf_grid_loc;
+
+std::string sab_input_file = std::string(BUILD_DIR) + "/test_files/HinYH2_tsl.h5";
 std::string sab_output_file = std::string(BUILD_DIR) + "/CDF_distributions.h5";
 
 bool use_external_energy_grid = false;
@@ -124,8 +131,8 @@ bool alpha_override_fit_function = false;
 // sample subcommand variables
 
 std::string sample_input_file = "";
-std::string sample_cdf_test_file = std::string(BUILD_DIR) + "/test_files/HinYH2_293_6K_CDFs.h5";
-std::string sample_coeff_test_file = std::string(BUILD_DIR) + "/test_files/HinYH2_Coeffs.h5";
+std::string sample_cdf_test_file = std::string(BUILD_DIR) + "/test_files/HinYH2_cdfs.h5";
+std::string sample_coeff_test_file = std::string(BUILD_DIR) + "/test_files/HinYH2_coeffs.h5";
 std::string sample_cdf_output_file = std::string(BUILD_DIR) + "/CDF_sampling_results.h5";
 std::string sample_coeff_output_file = std::string(BUILD_DIR) + "/COEFF_sampling_results.h5";
 std::string sample_output_file = "";
@@ -155,3 +162,9 @@ bool sample_alpha_naive_eval = false;
 bool sample_alpha_optimal_eval = false;
 bool sample_alpha_override_eval = false;
 std::string sample_alpha_override_evaluation_type = "";
+
+// elastic subcommand variables
+
+std::string elastic_otf_file = std::string(BUILD_DIR) + "/test_files/HinYH2_coeffs.h5";
+std::string elastic_endf_file = std::string(BUILD_DIR) + "/test_files/tsl-HinYH2.endf";
+std::string elastic_full_otf_file = std::string(BUILD_DIR) + "/Full_OTF.h5";

@@ -33,10 +33,17 @@ extern int beta_interpolation_scheme;
 extern int alpha_integration_scheme;
 extern int alpha_interpolation_scheme;
 
+extern bool linearize_cdfs;
+
+extern bool use_sigmoid_cdfs;
 extern int num_beta_cdf_points;
 extern int beta_cdf_extent;
 extern int num_alpha_cdf_points;
 extern int alpha_cdf_extent;
+
+extern bool use_external_cdfs;
+extern std::string alpha_cdf_grid_loc;
+extern std::string beta_cdf_grid_loc;
 
 extern std::string sab_input_file;
 extern std::string sab_output_file; 
@@ -149,5 +156,11 @@ extern bool sample_alpha_naive_eval;
 extern bool sample_alpha_optimal_eval;
 extern bool sample_alpha_override_eval;
 extern std::string sample_alpha_override_evaluation_type;
+
+// elastic subcomman variables
+
+extern std::string elastic_otf_file;
+extern std::string elastic_endf_file;
+extern std::string elastic_full_otf_file;
 
 #endif

@@ -51,8 +51,8 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/njoy/ENDFtk.git
     GIT_TAG develop
     GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE)
-
+    GIT_PROGRESS TRUE
+    )
 FetchContent_MakeAvailable(ENDFtk)
 
 message(STATUS "Retrieving CLI11 version 2.4.1.")
@@ -62,8 +62,8 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
     GIT_TAG v2.4.1
     GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE)
-
+    GIT_PROGRESS TRUE
+    )
 FetchContent_MakeAvailable(CLI11)
 
 message(STATUS "Retrieving Eigen")
@@ -73,21 +73,46 @@ FetchContent_Declare(
     GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
     GIT_TAG master
     GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE)
-
+    GIT_PROGRESS TRUE
+    )
 FetchContent_MakeAvailable(EIGEN)
+
+message(STATUS "Retrieving HDF5 version 1.14.6")
+set(HDF5_ENABLE_THREADSAFE     ON)
+set(HDF5_ENABLE_Z_LIB_SUPPORT OFF)
+set(HDF5_EXTERNALLY_CONFIGURED  1)
+set(HDF5_ENABLE_SZIP_SUPPORT  OFF)
+set(HDF5_BUILD_EXAMPLES       OFF)
+set(HDF5_BUILD_TOOLS          OFF)
+set(HDF5_BUILD_UTILS          OFF)
+set(HDF5_BUILD_HL_LIB         OFF)
+set(BUILD_SHARED_LIBS         OFF)
+FetchContent_Declare(HDF5
+    GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git
+    GIT_TAG        hdf5-1.14.6
+    EXCLUDE_FROM_ALL
+)
+FetchContent_MakeAvailable(HDF5)
+
+message(STATUS "Retrieving HighFive version 2.10.1")
+set(HIGHFIVE_UNIT_TESTS OFF)
+set(HIGHFIVE_TEST_SPAN OFF)
+set(HIGHFIVE_EXAMPLES OFF)
+set(HIGHFIVE_BUILD_DOCS OFF)
+set(HIGHFIVE_FIND_HDF5 OFF)
+set(HIGHFIVE_USE_BOOST Off)
+FetchContent_Declare(HighFive
+    GIT_REPOSITORY https://github.com/BlueBrain/HighFive.git
+    GIT_TAG        v2.10.1
+    EXCLUDE_FROM_ALL
+)
+FetchContent_MakeAvailable(HighFive)
 
 # GTEST is added if compile test are set to true
 
-# Find HDF5 package
-find_package(HDF5 COMPONENTS CXX REQUIRED)
-add_compile_options(-lhdf5_cpp -lhdf5)
-
-configure_file(test_files/HinYH2_energies.txt test_files/HinYH2_energies.txt COPYONLY)
-configure_file(test_files/HinYH2_293K_tsl.h5 test_files/HinYH2_293K_tsl.h5 COPYONLY)
-configure_file(test_files/HinYH2_293_6K_CDFs.h5 test_files/HinYH2_293_6K_CDFs.h5 COPYONLY)
-configure_file(test_files/HinYH2_Coeffs.h5 test_files/HinYH2_Coeffs.h5 COPYONLY)
-configure_file(test_files/tsl-HinYH2.leapr test_files/tsl-HinYH2.leapr COPYONLY)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test_files)
+file(GLOB TEST_FILES "test_files/*")
+file(COPY ${TEST_FILES} DESTINATION ${CMAKE_BINARY_DIR}/test_files)
 
 set(COMPILE_TESTS on)
 

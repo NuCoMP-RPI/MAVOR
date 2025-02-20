@@ -32,8 +32,6 @@ int main(int argc, char* argv[]){
     argv = mavor.ensure_utf8(argv);
     mavor.set_help_all_flag("-H,--help_all", "Expands all help messages");
     mavor.add_flag("-s,--silent", silence, "Disables the terminal output");
-    mavor.add_flag("-v,--verbose", verbose, "Enables additional terminal output (NOT SUPPORTED YET)");
-    mavor.add_flag("-l,--log", log_run, "Enables logging (NOT SUPPORTED YET)");
 
     // TSL subcommand
     CLI::App &tsl = *mavor.add_subcommand("tsl", "Deals with the generation of TSL data through leapr files and NJOY.");
@@ -62,7 +60,7 @@ int main(int argc, char* argv[]){
     sab.add_option("--alpha_min", alpha_min, "Sets the minimum integration alpha value");
     sab.add_option("--e_min", e_min, "Sets the minimum incident energy to consider.");
     sab.add_option("--num_energies", num_energies, "Sets the number of energies that are used to initialize the incident energy grid.");
-    auto &energy = *sab.add_option_group("Incident Energy Settings", "Sets how the incident energy grid is determined");
+    auto &energy = *sab.add_option_group("Incident Energy Settings", "Sets how the incident energy grid is determined.  If no values are set, the incident energy grid will be linearized.");
     auto user_energy_option = energy.add_option("-u,--user_energy_grid", energy_grid_loc, "Sets the location for a user defined energy grid to be used");
     auto predefined_energy_option = energy.add_flag("-p,--predefined_energy_grid", use_internal_energy_grid, "Tells the program to use the predefined energy grid");
     energy.require_option(0,1);
@@ -205,7 +203,8 @@ int main(int argc, char* argv[]){
         if (*tsl_num_temps){tsl_leapr_use_num_temps = true;}
         run_tsl();
     }
-    if (sab.parsed()){
+
+    else if (sab.parsed()){
         if (!silence){std::cout << "Running sab subroutines" << std::endl;}
         if (*user_energy_option){use_external_energy_grid = true;}
         if (dist.parsed()){
@@ -226,7 +225,8 @@ int main(int argc, char* argv[]){
         }
         run_sab();
     }
-    if (otf.parsed()){
+
+    else if (otf.parsed()){
         if (!silence){std::cout << "Running otf subroutines" << std::endl;}
 
         // Just look at this abomination, IDK how to make it any better
@@ -249,7 +249,7 @@ int main(int argc, char* argv[]){
         run_otf();
     }
 
-    if (sample.parsed()){
+    else if (sample.parsed()){
         if (!silence){std::cout << "Running sample subroutines" << std::endl;}
         if (*sample_cdf_option){
             if (!*sample_input_file_option){
@@ -283,9 +283,14 @@ int main(int argc, char* argv[]){
         run_sample();
     }
 
-    if (elastic.parsed()){
+    else if (elastic.parsed()){
         if (!silence){std::cout << "Running elastic subroutines" << std::endl;}
         run_elastic();
+    }
+
+    else{
+        if (!silence){std::cout << "Please use a subcommand" << std::endl;}
+        if (!silence){std::cout << "run 'mavor -h' to see available subcommands" << std::endl;}
     }
     
     auto main_process_end = std::chrono::high_resolution_clock::now();

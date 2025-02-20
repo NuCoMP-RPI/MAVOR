@@ -13,6 +13,9 @@
 using Tape = njoy::ENDFtk::tree::Tape;
 using MF7MT2 = njoy::ENDFtk::section::Type<7,2>;
 using ScatteringLaw = MF7MT2::ScatteringLaw;
+using CoherentElastic = MF7MT2::CoherentElastic;
+using IncoherentElastic = MF7MT2::IncoherentElastic;
+using MixedElastic = MF7MT2::MixedElastic;
 
 void add_coherent_elastic__(HighFive::Group elastic_group, const MF7MT2::CoherentElastic &coherent_elastic_data){
     HighFive::Group coherent_group = elastic_group.createGroup("Coherent");
@@ -73,12 +76,12 @@ void scattering_data(){
         MF7MT2 mt2 = tape.materials().front().section(7,2).parse<7,2>();
         ScatteringLaw scat_law = mt2.scatteringLaw();
         int lthr = mt2.LTHR();
-        /// TODO: There is probably a better way to get the different scattering law types using visit and a lambda function
-        if (lthr == 1){add_coherent_elastic__(elastic, std::get<0>(scat_law));}
-        else if (lthr == 2){add_incoherent_elastic__(elastic, std::get<1>(scat_law));}
+        if (lthr == 1){add_coherent_elastic__(elastic, std::get<CoherentElastic>(scat_law));}
+        else if (lthr == 2){add_incoherent_elastic__(elastic, std::get<IncoherentElastic>(scat_law));}
         else if (lthr == 3){
-            add_coherent_elastic__(elastic, std::get<2>(scat_law).coherent());
-            add_incoherent_elastic__(elastic, std::get<2>(scat_law).incoherent());
+            const MixedElastic& me = std::get<MixedElastic>(scat_law);
+            add_coherent_elastic__(elastic, me.coherent());
+            add_incoherent_elastic__(elastic, me.incoherent());
         }
         else{throw std::runtime_error("Unexpected LTHR value found in ENDF file.");}
     }

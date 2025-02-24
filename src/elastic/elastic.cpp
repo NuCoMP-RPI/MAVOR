@@ -7,7 +7,7 @@
 
 void run_elastic(){
     if (!silence){
-        std::cout << "Adding elastic scattering data | " << otf_input_directory << std::endl;
+        std::cout << "Adding elastic scattering data | " << elastic_otf_file << std::endl;
     }
     
     auto start = std::chrono::high_resolution_clock::now();

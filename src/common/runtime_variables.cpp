@@ -33,10 +33,10 @@ int alpha_interpolation_scheme = 2;
 bool linearize_cdfs = false;
 
 bool use_sigmoid_cdfs = true;
-int num_beta_cdf_points = 100;
-int beta_cdf_extent = 10;
-int num_alpha_cdf_points = 100;
-int alpha_cdf_extent = 10;
+int num_beta_cdf_points = 400;
+int beta_cdf_extent = 7;
+int num_alpha_cdf_points = 400;
+int alpha_cdf_extent = 7;
 
 bool use_external_cdfs = false;
 std::string alpha_cdf_grid_loc;

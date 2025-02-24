@@ -64,8 +64,6 @@ void scattering_data(){
     // Add in elastic data to the copied OTF coefficient file
     HighFive::File h5_file(elastic_full_otf_file, HighFive::File::ReadWrite);
 
-    HighFive::Group elastic = h5_file.createGroup("Elastic");
-
     Tape tape = njoy::ENDFtk::tree::fromFile(elastic_endf_file);
     
     int endf_mat = tape.materialNumbers()[0];
@@ -73,6 +71,7 @@ void scattering_data(){
     if (endf_mat != otf_mat){throw std::runtime_error("Material numbers do not match for the given OTF and ENDF files.");}
 
     if (tape.materials().front().hasSection(7,2)){
+        HighFive::Group elastic = h5_file.createGroup("Elastic");
         MF7MT2 mt2 = tape.materials().front().section(7,2).parse<7,2>();
         ScatteringLaw scat_law = mt2.scatteringLaw();
         int lthr = mt2.LTHR();

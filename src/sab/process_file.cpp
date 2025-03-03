@@ -80,40 +80,40 @@ void DistData::set_initial_cdf_grids__(){
      
 }
 
-std::pair<double, bool> DistData::return_arbitrary_TSL_val(double const &alpha, double const &beta)
-{
-    bool off_data = (
-        alpha > calculation_alphas.back() || 
-        beta  < calculation_betas.front() || 
-        beta  > calculation_betas.back()
-        );
-    if (off_data){
-        return std::make_pair(tsl_data.return_asym_SCT(alpha, beta), true);
-    }
-    else {
-        int alpha_lo_insert = std::lower_bound(calculation_alphas.begin()+1, calculation_alphas.end(), alpha) - calculation_alphas.begin();
-        int beta_lo_insert = std::lower_bound(calculation_betas.begin()+1, calculation_betas.end(), beta) - calculation_betas.begin();
-        double& f11 = calculation_tsl_vals[beta_lo_insert-1][alpha_lo_insert-1];
-        double& f12 = calculation_tsl_vals[beta_lo_insert-1][alpha_lo_insert];
-        double& f21 = calculation_tsl_vals[beta_lo_insert][alpha_lo_insert-1];
-        double& f22 = calculation_tsl_vals[beta_lo_insert][alpha_lo_insert];
-        bool below_cutoff = (f11<sct_cutoff || f12<sct_cutoff || f21<sct_cutoff || f22<sct_cutoff);
-        if (below_cutoff){
-            return std::make_pair(tsl_data.return_asym_SCT(alpha, beta), true);
-        }
-        else{
-            double& b_l = calculation_betas[beta_lo_insert-1];
-            double& b_u = calculation_betas[beta_lo_insert];
-            double& a_l = calculation_alphas[alpha_lo_insert-1];
-            double& a_u = calculation_alphas[alpha_lo_insert];
-            return std::make_pair(bi_interp(b_l, b_u, a_l, a_u,
-                                             f11, f12, f21, f22,
-                                             beta, alpha,
-                                             beta_interpolation_scheme, alpha_interpolation_scheme), 
-                                             false);
-        }
-    }
-}
+// std::pair<double, bool> DistData::return_arbitrary_TSL_val(double const &alpha, double const &beta)
+// {
+//     bool off_data = (
+//         alpha > calculation_alphas.back() || 
+//         beta  < calculation_betas.front() || 
+//         beta  > calculation_betas.back()
+//         );
+//     if (off_data){
+//         return std::make_pair(tsl_data.return_asym_SCT(alpha, beta), true);
+//     }
+//     else {
+//         int alpha_lo_insert = std::lower_bound(calculation_alphas.begin()+1, calculation_alphas.end(), alpha) - calculation_alphas.begin();
+//         int beta_lo_insert = std::lower_bound(calculation_betas.begin()+1, calculation_betas.end(), beta) - calculation_betas.begin();
+//         double& f11 = calculation_tsl_vals[beta_lo_insert-1][alpha_lo_insert-1];
+//         double& f12 = calculation_tsl_vals[beta_lo_insert-1][alpha_lo_insert];
+//         double& f21 = calculation_tsl_vals[beta_lo_insert][alpha_lo_insert-1];
+//         double& f22 = calculation_tsl_vals[beta_lo_insert][alpha_lo_insert];
+//         bool below_cutoff = (f11<sct_cutoff || f12<sct_cutoff || f21<sct_cutoff || f22<sct_cutoff);
+//         if (below_cutoff){
+//             return std::make_pair(tsl_data.return_asym_SCT(alpha, beta), true);
+//         }
+//         else{
+//             double& b_l = calculation_betas[beta_lo_insert-1];
+//             double& b_u = calculation_betas[beta_lo_insert];
+//             double& a_l = calculation_alphas[alpha_lo_insert-1];
+//             double& a_u = calculation_alphas[alpha_lo_insert];
+//             return std::make_pair(bi_interp(b_l, b_u, a_l, a_u,
+//                                              f11, f12, f21, f22,
+//                                              beta, alpha,
+//                                              beta_interpolation_scheme, alpha_interpolation_scheme), 
+//                                              false);
+//         }
+//     }
+// }
 
 std::vector<double> DistData::get_viable_betas__(double const& inc_energy){
     double b_min = tsl_data.calculate_beta_min(inc_energy);
@@ -150,7 +150,6 @@ std::pair<std::vector<double>, std::vector<bool>> DistData::get_alpha_line__(std
     vals.reserve(alpha_vals.size());
     truthy.reserve(alpha_vals.size());
     for(double alpha:alpha_vals){
-        // auto [val, thruth] = return_arbitrary_TSL_val(alpha, beta);
         auto [val, thruth] = tsl_data.return_arbitrary_TSL_val(alpha, beta);
         vals.push_back(val);
         truthy.push_back(thruth);
@@ -194,12 +193,7 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_beta_pdf(do
 
 std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_beta_pdf(double const& inc_energy){
     inc_ener_hold__ = inc_energy;
-    std::vector<double> beta_vals = get_viable_betas__(inc_energy);
-    std::vector<double> beta_pdf;
-    beta_pdf.reserve(beta_vals.size());
-    for (double beta: beta_vals){
-        beta_pdf.push_back(get_beta_pdf_val__(inc_energy, beta));
-    }
+    auto [beta_vals, beta_pdf] = return_beta_pdf(inc_energy);
     auto get_new_beta_pdf_val = [&](double x) {return wrapper_get_beta_pdf_val__(x);};
     linearize(beta_vals, beta_pdf, get_new_beta_pdf_val);
     return std::make_pair(beta_vals, beta_pdf);

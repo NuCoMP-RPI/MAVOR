@@ -27,7 +27,7 @@ double ENDF_integral_scheme_5(double const & x1, double const & x2, double const
 
 double ENDF_integrate(double const & x1, double const & x2, double const & y1, double const & y2, int const scheme){
     if (x1 == x2){
-        return y1;
+        return 0;
     }
     switch (scheme)
     {

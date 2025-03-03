@@ -20,3 +20,7 @@ target_link_libraries(sab_lib PUBLIC hdf5-static)
 target_include_directories(sab_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/sab")
 target_include_directories(sab_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/common")
 target_include_directories(sab_lib PRIVATE "${CMAKE_SOURCE_DIR}/include/predefined")
+
+if(COMPILE_TESTS)
+    add_subdirectory(unit_tests)
+endif(COMPILE_TESTS)

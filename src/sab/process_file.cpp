@@ -182,10 +182,6 @@ double DistData::get_beta_pdf_val__(double const& inc_energy, double const& beta
     return integrate_alpha_line__(alpha_vals, vals, truthy, beta);
 }
 
-double DistData::wrapper_get_beta_pdf_val__(double const& beta){
-    return get_beta_pdf_val__(inc_ener_hold__, beta);
-}
-
 std::pair<std::vector<double>, std::vector<double>> DistData::return_beta_pdf(double const& inc_energy){
     std::vector<double> beta_vals = get_viable_betas__(inc_energy);
     std::vector<double> beta_pdf;
@@ -197,10 +193,9 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_beta_pdf(do
 }
 
 std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_beta_pdf(double const& inc_energy){
-    inc_ener_hold__ = inc_energy;
     auto [beta_vals, beta_pdf] = return_beta_pdf(inc_energy);
-    auto get_new_beta_pdf_val = [&](double x) {return wrapper_get_beta_pdf_val__(x);};
-    linearize(beta_vals, beta_pdf, get_new_beta_pdf_val);
+    auto get_new_beta_pdf_val = [this, inc_energy](double beta) {return get_beta_pdf_val__(inc_energy, beta);};
+    linearize(beta_vals, beta_pdf, get_new_beta_pdf_val, 0.1, 0.001);
     return std::make_pair(beta_vals, beta_pdf);
 }
 
@@ -221,7 +216,7 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_
     std::vector<double> energies = logspace(e_min, tsl_data.e_max, 52); // Don't know what the best choice for starting grid would be or how many points
     std::vector<double> xs = return_ii_xs_vector(energies);
     auto get_new_xs = [&](double x) {return return_ii_xs_value(x);};
-    linearize(energies, xs, get_new_xs);
+    linearize(energies, xs, get_new_xs, 1000, 0.01); // Only consider the relative difference as important
     return std::make_pair(energies, xs);
 }
 
@@ -262,30 +257,23 @@ void DistData::linearize_beta_sampling_dists__(){
                                calculation_beta_vals[i][cdf_insert+1],
                                desired_cdf_val);
         };
-        linearize(beta_cdf_grid[i], beta_vals[i], get_new_cdf_point);
+        linearize(beta_cdf_grid[i], beta_vals[i], get_new_cdf_point, 0.1, 0.001);
     }
 }
 
-double DistData::wrapper_get_alpha_pdf_val__(double const& alpha){
-    auto [val, truthy] = tsl_data.return_arbitrary_TSL_val(alpha, beta_hold__);
-    return val;
-}
-
 std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_alpha_pdf(double const& beta){
-    beta_hold__ = beta;
     std::vector<double> a_vals = calculation_alphas;
-    auto [alpha_pdf, truthy] = get_alpha_line__(a_vals, beta_hold__);
-    auto get_new_alpha_pdf_val = [&](double x) {return wrapper_get_alpha_pdf_val__(x);};
-    linearize(a_vals, alpha_pdf, get_new_alpha_pdf_val);
+    auto [alpha_pdf, truthy] = get_alpha_line__(a_vals, beta);
+    auto get_new_alpha_pdf_val = [this, beta](double alpha) {return tsl_data.return_arbitrary_TSL_val(alpha, beta).first;};
+    linearize(a_vals, alpha_pdf, get_new_alpha_pdf_val, 0.1, 0.001);
     return std::make_pair(a_vals, alpha_pdf);
 }
 
 std::pair<std::vector<double>, std::vector<double>> DistData::return_viable_linearized_alpha_pdf(double const& inc_energy, double const& beta){
-    beta_hold__ = beta;
     std::vector<double> a_vals = get_viable_alphas__(inc_energy, beta);
-    auto [alpha_pdf, truthy] = get_alpha_line__(a_vals, beta_hold__);
-    auto get_new_alpha_pdf_val = [&](double x) {return wrapper_get_alpha_pdf_val__(x);};
-    linearize(a_vals, alpha_pdf, get_new_alpha_pdf_val);
+    auto [alpha_pdf, truthy] = get_alpha_line__(a_vals, beta);
+    auto get_new_alpha_pdf_val = [this, beta](double alpha) {return tsl_data.return_arbitrary_TSL_val(alpha, beta).first;};
+    linearize(a_vals, alpha_pdf, get_new_alpha_pdf_val, 0.1, 0.001);
     return std::make_pair(a_vals, alpha_pdf);
 }
 
@@ -316,7 +304,7 @@ void DistData::linearize_alpha_sampling_dists__(){
                                calculation_alpha_vals[i][cdf_insert+1],
                                desired_cdf_val);
         };
-        linearize(alpha_cdf_grid[i], alpha_vals[i], get_new_cdf_point);
+        linearize(alpha_cdf_grid[i], alpha_vals[i], get_new_cdf_point, 0.1, 0.001);
     }
 }
 

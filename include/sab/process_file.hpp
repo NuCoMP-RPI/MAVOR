@@ -117,12 +117,6 @@ class DistData {
         std::vector<std::vector<double>> calculation_alpha_vals;
         std::vector<std::vector<double>> calculation_alpha_cdfs;
 
-        /// @brief A working variable to hold the incident energy in the linearization process
-        double inc_ener_hold__;
-        
-        /// @brief A working variable to hold the beta value in the linearization process
-        double beta_hold__;
-
         /// @brief Sets the interpolation and integration schemes in the runtime variables given the TSL data.
         /// This current implementation is not correct.  It assumes that only one scheme is applied to all values and no ranges exist.
         /// It also does not correct for the non-linear exp(-beta/2) term when converting to the asymmetric form of the TSL.  
@@ -172,18 +166,6 @@ class DistData {
         /// @return PDF value
         double get_beta_pdf_val__(double const& inc_energy, double const& beta);
         
-        /// @brief Wrapper to get a PDF value for a desired beta using the "inc_ener_hold__" variable.
-        /// Used in the linearization process
-        /// @param beta Desired beta value
-        /// @return PDF value
-        double wrapper_get_beta_pdf_val__(double const& beta);
-
-        /// @brief Wrapper to get a PDF value for a desired alpha using the "beta_hold__" variable.
-        /// Used in the linearization process
-        /// @param alpha Desired alpha value
-        /// @return PDF value
-        double wrapper_get_alpha_pdf_val__(double const& alpha);
-
         /// @brief Runner function to calculate the beta sampling distributions
         void get_beta_sampling_dists__();
 

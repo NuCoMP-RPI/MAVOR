@@ -218,7 +218,7 @@ std::vector<double> DistData::return_ii_xs_vector(std::vector<double> const& inc
 }
 
 std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_ii_xs(){
-    std::vector<double> energies = logspace(e_min, tsl_data.e_max, 100);
+    std::vector<double> energies = logspace(e_min, tsl_data.e_max, 52); // Don't know what the best choice for starting grid would be or how many points
     std::vector<double> xs = return_ii_xs_vector(energies);
     auto get_new_xs = [&](double x) {return return_ii_xs_value(x);};
     linearize(energies, xs, get_new_xs);

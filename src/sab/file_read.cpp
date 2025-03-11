@@ -383,8 +383,9 @@ std::pair<double, bool> TslFileData::return_arbitrary_TSL_val(double const& alph
         search_beta = std::abs(search_beta);
     }
     // If the desired alpha/beta is not contained within the stored data, use SCT
+    /// NOTE: Getting S values below the alpha grid is handled by extrapolation
     bool off_data = (
-                    //  search_alpha < alphas.front() || 
+                    //  search_alpha < alphas.front() ||
                      search_alpha > alphas.back() || 
                      search_beta < betas.front() || 
                      search_beta > betas.back()
@@ -392,7 +393,6 @@ std::pair<double, bool> TslFileData::return_arbitrary_TSL_val(double const& alph
     if(off_data){return std::make_pair(return_asym_SCT(alpha, beta), true);}
 
     else{
-        // std::cout << "Data point is on grid." << std::endl;
         // Extract the S values that bracket the desired point
         int alpha_lo_insert = std::lower_bound(alphas.begin()+1, alphas.end(), search_alpha) - alphas.begin();
         int beta_lo_insert = std::lower_bound(betas.begin()+1, betas.end(), search_beta) - betas.begin();
@@ -412,25 +412,43 @@ std::pair<double, bool> TslFileData::return_arbitrary_TSL_val(double const& alph
         if (below_cutoff){return std::make_pair(return_asym_SCT(alpha, beta), true);}
 
         else{
+            double s;
             double& b_l = betas[beta_lo_insert-1];
             double& b_u = betas[beta_lo_insert];
             double& a_l = alphas[alpha_lo_insert-1];
             double& a_u = alphas[alpha_lo_insert];
 
-            // Determine the interpolation schemes
-            int alpha_range_insert = std::lower_bound(alpha_interpolants_boundaries.begin(), 
-                                                      alpha_interpolants_boundaries.end(), 
-                                                      alpha_lo_insert) - alpha_interpolants_boundaries.begin();
-            int alpha_interp_scheme = alpha_interpolants[alpha_range_insert];
             int beta_range_insert = std::lower_bound(beta_interpolants_boundaries.begin(), 
                                                      beta_interpolants_boundaries.end(), 
                                                      beta_lo_insert) - beta_interpolants_boundaries.begin();
             int beta_interp_scheme = beta_interpolants[beta_range_insert];
 
-            double s = bi_interp(b_l, b_u, a_l, a_u,
-                                 f11, f12, f21, f22,
-                                 search_beta, search_alpha,
-                                 beta_interp_scheme, alpha_interp_scheme);
+            if (search_alpha < alphas.front()){
+                // Opposite with what is stated in "(2016) Computational Methods used to Process Thermal Neutron Scattering Data for use in Continuous energy Monte Carlo Codes - Trumbull"
+                // Maybe just a mistake in the writing of the paper cause this fixed scattering cosine calculations at low E
+                // Also needed the ternary to change behavior so that energy transfer pdfs for HinH2O aligned
+                // if s values are increasing with alpha, log-log interpolation, otherwise log-linear interpolation
+                int b_l_alpha_interp_scheme = (f11 - f12 < 0 ? 5 : 4);
+                int b_u_alpha_interp_scheme = (f21 - f22 < 0 ? 5 : 4);
+
+                // interpolate wrt alphas
+                double s_l = ENDF_interp(a_l, a_u, f11, f12, search_alpha, b_l_alpha_interp_scheme);
+                double s_u = ENDF_interp(a_l, a_u, f21, f22, search_alpha, b_u_alpha_interp_scheme);
+                // interpolate wrt beta
+                s = ENDF_interp(b_l, b_u, s_l, s_u, search_beta, beta_interp_scheme);
+            }
+            else{
+                // Determine the interpolation schemes
+                int alpha_range_insert = std::lower_bound(alpha_interpolants_boundaries.begin(), 
+                                                          alpha_interpolants_boundaries.end(), 
+                                                          alpha_lo_insert) - alpha_interpolants_boundaries.begin();
+                int alpha_interp_scheme = alpha_interpolants[alpha_range_insert];
+
+                s = bi_interp(b_l, b_u, a_l, a_u,
+                              f11, f12, f21, f22,
+                              search_beta, search_alpha,
+                              beta_interp_scheme, alpha_interp_scheme);
+            }
 
             // Take exp(s) if lln is set
             if (lln == 1){s = std::exp(s);}

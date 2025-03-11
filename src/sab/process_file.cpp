@@ -44,6 +44,11 @@ DistData::DistData(TslFileData& file_data) : tsl_data(file_data){
 }
 
 void DistData::set_interp_integration_schemes__(){
+    /// NOTE: Due to the handling of TSL data, these schemes may be unreliable.
+    /// Alpha interpolation and integration will be invalid as long as lln is set in the tsl data (ln(s) instead of s is stored) and interpolation cannot be altered
+    /// Some considerations have been taken but not guaranteed to be valid
+    /// Beta interpolation and integration will be invalid as long as lasym is set in the tsl data (symmetric for of s in stored)
+    /// All beta interpolation should be handled in file_read.cpp and integration should be done with lin-lin due to linearization routines
     alpha_interpolation_scheme = tsl_data.return_alpha_schemes();
     alpha_integration_scheme = alpha_interpolation_scheme;
     beta_interpolation_scheme = tsl_data.return_beta_schemes();

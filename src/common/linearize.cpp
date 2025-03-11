@@ -6,7 +6,7 @@
 
 #include "linearize.hpp"
 
-void linearize(std::vector<double>& x_points, std::vector<double>& y_points, std::function<double(double)> get_new_y){
+void linearize(std::vector<double>& x_points, std::vector<double>& y_points, std::function<double(double)> get_new_y, const double absolute_tolerance, const double relative_tolerance){
     std::vector<std::pair<int, int>> stack;
     stack.reserve(x_points.size());
     for(int i=0; i<x_points.size()-1; i++){
@@ -35,7 +35,7 @@ void linearize(std::vector<double>& x_points, std::vector<double>& y_points, std
         double rel_diff = (y_point != 0) ? abs(abs_diff/y_point) : 0;
 
 
-        if (abs_diff>0.1 || rel_diff>0.001){
+        if (abs_diff>absolute_tolerance || rel_diff>relative_tolerance){
             x_points.push_back(x_point);
             y_points.push_back(y_point);
             stack.push_back(std::make_pair(left, x_points.size()-1));

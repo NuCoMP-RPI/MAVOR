@@ -2,6 +2,7 @@
 #include <chrono>
 #include <tuple>
 #include <fstream>
+#include <iomanip>
 
 #include "runtime_variables.hpp"
 #include "sab.hpp"
@@ -10,6 +11,7 @@
 
 void write_vectors_to_file(const std::vector<double>& x, const std::vector<double>& y, const std::string& filename) {
     std::ofstream outfile(filename);
+    outfile << std::scientific << std::setprecision(15);
     for (size_t i = 0; i < x.size(); ++i) {
         outfile << x[i] << "," << y[i] << "\n";
     }
@@ -53,6 +55,7 @@ void run_sab(){
     else{
         auto process_start = std::chrono::high_resolution_clock::now();
         std::vector<double> x,y;
+        double beta;
         switch (distribution_choice)
         {
         case 1:
@@ -67,8 +70,12 @@ void run_sab(){
             }
             break;
         case 3:
-            if (!silence){std::cout << "Calculation Momentum Transfer." << std::endl;}
-            std::tie(x,y) = dist_data.return_viable_linearized_alpha_pdf(dist_incident_energy, dist_data.return_beta(dist_incident_energy, dist_outgoing_energy));
+            beta = dist_data.return_beta(dist_incident_energy, dist_outgoing_energy);
+            if (!silence){
+                std::cout << "Calculation Momentum Transfer." << std::endl;
+                std::cout << "Desired Beta value: " << beta << std::endl;
+            }
+            std::tie(x,y) = dist_data.return_viable_linearized_alpha_pdf(dist_incident_energy, beta);
             if (convert_to_eemu){
                 x = dist_data.alphas_to_scatting_angles(dist_incident_energy, dist_outgoing_energy, x);
             }

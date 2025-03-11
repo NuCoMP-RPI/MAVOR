@@ -329,12 +329,12 @@ std::vector<std::vector<double>> TslFileData::return_full_asym_tsl_vals(){
 }
 
 double TslFileData::asym_SCT_alpha_integral_bounds__(double const& alpha, double const& beta){
-    double abs_b = abs(beta);
-    double two_sqrt_ar = 2*sqrt(alpha*temp_ratio);
-    double erfc_1 = erfc((abs_b-alpha)/two_sqrt_ar);
-    double erfc_2 = erfc((abs_b+alpha)/two_sqrt_ar);
-    double inner_exp = exp(beta/(std::copysign(temp_ratio, beta)));
-    double outer_exp = exp(-(abs_b/2)-(beta/2));
+    double abs_b = std::abs(beta);
+    double two_sqrt_ar = 2.0*std::sqrt(alpha*temp_ratio);
+    double erfc_1 = std::erfc((abs_b-alpha)/two_sqrt_ar);
+    double erfc_2 = std::erfc((abs_b+alpha)/two_sqrt_ar);
+    double inner_exp = std::exp(beta/(std::copysign(temp_ratio, beta)));
+    double outer_exp = std::exp(-(abs_b/2.0)-(beta/2.0));
     return 0.5*(outer_exp*(erfc_1 - inner_exp*erfc_2));
 }
 
@@ -347,22 +347,22 @@ double TslFileData::calculate_beta_max(double const& inc_energy){
 }
 
 std::pair<double, double> TslFileData::calculate_alpha_extrema(double const& inc_energy, double const& beta){
-    double t1 = sqrt(inc_energy);
-    double t2 = sqrt(abs(inc_energy + beta*boltz*temp));
+    double t1 = std::sqrt(inc_energy);
+    double t2 = std::sqrt(std::abs(inc_energy + beta*boltz*temp));
     double t3 = a0*boltz*temp;
-    return std::make_pair(std::max(alpha_min, pow((t1 - t2), 2)/t3), pow((t1 + t2), 2)/t3);
+    return std::make_pair(std::max(alpha_min, std::pow((t1 - t2), 2)/t3), std::pow((t1 + t2), 2)/t3);
 }
 
 double TslFileData::return_sym_SCT(double const& alpha, double const& beta){
-    double numer_numer = pow((alpha-abs(beta)), 2);
-    double numer_denom = 4*alpha*temp_ratio;
-    double numer = exp(-(numer_numer/numer_denom) - (abs(beta)/2));
-    double denom = sqrt(4*PI*alpha*temp_ratio);
+    double numer_numer = std::pow((alpha-std::abs(beta)), 2);
+    double numer_denom = 4.0*alpha*temp_ratio;
+    double numer = std::exp(-(numer_numer/numer_denom) - (std::abs(beta)/2.0));
+    double denom = std::sqrt(4.0*PI*alpha*temp_ratio);
     return numer/denom;
 }
 
 double TslFileData::return_asym_SCT(double const& alpha, double const& beta){
-    return exp(-beta/2) * return_sym_SCT(alpha, beta);
+    return std::exp(-beta/2.0) * return_sym_SCT(alpha, beta);
 }
 
 double TslFileData::return_asym_SCT_alpha_integral(double const& alpha_l, double const& alpha_u, double const& beta){
@@ -380,7 +380,7 @@ std::pair<double, bool> TslFileData::return_arbitrary_TSL_val(double const& alph
         search_beta *= temp/ref_temp_k;
     }
     if (lasym == 0){
-        search_beta = abs(search_beta);
+        search_beta = std::abs(search_beta);
     }
     // If the desired alpha/beta is not contained within the stored data, use SCT
     bool off_data = (
@@ -405,10 +405,10 @@ std::pair<double, bool> TslFileData::return_arbitrary_TSL_val(double const& alph
         // Ensure to compare the true S value and not ln(S)
         // Ternary operator looks to see if lln is set, if so take exp, if not use value directly
         // Cant update the values themselves cause interpolation is only valid on stored values
-        bool below_cutoff = ((lln ? exp(f11) : f11) < sct_cutoff ||
-                             (lln ? exp(f12) : f12) < sct_cutoff ||
-                             (lln ? exp(f21) : f21) < sct_cutoff ||
-                             (lln ? exp(f22) : f22) < sct_cutoff);
+        bool below_cutoff = ((lln ? std::exp(f11) : f11) < sct_cutoff ||
+                             (lln ? std::exp(f12) : f12) < sct_cutoff ||
+                             (lln ? std::exp(f21) : f21) < sct_cutoff ||
+                             (lln ? std::exp(f22) : f22) < sct_cutoff);
         if (below_cutoff){return std::make_pair(return_asym_SCT(alpha, beta), true);}
 
         else{
@@ -433,10 +433,9 @@ std::pair<double, bool> TslFileData::return_arbitrary_TSL_val(double const& alph
                                  beta_interp_scheme, alpha_interp_scheme);
 
             // Take exp(s) if lln is set
-            if (lln == 1){s = exp(s);}
-            // Mulitply by exp(-beta/2) if lasym is set
-            if (lasym == 0){s = exp(-beta/2) * s;}
-
+            if (lln == 1){s = std::exp(s);}
+            // Multiply by exp(-beta/2) if lasym is set
+            if (lasym == 0){s = std::exp(-beta/2.0) * s;}
             return std::make_pair(s, false);
         }
     }

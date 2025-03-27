@@ -54,7 +54,7 @@ double beta_max = 50;
 double sct_cutoff = 1.9219477278e-98;  // Based off the sabmin value in thermr | sabmin = exp(-225) | Found line 1609 and 1628 of thermr.f90
 double alpha_min = 1e-10;
 double e_min = 1e-5;
-int num_energies = 105;
+int num_energies = 102;
 
 // DIST subcommand for SAB
 

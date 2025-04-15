@@ -221,8 +221,8 @@ void OTFData::write_coefficients(){
     inelastic.createDataSet("M0", m0);
     inelastic.createDataSet("BOUND_XS", bound_xs);
     inelastic.createDataSet("FREE_XS", free_xs);
-    inelastic.createDataSet("MAX_T", temps.front());
-    inelastic.createDataSet("MIN_T", temps.back());
+    inelastic.createDataSet("MIN_T", temps.front());
+    inelastic.createDataSet("MAX_T", temps.back());
 
     HighFive::Group xs = inelastic.createGroup("XS");
     xs.createDataSet("FITTING_FUNCTION", std::get<3>(class_xs_fit.first.second).first);

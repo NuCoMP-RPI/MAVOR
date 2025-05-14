@@ -56,9 +56,11 @@ std::vector<double> pdf_to_cdf(std::vector<double> const & x, std::vector<double
     for (int i=1; i<x.size(); i++){
         cdf[i] = cdf[i-1] + ENDF_integrate(x[i-1], x[i], y[i-1], y[i], integration_scheme);
     }
-    // NOTE: This check may need to be for inf and nan as well but I didn't see them come up in testing
-    if (cdf.back() < std::numeric_limits<double>::min()){ // Check to make sure the CDF value makes sense.
-        cdf = linspace(0, 1, cdf.size());
+    if (!std::isfinite(cdf.back()) || cdf.back() <= 0.0){
+        throw std::runtime_error("PDF was all zeros.");
+    }
+    if (cdf.back() < std::numeric_limits<double>::min()) {
+        std::cerr << "WARNING: CDF is below numeric_limits<double>::min(). May suffer from precision loss in CDF normalization.\n";
     }
     else{ 
         double factor = 1/cdf.back();

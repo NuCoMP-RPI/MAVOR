@@ -39,6 +39,12 @@ DistData::DistData(TslFileData& file_data) : tsl_data(file_data){
     calculation_half_betas = tsl_data.return_scaled_betas();
     calculation_tsl_vals = tsl_data.return_full_asym_tsl_vals();
 
+    /// NOTE: Ensure that only beta are used that are below the beta max set in the runtime variables
+    std::vector<double>::iterator it = std::lower_bound(beta_grid.begin(), beta_grid.end(), beta_max);
+    std::size_t trim_index = std::distance(beta_grid.begin(), it);
+    beta_grid.erase(beta_grid.begin() + trim_index, beta_grid.end());
+    calculation_half_betas.erase(calculation_half_betas.begin() + trim_index, calculation_half_betas.end());
+    
     set_interp_integration_schemes__();
     set_initial_cdf_grids__();
 }

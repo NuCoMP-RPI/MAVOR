@@ -6,9 +6,9 @@
 #include "sab_file.hpp"
 
 template<typename T>
-std::vector<std::vector<T>> read_jagged_matrix__(HighFive::File file, const std::string &name){
-    std::vector<T> flat_data = file.getDataSet(name + " Flattened").read<std::vector<T>>();
-    std::vector<int> offsets = file.getDataSet(name + " Offsets").read<std::vector<int>>();
+std::vector<std::vector<T>> read_jagged_matrix__(HighFive::Group group, const std::string &name){
+    std::vector<T> flat_data = group.getDataSet(name + "_FLATTENED").read<std::vector<T>>();
+    std::vector<int> offsets = group.getDataSet(name + "_OFFSETS").read<std::vector<int>>();
     std::vector<std::vector<T>> reconstructed;
     for (size_t i = 0; i < offsets.size() - 1; i++) {
         reconstructed.push_back(std::vector<T>(
@@ -34,29 +34,29 @@ SabData::SabData(const std::string & file_path){
 
     za = file.getDataSet("ZA").read<int>();
     mat = file.getDataSet("MAT").read<int>();
-    temp = file.getDataSet("Temperature").read<double>();
-    t_eff = file.getDataSet("Effective Temperature").read<double>();
-    temp_ratio = file.getDataSet("Temperature Ratio").read<double>();
     a0 = file.getDataSet("A0").read<double>();
-    e_max = file.getDataSet("Maximum Energy").read<double>();
+    e_max = file.getDataSet("E_MAX").read<double>();
     m0 = file.getDataSet("M0").read<double>();
-    free_xs = file.getDataSet("Free XS").read<double>();
-    bound_xs = file.getDataSet("Bound XS").read<double>();
+    bound_xs = file.getDataSet("BOUND_XS").read<double>();
+    free_xs = file.getDataSet("FREE_XS").read<double>();
+    temp = file.getDataSet("TEMPERATURE").read<double>();
+    t_eff = file.getDataSet("T_EFF").read<double>();
+    temp_ratio = file.getDataSet("T_R").read<double>();
 
-    inc_energy_grid = file.getDataSet("Incident Energy Grid"). read<std::vector<double>>();
-    ii_xs = file.getDataSet("Incoherent Inelastic XS"). read<std::vector<double>>();
+    HighFive::Group xs = file.getGroup("XS");
+    inc_energy_grid = xs.getDataSet("ENERGY_GRID"). read<std::vector<double>>();
+    ii_xs = xs.getDataSet("XS_VALUES"). read<std::vector<double>>();
 
-    std::vector<std::vector<double>> beta_cdf_grid_jagged = read_jagged_matrix__<double>(file, "Beta CDF Grid");
+    HighFive::Group beta = file.getGroup("BETA");
+    std::vector<std::vector<double>> beta_cdf_grid_jagged = read_jagged_matrix__<double>(beta, "CDF_GRID");
     if (is_uniform_matrix(beta_cdf_grid_jagged)){beta_cdf_grid = beta_cdf_grid_jagged[0];}
     else {throw std::runtime_error("Beta CDF Grids are not uniform.");}
-    
-    beta_vals = read_jagged_matrix__<double>(file, "Betas");
+    beta_vals = read_jagged_matrix__<double>(beta, "BETA_VALUES");
 
-    beta_grid = file.getDataSet("Beta Grid").read<std::vector<double>>();
-
-    std::vector<std::vector<double>> alpha_cdf_grid_jagged = read_jagged_matrix__<double>(file, "Alpha CDF Grid");
+    HighFive::Group alpha = file.getGroup("ALPHA");
+    beta_grid = alpha.getDataSet("BETA_GRID").read<std::vector<double>>();
+    std::vector<std::vector<double>> alpha_cdf_grid_jagged = read_jagged_matrix__<double>(alpha, "CDF_GRID");
     if (is_uniform_matrix(alpha_cdf_grid_jagged)){alpha_cdf_grid = alpha_cdf_grid_jagged[0];}
     else {throw std::runtime_error("Alpha CDF Grids are not uniform.");}
-    
-    alpha_vals = read_jagged_matrix__<double>(file, "Alphas");
+    alpha_vals = read_jagged_matrix__<double>(alpha, "ALPHA_VALUES");
 }

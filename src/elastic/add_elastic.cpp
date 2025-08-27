@@ -47,7 +47,7 @@ void add_incoherent_elastic__(HighFive::Group elastic_group, const MF7MT2::Incoh
                                      incoherent_elastic_data.temperatures().end()};
     incoherent_group.createDataSet("TEMPERATURES", temperatures);
     
-    incoherent_group.createDataSet("INTERPOLATION_LAW", incoherent_elastic_data.interpolants()[0]);
+    incoherent_group.createAttribute("INTERPOLATION_LAW", incoherent_elastic_data.interpolants()[0]);
     
     std::vector<double> debye_wallers{incoherent_elastic_data.debyeWallerValues().begin(),
                                       incoherent_elastic_data.debyeWallerValues().end()};
@@ -67,7 +67,7 @@ void scattering_data(){
     Tape tape = njoy::ENDFtk::tree::fromFile(elastic_endf_file);
     
     int endf_mat = tape.materialNumbers()[0];
-    int otf_mat = h5_file.getDataSet("/Inelastic/MAT").read<int>();
+    int otf_mat = h5_file.getAttribute("MAT").read<int>();
     if (endf_mat != otf_mat){throw std::runtime_error("Material numbers do not match for the given OTF and ENDF files.");}
 
     if (tape.materials().front().hasSection(7,2)){

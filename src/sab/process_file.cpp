@@ -222,7 +222,7 @@ std::pair<std::vector<double>, std::vector<double>> DistData::return_linearized_
     std::vector<double> energies = logspace(e_min, tsl_data.e_max, num_energies); // Don't know what the best choice for starting grid would be or how many points
     std::vector<double> xs = return_ii_xs_vector(energies);
     auto get_new_xs = [&](double x) {return return_ii_xs_value(x);};
-    linearize(energies, xs, get_new_xs, 1000, 0.01); // Only consider the relative difference as important
+    linearize(energies, xs, get_new_xs, 1000, 0.001); // Only consider the relative difference as important
     return std::make_pair(energies, xs);
 }
 

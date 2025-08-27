@@ -24,7 +24,7 @@ void run_sab(){
     }
 
     auto file_read_start = std::chrono::high_resolution_clock::now();
-    TslFileData file_data(sab_input_file);
+    TslFileData file_data(sab_input_file, sab_file_type);
     DistData dist_data(file_data);
     auto file_read_end  = std::chrono::high_resolution_clock::now();
     auto file_read_duration = std::chrono::duration_cast<std::chrono::milliseconds>(file_read_end - file_read_start);

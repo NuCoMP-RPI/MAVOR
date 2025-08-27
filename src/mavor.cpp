@@ -49,6 +49,7 @@ int main(int argc, char* argv[]){
     // SAB subcommand
     CLI::App &sab = *mavor.add_subcommand("sab", "Generates TSL sampling data given the output from LEAPR or similar tools.");
     sab.ignore_case();
+    sab.add_option("-f,--file_type", sab_file_type, "Sets the type of file to be processed.");
     sab.add_option("-i,--input_file", sab_input_file, "Sets the file name (and path) to be processed.");
     sab.add_option("-o,--output_file", sab_output_file, "Sets the file name (and path) to store the sampling distributions.");
     sab.add_option("--beta_integration", beta_integration_scheme, "Controls how the integration in the beta direction is handled");

@@ -25,6 +25,8 @@ std::string tsl_njoy_sim_loc = std::string(BUILD_DIR) + "/njoy_sims";
 
 // SAB subcommand variables 
 
+std::string sab_file_type = "hdf5";
+
 int beta_integration_scheme = 2;
 int beta_interpolation_scheme = 2;
 int alpha_integration_scheme = 2;

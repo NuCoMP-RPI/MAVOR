@@ -28,6 +28,8 @@ extern std::string tsl_njoy_sim_loc;
 
 // Sab subcommand variables
 
+extern std::string sab_file_type;
+
 extern int beta_integration_scheme;
 extern int beta_interpolation_scheme;
 extern int alpha_integration_scheme;

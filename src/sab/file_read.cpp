@@ -371,6 +371,60 @@ double TslFileData::return_asym_SCT_alpha_integral(double const& alpha_l, double
     return u-l;
 }
 
+
+struct CubicSpline {
+    std::array<double, 4> x;
+    std::array<double, 4> y;
+    std::array<double, 4> M;  // Second derivatives
+
+    // Constructor — builds the spline coefficients
+    CubicSpline(const std::array<double, 4>& x_vals, const std::array<double, 4>& y_vals)
+        : x(x_vals), y(y_vals), M{} {
+
+        // h[i] = x[i+1] - x[i]
+        double h0 = x[1] - x[0];
+        double h1 = x[2] - x[1];
+        double h2 = x[3] - x[2];
+
+        assert(h0 > 0 && h1 > 0 && h2 > 0);
+
+        // alpha[i] = 3 * ( (y[i+1] - y[i]) / h[i] - (y[i] - y[i-1]) / h[i-1] )
+        double alpha1 = (3.0 / h1) * (y[2] - y[1]) - (3.0 / h0) * (y[1] - y[0]);
+        double alpha2 = (3.0 / h2) * (y[3] - y[2]) - (3.0 / h1) * (y[2] - y[1]);
+
+        // Solve tridiagonal system for M[1], M[2]
+        // Natural spline: M[0] = M[3] = 0
+        double l1 = 2 * (x[2] - x[0]);
+        double mu1 = h1 / l1;
+        double z1 = (alpha1 - 0) / l1;
+
+        double l2 = 2 * (x[3] - x[1]) - h1 * mu1;
+        double z2 = (alpha2 - h1 * z1) / l2;
+
+        M[0] = 0.0;
+        M[3] = 0.0;
+        M[2] = z2;
+        M[1] = z1 - mu1 * M[2];
+    }
+
+    // Evaluate the spline at x_eval
+    double evaluate(double x_eval) const {
+        // Find the interval
+        int i = -1;
+        if (x_eval < x[1]) i = 0;
+        else if (x_eval < x[2]) i = 1;
+        else i = 2;
+
+        double h = x[i + 1] - x[i];
+        double A = (x[i + 1] - x_eval) / h;
+        double B = (x_eval - x[i]) / h;
+
+        return A * y[i] + B * y[i + 1]
+             + ((A*A*A - A) * M[i] + (B*B*B - B) * M[i + 1]) * (h * h) / 6.0;
+    }
+};
+
+
 std::pair<double, bool> TslFileData::return_arbitrary_TSL_val(double const& alpha, double const& beta){
     // Convert alpha and beta into search values that are in the same domain as the stored values
     double search_alpha = alpha;
@@ -430,12 +484,26 @@ std::pair<double, bool> TslFileData::return_arbitrary_TSL_val(double const& alph
                 // if s values are increasing with alpha, log-log interpolation, otherwise log-linear interpolation
                 int b_l_alpha_interp_scheme = (f11 - f12 < 0 ? 5 : 4);
                 int b_u_alpha_interp_scheme = (f21 - f22 < 0 ? 5 : 4);
+                // int b_l_alpha_interp_scheme = (f11 - f12 > 0 ? 5 : 4);
+                // int b_u_alpha_interp_scheme = (f21 - f22 > 0 ? 5 : 4);
 
                 // interpolate wrt alphas
                 double s_l = ENDF_interp(a_l, a_u, f11, f12, search_alpha, b_l_alpha_interp_scheme);
                 double s_u = ENDF_interp(a_l, a_u, f21, f22, search_alpha, b_u_alpha_interp_scheme);
                 // interpolate wrt beta
                 s = ENDF_interp(b_l, b_u, s_l, s_u, search_beta, beta_interp_scheme);
+
+                // Spline implementation with S(alpha=0)=0
+                // std::array<double, 4> x_array = {0, alphas[0], alphas[1], alphas[2]};
+                // std::array<double, 4> s_l_array = {0, tsl_vals[beta_lo_insert-1][0], tsl_vals[beta_lo_insert-1][1], tsl_vals[beta_lo_insert-1][2]};
+                // std::array<double, 4> s_u_array = {0, tsl_vals[beta_lo_insert][0], tsl_vals[beta_lo_insert][1], tsl_vals[beta_lo_insert][2]};
+
+                // CubicSpline spline_l(x_array, s_l_array);
+                // CubicSpline spline_u(x_array, s_u_array);
+
+                // double s_l = spline_l.evaluate(search_alpha);
+                // double s_u = spline_u.evaluate(search_alpha);
+                // s = ENDF_interp(b_l, b_u, s_l, s_u, search_beta, beta_interp_scheme);
             }
             else{
                 // Determine the interpolation schemes

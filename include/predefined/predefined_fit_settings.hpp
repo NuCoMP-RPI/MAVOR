@@ -1,13 +1,14 @@
 #ifndef MAVOR_PREDEFINED_FIT_SETTINGS_H
 #define MAVOR_PREDEFINED_FIT_SETTINGS_H
 
+#include <functional>
 #include <map>
 #include <vector>
 #include <iostream>
 
 /// @brief Typedef for a function pointer to a basis function.
 /// The function takes a `const double &` and an `int` as input and returns a `double`.
-typedef double(*FuncPointer)(const double &, const int);
+using FuncPointer = std::function<double(const double&, const int)>;
 
 /// @brief A pair representing a basis function with its name and associated function pointer.
 typedef std::pair<std::string, FuncPointer> BasisFunction;
@@ -111,5 +112,60 @@ extern PredefinedMaterialFitsMap optimal_material_fits;
 
 /// @brief Groups of predefined material fits for various configurations.
 extern PredefinedFitGroups predefined_material_fits_groups;
+
+
+// // Function pointer for basis functions
+// using FuncPointer = std::function<double(const double&, const int)>;
+
+// // Basis function representation
+// struct BasisFunction {
+//     std::string name;
+//     FuncPointer function;
+// };
+
+// // Map of basis functions
+// using BasisFunctionMap = std::map<int, BasisFunction>;
+
+// // Basis function settings
+// struct BasisFunctionSettings {
+//     bool needs_scaling;
+//     double min_value;
+//     double max_value;
+//     BasisFunction basis_function;
+// };
+
+// // Fitting function representation
+// struct FittingFunction {
+//     std::string name;
+//     BasisFunctionSettings settings;
+// };
+
+// // Map of fitting functions
+// using FittingFunctionMap = std::map<int, FittingFunction>;
+
+// // Fit representation
+// struct Fit {
+//     FittingFunction fitting_function;
+//     int order;
+// };
+
+// // Material fit containing all three fits
+// struct MaterialFit {
+//     Fit xs_fit;
+//     Fit beta_fit;
+//     Fit alpha_fit;
+// };
+
+// // Material fit settings
+// struct MaterialFitSettings {
+//     std::string material_name;
+//     MaterialFit material_fit;
+// };
+
+// // Predefined material fit map
+// using PredefinedMaterialFitsMap = std::map<int, MaterialFitSettings>;
+
+// // Groups of predefined fits
+// using PredefinedFitGroups = std::map<int, PredefinedMaterialFitsMap>;
 
 #endif

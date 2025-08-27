@@ -119,7 +119,7 @@ void OTFData::load_material_fits__(){
         PredefinedMaterialFitsMap::iterator mat_it = fit_group_it->second.find(mat);
         if (mat_it != fit_group_it->second.end()){
             MaterialFitSettings mat_fit_settings = mat_it->second;
-            std::string mat_name = std::get<0>(mat_fit_settings);
+            const std::string& mat_name = mat_fit_settings.first;
             MaterialFit mat_fits = std::get<1>(mat_fit_settings);
             class_xs_fit = std::get<0>(mat_fits);
             class_beta_fit = std::get<1>(mat_fits);
@@ -211,23 +211,24 @@ void OTFData::generate_coefficients(){
 
 void OTFData::write_coefficients(){
     HighFive::File file(otf_output_file, HighFive::File::Overwrite);
-
+    
+    file.createAttribute("ZA", za);
+    file.createAttribute("MAT", mat);
+    file.createAttribute("A0", a0);
+    file.createAttribute("M0", m0);
+    file.createAttribute("BOUND_XS", bound_xs);
+    file.createAttribute("FREE_XS", free_xs);
+    
     HighFive::Group inelastic = file.createGroup("Inelastic");
-
-    inelastic.createDataSet("ZA", za);
-    inelastic.createDataSet("MAT", mat);
-    inelastic.createDataSet("A0", a0);
-    inelastic.createDataSet("E_MAX", e_max);
-    inelastic.createDataSet("M0", m0);
-    inelastic.createDataSet("BOUND_XS", bound_xs);
-    inelastic.createDataSet("FREE_XS", free_xs);
-    inelastic.createDataSet("MIN_T", temps.front());
-    inelastic.createDataSet("MAX_T", temps.back());
+    
+    inelastic.createAttribute("E_MAX", e_max);
+    inelastic.createAttribute("MIN_T", temps.front());
+    inelastic.createAttribute("MAX_T", temps.back());
 
     HighFive::Group xs = inelastic.createGroup("XS");
-    xs.createDataSet("FITTING_FUNCTION", std::get<3>(class_xs_fit.first.second).first);
-    xs.createDataSet("MAX_SCALE", std::get<2>(class_xs_fit.first.second));
-    xs.createDataSet("MIN_SCALE", std::get<1>(class_xs_fit.first.second));
+    xs.createAttribute("FITTING_FUNCTION", std::get<3>(class_xs_fit.first.second).first);
+    xs.createAttribute("MAX_SCALE", std::get<2>(class_xs_fit.first.second));
+    xs.createAttribute("MIN_SCALE", std::get<1>(class_xs_fit.first.second));
     xs.createDataSet("ENERGY_GRID", inc_energy_grid);
     std::vector<double> flattened_xs;
     for (const auto& vec : xs_coeffs) {
@@ -236,9 +237,9 @@ void OTFData::write_coefficients(){
     xs.createDataSet("COEFFS", flattened_xs);
 
     HighFive::Group beta = inelastic.createGroup("BETA");
-    beta.createDataSet("FITTING_FUNCTION", std::get<3>(class_alpha_fit.first.second).first);
-    beta.createDataSet("MAX_SCALE", std::get<2>(class_alpha_fit.first.second));
-    beta.createDataSet("MIN_SCALE", std::get<1>(class_alpha_fit.first.second));
+    beta.createAttribute("FITTING_FUNCTION", std::get<3>(class_alpha_fit.first.second).first);
+    beta.createAttribute("MAX_SCALE", std::get<2>(class_alpha_fit.first.second));
+    beta.createAttribute("MIN_SCALE", std::get<1>(class_alpha_fit.first.second));
     beta.createDataSet("ENERGY_GRID", inc_energy_grid);
     beta.createDataSet("CDF_GRID", beta_cdf_grid);
     std::vector<double> flattened_beta;
@@ -250,9 +251,9 @@ void OTFData::write_coefficients(){
     beta.createDataSet("COEFFS", flattened_beta);
 
     HighFive::Group alpha = inelastic.createGroup("ALPHA");
-    alpha.createDataSet("FITTING_FUNCTION", std::get<3>(class_alpha_fit.first.second).first);
-    alpha.createDataSet("MAX_SCALE", std::get<2>(class_alpha_fit.first.second));
-    alpha.createDataSet("MIN_SCALE", std::get<1>(class_alpha_fit.first.second));
+    alpha.createAttribute("FITTING_FUNCTION", std::get<3>(class_alpha_fit.first.second).first);
+    alpha.createAttribute("MAX_SCALE", std::get<2>(class_alpha_fit.first.second));
+    alpha.createAttribute("MIN_SCALE", std::get<1>(class_alpha_fit.first.second));
     alpha.createDataSet("BETA_GRID", beta_grid);
     alpha.createDataSet("CDF_GRID", alpha_cdf_grid);
     std::vector<double> flattened_alpha;
@@ -293,6 +294,9 @@ void OTFData::fill_A_matrices__(){
     }
 }
 
+/// TODO: This needs to be optimized
+/// NOTE: Instead of evaluating the orders 1 at a time, allow the fitting function to iteratively generate the vector
+/// NOTE: See OpenMC implementation 
 Eigen::VectorXd OTFData::eval_fit_func__(double const & x, int const & number, FuncPointer func){
     Eigen::VectorXd eval(number);
     for (int i = 0; i<number; i++){

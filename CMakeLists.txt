@@ -33,26 +33,14 @@ set(TSL_NJOY_EXE_LOC ${NJOY_BINARY_DIR}/njoy CACHE STRING "Path to NJOY executab
 
 include(FetchContent)
 
-# message(STATUS "Retrieving ENDFtk version 1.1.0")
-# FetchContent_Declare(
-#     ENDFtk
-#     QUIET
-#     GIT_REPOSITORY https://github.com/njoy/ENDFtk.git
-#     GIT_TAG v1.1.0
-#     GIT_SHALLOW TRUE
-#     GIT_PROGRESS TRUE)
-
-# FetchContent_MakeAvailable(ENDFtk)
-
-message(STATUS "Retrieving ENDFtk develop")
+message(STATUS "Retrieving ENDFtk version 1.2.0")
 FetchContent_Declare(
     ENDFtk
     QUIET
     GIT_REPOSITORY https://github.com/njoy/ENDFtk.git
-    GIT_TAG develop
+    GIT_TAG v1.2.0
     GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-    )
+    GIT_PROGRESS TRUE)
 FetchContent_MakeAvailable(ENDFtk)
 
 message(STATUS "Retrieving CLI11 version 2.4.1.")

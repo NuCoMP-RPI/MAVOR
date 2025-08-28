@@ -1,0 +1,64 @@
+ $Rev::          $  $Date::           #$                             0 0  0     
+ 1.001000+3 9.991673-1         -1          0          0          0   1 1451     
+ 0.000000+0 0.000000+0          0          0          0          6   1 1451     
+ 1.000000+0 5.000000+0          0          0         12          8   1 1451     
+ 0.000000+0 0.000000+0          0          0         54          1   1 1451     
+ H(H2O)     ARCAB     EVAL-JUN17 Marquez Damian                      1 1451     
+ NDS 148, 1 (2018)    DIST-FEB18                                     1 1451     
+----ENDF/B-VIII.0     MATERIAL 1                                     1 1451     
+-----THERMAL NEUTRON SCATTERING DATA                                 1 1451     
+------ENDF-6 FORMAT                                                  1 1451     
+                                                                     1 1451     
+******************************************************************   1 1451     
+*                                                                *   1 1451     
+* Temperatures = 283.6, 293.6, 300.0,                            *   1 1451     
+*         323.6, 350.0, 373.6, 400.0,                            *   1 1451     
+*         423.6, 450.0, 473.6, 500.0,                            *   1 1451     
+*         523.6, 550.0, 573.6, 600.0 K, 623.6 K                  *   1 1451     
+*                                                                *   1 1451     
+* Extrapolated temperatures = 650.0, 800.0 K                     *   1 1451     
+*                                                                *   1 1451     
+* This evaluation is based on the CAB Model for light water[1]   *   1 1451     
+* in a liquid state, T < T-crit(H2O) = 647.1 K. Two extrapolated *   1 1451     
+* temperature points at 650 K and 800 K were added for backwards *   1 1451     
+* compatibility with ENDF/B-VII.1 scripts. The file (MF7) was    *   1 1451     
+* generated using NJOY 99.396[1] with a patch (upcab).           *   1 1451     
+*                                                                *   1 1451     
+* The CAB model is a further improvement of ENDF/B-VII (2006)    *   1 1451     
+* and IKE, Stuttgart (2005) models for light water (incoherent   *   1 1451     
+* inelastic approximation for n + H-in-H2O & vibrational         *   1 1451     
+* spectrum decomposition). The continuous spectrum[2] is based   *   1 1451     
+* on MD GROMACS Calculations[2] and diffusion coefficients       *   1 1451     
+* measured by Yoshida[3] and Mills[4].                           *   1 1451     
+*                                                                *   1 1451     
+* For oxygen in H2O, free gas approximation is acceptable.       *   1 1451     
+*                                                                *   1 1451     
+* The evaluation was prepared by:                                *   1 1451     
+*                                                                *   1 1451     
+* J.I. Marquez Damian, F. Cantargi, and J.R. Granada             *   1 1451     
+* Nuclear Data Group - Neutron Physics Department                *   1 1451     
+* Centro Atomico Bariloche - Argentina (CAB):                    *   1 1451     
+*                                                                *   1 1451     
+*  and                                                           *   1 1451     
+*                                                                *   1 1451     
+* D. Roubtsov                                                    *   1 1451     
+* Canadian Nuclear Laboratories (CNL)                            *   1 1451     
+* Chalk River, Canada                                            *   1 1451     
+*                                                                *   1 1451     
+* References:                                                    *   1 1451     
+*  [1] Ann. Nucl. Energy, 65, 280 (2014)                         *   1 1451     
+*      http://dx.doi.org/10.1016/j.anucene.2013.11.014           *   1 1451     
+*  [2] J. Chem. Phys. 139, 024504 (2013)                         *   1 1451     
+*      http://dx.doi.org/10.1063/1.4812828                       *   1 1451     
+*  [3] J. Chem. Phys. 123, 164506 (2005)                         *   1 1451     
+*      http://dx.doi.org/10.1063/1.2056542                       *   1 1451     
+*  [4] J. Phys. Chem. 77, 685 (1973)                             *   1 1451     
+*      http://dx.doi.org/10.1021/j100624a025                     *   1 1451     
+*                                                                *   1 1451     
+******************************************************************   1 1451     
+                                                                     1 1451     
+                                1        451         59          0   1 1451     
+                                                                     1 1  0     
+                                                                     1 0  0     
+                                                                     0 0  0     
+                                                                    -1 0  0     

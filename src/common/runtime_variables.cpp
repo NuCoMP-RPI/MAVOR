@@ -134,7 +134,7 @@ bool alpha_override_fit_function = false;
 
 std::string sample_input_file = "";
 std::string sample_cdf_test_file = std::string(BUILD_DIR) + "/test_files/defaults/HinYH2_sab.h5";
-std::string sample_coeff_test_file = std::string(BUILD_DIR) + "/test_files/defaults/HinYH2_coeffs.h5";
+std::string sample_coeff_test_file = "";
 std::string sample_cdf_output_file = std::string(BUILD_DIR) + "/CDF_sampling_results.h5";
 std::string sample_coeff_output_file = std::string(BUILD_DIR) + "/COEFF_sampling_results.h5";
 std::string sample_output_file = "";
@@ -167,6 +167,6 @@ std::string sample_alpha_override_evaluation_type = "";
 
 // elastic subcommand variables
 
-std::string elastic_otf_file = std::string(BUILD_DIR) + "/test_files/defaults/HinYH2_coeffs.h5";
+std::string elastic_otf_file = "";
 std::string elastic_endf_file = std::string(BUILD_DIR) + "/test_files/defaults/tsl-HinYH2.endf";
 std::string elastic_full_otf_file = std::string(BUILD_DIR) + "/HinYH2_OTF.h5";

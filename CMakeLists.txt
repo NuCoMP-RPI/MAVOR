@@ -65,22 +65,32 @@ FetchContent_Declare(
     )
 FetchContent_MakeAvailable(EIGEN)
 
-message(STATUS "Retrieving HDF5 version 1.14.6")
-set(HDF5_ENABLE_THREADSAFE     ON)
-set(HDF5_ENABLE_Z_LIB_SUPPORT OFF)
-set(HDF5_EXTERNALLY_CONFIGURED  1)
-set(HDF5_ENABLE_SZIP_SUPPORT  OFF)
-set(HDF5_BUILD_EXAMPLES       OFF)
-set(HDF5_BUILD_TOOLS          OFF)
-set(HDF5_BUILD_UTILS          OFF)
-set(HDF5_BUILD_HL_LIB         OFF)
-set(BUILD_SHARED_LIBS         OFF)
-FetchContent_Declare(HDF5
-    GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git
-    GIT_TAG        hdf5-1.14.6
-    EXCLUDE_FROM_ALL
-)
-FetchContent_MakeAvailable(HDF5)
+# set(HDF5_USE_STATIC_LIBRARIES ON CACHE BOOL "" FORCE)
+# find_package(HDF5 REQUIRED COMPONENTS C)
+# if(HDF5_FOUND)
+#     message(STATUS "Found HDF5: ${HDF5_VERSION}")
+#     include_directories(${HDF5_INCLUDE_DIRS})
+#     link_libraries(${HDF5_LIBRARIES})
+#     set(HDF5_IS_PARALLEL FALSE)
+# else()
+#     message(WARNING "No system HDF5 found, falling back to FetchContent")
+    message(STATUS "Retrieving HDF5 version 1.14.6")
+    set(HDF5_ENABLE_THREADSAFE    OFF)
+    set(HDF5_ENABLE_Z_LIB_SUPPORT OFF)
+    set(HDF5_EXTERNALLY_CONFIGURED  1)
+    set(HDF5_ENABLE_SZIP_SUPPORT  OFF)
+    set(HDF5_BUILD_EXAMPLES       OFF)
+    set(HDF5_BUILD_TOOLS          OFF)
+    set(HDF5_BUILD_UTILS          OFF)
+    set(HDF5_BUILD_HL_LIB         OFF)
+    set(BUILD_SHARED_LIBS         OFF)
+    FetchContent_Declare(HDF5
+        GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git
+        GIT_TAG        hdf5-1.14.6
+        EXCLUDE_FROM_ALL
+    )
+    FetchContent_MakeAvailable(HDF5)
+# endif()
 
 message(STATUS "Retrieving HighFive version 2.10.1")
 set(HIGHFIVE_UNIT_TESTS OFF)
@@ -88,6 +98,7 @@ set(HIGHFIVE_TEST_SPAN OFF)
 set(HIGHFIVE_EXAMPLES OFF)
 set(HIGHFIVE_BUILD_DOCS OFF)
 set(HIGHFIVE_FIND_HDF5 OFF)
+set(HIGHFIVE_USE_MPI OFF)
 set(HIGHFIVE_USE_BOOST Off)
 FetchContent_Declare(HighFive
     GIT_REPOSITORY https://github.com/BlueBrain/HighFive.git

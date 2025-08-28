@@ -1,5 +1,9 @@
 # Build Location
 build
 
-# Hidden folders
+# Hidden Folders
 .*
+
+# Automation Outputs
+automation_scripts/otf_files
+automation_scripts/working_dir

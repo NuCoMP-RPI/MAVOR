@@ -4,6 +4,6 @@ build
 # Hidden Folders
 .*
 
-# Automation Outputs
-automation_scripts/otf_files
-automation_scripts/working_dir
+# Automation Folder
+automation_scripts/*
+!automation_scripts/*.py
